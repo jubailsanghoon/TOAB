@@ -3,6 +3,7 @@
  * Integrates TOAEngine, TOADiagram, DataStore, LicenseManager, HeaderKit & I18N.
  */
 const BETA_ALLOWED_SUPPORTS = ["NATURAL", "SADDLE120", "TR2_45", "TR2_CUSTOM"];
+const BETA_SAMPLE_SUPPORTS = ["TR2_491", "TR2_30", "TR4_STD", "TR4_CUSTOM", "DOUBLE_ROLLER"];
 
 const App = {
   state: {
@@ -47,6 +48,8 @@ const App = {
     this.onRmatChange(false);
     this.calcDT();
     this.calcRollerSets();
+    this.renderMetrics();
+    this.renderSampleMainDiagrams();
     this.renderMeas(this.state.lastResult);
     this.renderSaved();
     this.updatePlanBadge();
@@ -66,11 +69,8 @@ const App = {
     const sel = document.getElementById("i-sup");
     if (!sel) return;
     Array.from(sel.options).forEach(opt => {
-      opt.disabled = !BETA_ALLOWED_SUPPORTS.includes(opt.value);
+      opt.disabled = false;
     });
-    if (!BETA_ALLOWED_SUPPORTS.includes(sel.value)) {
-      sel.value = "TR2_45";
-    }
   },
 
   t(key) {
@@ -171,6 +171,8 @@ const App = {
     }
     this.onRmatChange();
     this.calcRollerSets();
+    this.renderMetrics();
+    this.renderSampleMainDiagrams();
     const D = +document.getElementById("iD").value || 0;
     const t = +document.getElementById("it").value || 0;
     const ev = TOAEngine.evaluateDT(D, t);
@@ -221,9 +223,9 @@ const App = {
     s("t-ph-tr", x.phTr); s("t-ph-tl", x.phTl); s("t-ph-ts", x.phTs);
     s("t-savlist", x.savlist);
     s("t-tstog", this.state.savCollapsed ? x.savShow : x.savHide);
-    const disTag = x.betaDisabledTag || "[비활성]";
-    s("o-nat", x.oNat); s("o-sad", x.oSad); s("o-t2a", `${x.oT2a} ${disTag}`); s("o-t2b", x.oT2b);
-    s("o-t2c", `${x.oT2c} ${disTag}`); s("o-t2d", x.oT2d); s("o-t4a", `${x.oT4a} ${disTag}`); s("o-t4b", `${x.oT4b} ${disTag}`); s("o-dbl", `${x.oDbl} ${disTag}`);
+    const sampleTag = x.betaSampleTag || "[샘플]";
+    s("o-nat", x.oNat); s("o-sad", x.oSad); s("o-t2a", `${x.oT2a} ${sampleTag}`); s("o-t2b", x.oT2b);
+    s("o-t2c", `${x.oT2c} ${sampleTag}`); s("o-t2d", x.oT2d); s("o-t4a", `${x.oT4a} ${sampleTag}`); s("o-t4b", `${x.oT4b} ${sampleTag}`); s("o-dbl", `${x.oDbl} ${sampleTag}`);
     this.enforceBetaSupportSelection();
     s("o-body", x.oBody); s("o-end", x.oEnd); s("o-fn", x.oFn); s("o-ff", x.oFf);
 
@@ -232,17 +234,19 @@ const App = {
     s("betaNoticeTitle", x.betaNoticeTitle);
     const betaMsgEl = document.getElementById("betaNoticeMsg");
     if (betaMsgEl && x.betaNoticeMsg) {
-      betaMsgEl.innerHTML = String(x.betaNoticeMsg).replace(/\n/g, "<br>");
+      const parts = String(x.betaNoticeMsg).split("\n");
+      betaMsgEl.innerHTML = parts.length >= 2
+        ? `<span class="bp-line">${parts[0]}</span><span class="bp-warn">${parts.slice(1).join("<br>")}</span>`
+        : `<span class="bp-line">${parts[0]}</span>`;
     }
     s("betaNoticeBtn", x.betaNoticeBtn);
-    s("t-td-dis", x.betaDisabledParen || "(비활성)");
-    s("t-td-disabled-msg", x.betaTdDisabledMsg);
-    const disBadge = x.betaDisabledBadge || "Beta 비활성";
-    document.querySelectorAll(".beta-disabled-card").forEach(el => {
-      el.setAttribute("data-beta-disabled", disBadge);
+    s("t-td-sample", sampleTag);
+    s("t-cs-sample", sampleTag);
+    s("t-sv-sample", sampleTag);
+    document.querySelectorAll(".beta-sample-card").forEach(el => {
+      el.setAttribute("data-beta-sample", sampleTag);
     });
-    const tabTd = document.getElementById("tab-td");
-    if (tabTd) tabTd.title = disBadge;
+    const disBadge = x.betaDisabledBadge || "Beta 비활성";
     const csvBtn = document.getElementById("t-csv");
     if (csvBtn) csvBtn.title = disBadge;
     const xlsBtn = document.getElementById("t-xls");
@@ -354,13 +358,12 @@ const App = {
   },
 
   onSupChange(triggerAnalysis = false) {
-    this.enforceBetaSupportSelection();
     const v = document.getElementById("i-sup").value;
-    const show = v === "TR2_CUSTOM";
+    const show = v === "TR2_CUSTOM" || v === "TR4_CUSTOM" || v === "DOUBLE_ROLLER";
     document.getElementById("cust-wrap").classList.toggle("hide", !show);
     document.getElementById("cust-tr2").classList.toggle("hide", v !== "TR2_CUSTOM");
-    document.getElementById("cust-tr4")?.classList.add("hide");
-    document.getElementById("cust-dbl")?.classList.add("hide");
+    document.getElementById("cust-tr4")?.classList.toggle("hide", v !== "TR4_CUSTOM");
+    document.getElementById("cust-dbl")?.classList.toggle("hide", v !== "DOUBLE_ROLLER");
     if (triggerAnalysis) this.runAnalysis({ keepTab: true, silent: true });
   },
 
@@ -370,9 +373,31 @@ const App = {
   },
 
   updateActualSets() {
-    // Beta v0.5: 최소 권장 롤러 세트 비활성
+    // Beta v0.5: 고정 샘플 기준(4 sets) 대비 상태 표시 + [샘플]
+    const aEl = document.getElementById("i-asets");
     const st = document.getElementById("asets-status");
-    if (st) st.textContent = "—";
+    if (!aEl || !st) return;
+    const tag = this.t("betaSampleTag") || "[샘플]";
+    const aVal = parseInt(aEl.value, 10);
+    const minRec = 4;
+    if (isNaN(aVal) || aVal < 1) {
+      st.textContent = `— ${tag}`;
+      st.style.background = "var(--inp)";
+      st.style.color = "var(--tx2)";
+      aEl.style.borderColor = "var(--bdr)";
+      return;
+    }
+    if (aVal >= minRec) {
+      st.textContent = `✓ ${this.t("asetsOk")} ${tag}`;
+      st.style.background = "var(--gnbg)";
+      st.style.color = "var(--gn)";
+      aEl.style.borderColor = "var(--gn)";
+    } else {
+      st.textContent = `⚠ +${minRec - aVal} ${this.t("asetsShort")} ${tag}`;
+      st.style.background = "var(--rdbg)";
+      st.style.color = "var(--rd)";
+      aEl.style.borderColor = "var(--rd)";
+    }
   },
 
   renderBrazierAlert(ev) {
@@ -626,22 +651,21 @@ const App = {
   },
 
   calcRollerSets() {
-    // Beta v0.5: 최소 권장 롤러 세트 및 측면도 비활성
+    // Beta v0.5: 고정 샘플 숫자 표시
+    const tag = this.t("betaSampleTag") || "[샘플]";
     const setText = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
-    setText("rs-sets", "—");
-    setText("rs-defl", "—");
-    setText("rs-hertz", "—");
-    setText("rs-span", "—");
-    setText("rs-gov", "—");
+    setText("rs-sets", `4 sets ${tag}`);
+    setText("rs-defl", "3 sets");
+    setText("rs-hertz", "4 sets");
+    setText("rs-span", "2400mm");
+    setText("rs-gov", `Hertz ${tag}`);
     this.updateActualSets();
   },
 
   getP() {
-    this.enforceBetaSupportSelection();
     const D = +document.getElementById("iD").value;
     const t = +document.getElementById("it").value;
-    const rawSt = document.getElementById("i-sup").value;
-    const st = BETA_ALLOWED_SUPPORTS.includes(rawSt) ? rawSt : "TR2_45";
+    const st = document.getElementById("i-sup").value;
     const customLimRaw = +document.getElementById("i-custom-lim")?.value || 0;
     const opts = {
       zone: document.getElementById("i-zone").value,
@@ -650,6 +674,14 @@ const App = {
     };
     const p = { D, t, st, opts };
     if (st === "TR2_CUSTOM") p.a = +document.getElementById("i-a").value;
+    if (st === "TR4_CUSTOM") {
+      p.a1 = +document.getElementById("i-a1").value;
+      p.a2 = +document.getElementById("i-a2").value;
+    }
+    if (st === "DOUBLE_ROLLER") {
+      p.ac = +document.getElementById("i-ac").value;
+      p.gr = +document.getElementById("i-gr").value;
+    }
     return p;
   },
 
@@ -666,10 +698,6 @@ const App = {
   },
 
   goTab(id) {
-    if (id === "td") {
-      this.toast(this.t("betaTdToast"), true);
-      return;
-    }
     const activeTab = id === "ts" ? "tc" : id;
     const panelIds = ["tc", "tm", "td", "tr", "tl"];
     const btnIds = ["tab-tc", "tab-tm", "tab-td", "tab-tr", "tab-tl"];
@@ -679,16 +707,37 @@ const App = {
     btnIds.forEach(btnId => {
       document.getElementById(btnId)?.classList.toggle("on", btnId === `tab-${activeTab}`);
     });
+    if (activeTab === "td") {
+      this.renderSampleMainDiagrams();
+    }
     if (id === "ts") {
       this.toggleSavedCollapse(false);
       document.getElementById("ts")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
     }
   },
 
+  buildSampleSupportResult(p) {
+    // Beta v0.5: 샘플 지지방식 5종 선택 시 고정 예시 제원(D=8000, t=20) 기반 샘플 결과 생성
+    const sampleP = {
+      D: 8000,
+      t: 20,
+      st: p.st,
+      opts: p.opts || {},
+      a1: p.a1 != null ? p.a1 : 30,
+      a2: p.a2 != null ? p.a2 : 60,
+      ac: p.ac != null ? p.ac : 45,
+      gr: p.gr != null ? p.gr : 10
+    };
+    const r = TOAEngine.analyze(sampleP);
+    r.isBetaSample = true;
+    return r;
+  },
+
   runAnalysis({ keepTab = false, silent = false } = {}) {
     const p = this.getP();
     try {
-      const r = TOAEngine.analyze(p);
+      const isSampleSup = BETA_SAMPLE_SUPPORTS.includes((p.st || "").toUpperCase());
+      const r = isSampleSup ? this.buildSampleSupportResult(p) : TOAEngine.analyze(p);
       this.state.lastResult = r;
       this.saveLastState();
       this.renderNat(r);
@@ -758,15 +807,20 @@ const App = {
     };
     const st = (r.p.st || "NATURAL").toUpperCase();
     const supName = this.t(supKeyMap[st] || "") || st;
-    document.getElementById("sup-lbl").textContent = `${this.t("sup")} · ${supName}`;
+    const tag = this.t("betaSampleTag") || "[샘플]";
+    document.getElementById("sup-lbl").textContent = `${this.t("sup")} · ${supName}${r.isBetaSample ? ` ${tag}` : ""}`;
     const c = r.oval_pct < 0.01 ? "#22c55e" : r.oval_pct < 0.5 ? "#377feb" : "#f87171";
     const cc = r.oval_pct > 1 ? "c-rd" : r.oval_pct > 0.3 ? "c-or" : "c-ac";
     const supDot = document.getElementById("dot-sup");
     supDot.className = "rc-dot on";
     supDot.style.background = c;
     this.setCardBucklingClass(document.getElementById("card-sup"), r.p.D, r.p.t, r.oval_pct);
+    const sampleBadgeHtml = r.isBetaSample
+      ? `<div style="margin-bottom:4px;"><span class="beta-sample-badge" style="margin-left:0;">${tag} D=8000·t=20</span></div>`
+      : "";
     document.getElementById("sup-body").innerHTML =
-      `<div class="rc-big ${cc}">${r.oval_mm.toFixed(2)}<span class="rc-unit">mm</span></div>`
+      sampleBadgeHtml
+      + `<div class="rc-big ${cc}">${r.oval_mm.toFixed(2)}<span class="rc-unit">mm</span></div>`
       + `<div class="rc-desc">PREDICTED DEFLECTION (ATTENUATED)</div>`
       + `<div class="rc-sub ${cc}">${r.oval_pct.toFixed(2)}<span style="font-size:13px;margin-left:2px;">%</span></div>`
       + `<div class="rc-sub-d">PREDICTED OVALITY (${(r.vsNat * 100).toFixed(0)}% OF NATURAL · θ<sub>max</sub>=${r.thetaMaxDeg != null ? r.thetaMaxDeg : 0}° / θ<sub>min</sub>=${r.thetaMinDeg != null ? r.thetaMinDeg : 90}°)</div>`
@@ -884,25 +938,36 @@ const App = {
   },
 
   renderMetrics(r, p) {
-    // Beta v0.5: 롤러 지지 성능 분석 비활성
+    // Beta v0.5: 롤러 지지 성능 분석 고정 샘플 숫자 표시
+    const tag = this.t("betaSampleTag") || "[샘플]";
     const sb = document.getElementById("stab");
     if (sb) {
-      sb.className = "stab idle";
-      sb.textContent = "—";
+      sb.className = "stab ok";
+      sb.textContent = `${this.t("stabStable")} ${tag}`;
     }
-    const mi = (l, u) => `<div class="mi"><div class="mi-l">${l}</div><div class="mi-v">—<span class="mi-u">${u}</span></div></div>`;
+    const mi = (l, v, u, cc2 = "") => `<div class="mi"><div class="mi-l">${l}</div><div class="mi-v ${cc2}">${v}<span class="mi-u">${u}</span></div></div>`;
     const mEl = document.getElementById("metrics");
     if (mEl) {
-      mEl.innerHTML = mi(this.t("ma"), "°") + mi(this.t("ml"), "kN") + mi(this.t("ms"), "MPa") + mi(this.t("md"), "mm");
+      mEl.innerHTML =
+        mi(this.t("ma"), "45.00", "°")
+        + mi(this.t("ml"), "148.50", "kN")
+        + mi(this.t("ms"), "312.4", "MPa", "c-or")
+        + mi(this.t("md"), "8.20", "mm");
     }
     const noteEl = document.getElementById("rol-note");
-    if (noteEl) noteEl.textContent = "";
+    if (noteEl) {
+      noteEl.textContent = `${tag} Hertz [STEEL] | Ø600mm | cl=300mm | C-C=1200mm | Sets=4 (D=8000·t=20·L=12000)`;
+    }
   },
 
   renderCompliance(r) {
     const c = r.comp;
     const h = this.t("cHdr");
-    let html = `<div class="twrap"><table class="tbl"><thead><tr>${h.map(v => `<th>${v}</th>`).join("")}</tr></thead><tbody>`;
+    const tag = this.t("betaSampleTag") || "[샘플]";
+    let html = r.isBetaSample
+      ? `<div style="margin-bottom:8px;padding:7px 11px;border-radius:7px;background:#fef3c7;border:1px solid #f59e0b;color:#92400e;font-size:11.5px;font-weight:700;"><span class="beta-sample-badge" style="margin:0 6px 0 0;">${tag}</span>${this.t("betaReinfExampleSpec")}</div>`
+      : "";
+    html += `<div class="twrap"><table class="tbl"><thead><tr>${h.map(v => `<th>${v}</th>`).join("")}</tr></thead><tbody>`;
     const stdKeys = c.CUSTOM ? ["API_2B", "ISO_19902", "API_5L", "DNV", "CUSTOM"] : ["API_2B", "ISO_19902", "API_5L", "DNV"];
     stdKeys.forEach(k => {
       const v = c[k];
@@ -952,10 +1017,10 @@ const App = {
   },
 
   renderCompare(all) {
-    // Beta v0.5: 활성화된 지지방식(① 자연상태, ② 120° 새들, ③-B TR2 α=45°) 비교
-    const cmMap = { NATURAL: "oNat", SADDLE120: "oSad", TR2_45: "oT2b" };
-    const cmCol = ["#ef4444", "#f97316", "#3b82f6"];
-    const types = ["NATURAL", "SADDLE120", "TR2_45"];
+    const cmMap = { NATURAL: "oNat", SADDLE120: "oSad", TR2_30: "oT2c", TR2_45: "oT2b", TR2_491: "oT2a", TR4_STD: "oT4a" };
+    const cmCol = ["#ef4444", "#f97316", "#f59e0b", "#3b82f6", "#22c55e", "#8b5cf6"];
+    const types = ["NATURAL", "SADDLE120", "TR2_30", "TR2_45", "TR2_491", "TR4_STD"];
+    const tag = this.t("betaSampleTag") || "[샘플]";
     let mx = 0;
     types.forEach(k => { if (all[k]) mx = Math.max(mx, all[k].oval_mm); });
 
@@ -965,7 +1030,8 @@ const App = {
     types.forEach((tp, i) => {
       const r = all[tp];
       if (!r) return;
-      const lbl = this.t(cmMap[tp]) || tp;
+      const isSample = BETA_SAMPLE_SUPPORTS.includes(tp);
+      const lbl = (this.t(cmMap[tp]) || tp) + (isSample ? ` ${tag}` : "");
       const ov = r.oval_mm, pct = r.oval_pct;
       const bw = mx > 0 ? Math.max(0.5, ov / mx * 100) : 0.5;
       barH += `<div class="bar-row"><div class="bar-lbl">${lbl}</div>`
@@ -1192,8 +1258,41 @@ const App = {
     document.getElementById("tl-body").innerHTML = html;
   },
 
+  renderSampleMainDiagrams() {
+    if (typeof TOADiagram === "undefined" || typeof TOAEngine === "undefined") return;
+    try {
+      const tag = this.t("betaSampleTag") || "[샘플]";
+      const sampleRes = TOAEngine.analyze({ D: 8000, t: 20, st: "TR2_45", opts: { zone: "body", fatigue: false } });
+      TOADiagram.drawCrossSection(sampleRes, {
+        rd: 600,
+        theme: this.state.theme,
+        dmin: 0,
+        dmax: 0,
+        labels: {
+          nat: this.t("nat"),
+          sup: this.t("sup"),
+          meas: this.t("meas")
+        },
+        sampleTag: tag
+      });
+      const sampleRsInfo = TOAEngine.computeRollerSets({ D: 8000, t: 20, L: 12000, nW: 5, nA: 1, rd: 600, cl: 300 });
+      TOADiagram.drawSideView(
+        sampleRes,
+        4,
+        2400,
+        12000,
+        5,
+        1,
+        { ...(sampleRsInfo || {}), govLabel: `Hertz ${tag}` },
+        this.state.theme,
+        { sampleTag: tag }
+      );
+    } catch (e) {}
+  },
+
   drawDiag(r) {
-    // Beta v0.5: 단면도·측면도 비활성, 보강 도면은 샘플로만 발행
+    // Beta v0.5: 단면도·측면도 및 보강 도면 모두 샘플 데이터 + [샘플] 표기로 발행
+    this.renderSampleMainDiagrams();
     if (this.state.lastReinfPlan) {
       this.renderSampleReinforcement();
     }

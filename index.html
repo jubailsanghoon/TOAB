@@ -128,8 +128,8 @@
       <span class="beta-popup-badge">TOA BETA v0.5</span>
       <h2 class="beta-popup-title" id="betaNoticeTitle">베타 버전 사용 안내</h2>
       <p class="beta-popup-msg" id="betaNoticeMsg">
-        이 앱은 베타버전으로 현장 사전 검토·롤러 세팅·품질 협의용 1차 엔지니어링 도구로는 쓸모가 크지만<br>
-        최종 설계·제작 승인(Code Sign-off)용 해석기로는 단독 사용해서는 안된다
+        <span class="bp-line">이 앱은 베타버전으로 현장 사전 검토·롤러 세팅·품질 협의용 1차 엔지니어링 도구로는 쓸모가 크지만</span>
+        <span class="bp-warn">최종 설계·제작 승인(Code Sign-off)용 해석기로는 단독 사용해서는 안된다</span>
       </p>
       <button type="button" class="beta-popup-btn" id="betaNoticeBtn" onclick="App.closeBetaNotice()">확인했습니다</button>
     </div>
@@ -188,13 +188,13 @@
             <select class="fi" id="i-sup" onchange="App.onSupChange(true)">
               <option value="NATURAL" id="o-nat">① 자연상태</option>
               <option value="SADDLE120" id="o-sad">② 120° 새들</option>
-              <option value="TR2_491" id="o-t2a" disabled>③-A TR2 α=49.1° (ref) [비활성]</option>
+              <option value="TR2_491" id="o-t2a">③-A TR2 α=49.1° (ref) [샘플]</option>
               <option value="TR2_45" selected id="o-t2b">③-B TR2 α=45° ★</option>
-              <option value="TR2_30" id="o-t2c" disabled>③-C TR2 α=30° [비활성]</option>
+              <option value="TR2_30" id="o-t2c">③-C TR2 α=30° [샘플]</option>
               <option value="TR2_CUSTOM" id="o-t2d">③-D TR2 Custom</option>
-              <option value="TR4_STD" id="o-t4a" disabled>④-A TR4 4롤러 (22.5°/67.5°) [비활성]</option>
-              <option value="TR4_CUSTOM" id="o-t4b" disabled>④-B TR4 4롤러 Custom (α1/α2) [비활성]</option>
-              <option value="DOUBLE_ROLLER" id="o-dbl" disabled>⑤ 고정형 더블롤러 (4롤 피벗) [비활성]</option>
+              <option value="TR4_STD" id="o-t4a">④-A TR4 4롤러 (22.5°/67.5°) [샘플]</option>
+              <option value="TR4_CUSTOM" id="o-t4b">④-B TR4 4롤러 Custom (α1/α2) [샘플]</option>
+              <option value="DOUBLE_ROLLER" id="o-dbl">⑤ 고정형 더블롤러 (4롤 피벗) [샘플]</option>
             </select>
           </div>
           <div class="fg">
@@ -331,32 +331,32 @@
       <!-- 타원화 및 굽힘(Ovalization & Bending) 적극 경고 배너 -->
       <div id="oval-bend-alert" class="ob-alert hide" role="alert"></div>
       <div class="bottom-summary-row">
-        <!-- 하단 1: 최소 권장 롤러 세트 (Beta 비활성) -->
-        <div class="card summary-card summary-rs beta-disabled-card" data-beta-disabled="Beta 비활성" aria-disabled="true">
+        <!-- 하단 1: 최소 권장 롤러 세트 (Beta 샘플 표시) -->
+        <div class="card summary-card summary-rs beta-sample-card" data-beta-sample="[샘플]">
           <div class="card-ttl">
             <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><circle cx="8" cy="20" r="2"/><circle cx="16" cy="20" r="2"/></svg>
             <span id="t-rspanel">최소 권장 롤러 세트</span>
-            <span id="rs-sets" class="card-ttl-badge">—</span>
+            <span id="rs-sets" class="card-ttl-badge">4 sets</span>
           </div>
           <div id="rs-panel">
             <div class="m4">
-              <div class="mi"><div class="mi-l" id="t-rsdefl">처짐 기준</div><div class="mi-v" id="rs-defl">—</div></div>
-              <div class="mi"><div class="mi-l" id="t-rshertz">Hertz 기준</div><div class="mi-v" id="rs-hertz">—</div></div>
-              <div class="mi"><div class="mi-l" id="t-rsspan">구조 스팬</div><div class="mi-v" id="rs-span">—</div></div>
-              <div class="mi"><div class="mi-l" id="t-rsgov">결정 기준</div><div class="mi-v c-ac" id="rs-gov" style="font-size:13px;">—</div></div>
+              <div class="mi"><div class="mi-l" id="t-rsdefl">처짐 기준</div><div class="mi-v" id="rs-defl">3 sets</div></div>
+              <div class="mi"><div class="mi-l" id="t-rshertz">Hertz 기준</div><div class="mi-v" id="rs-hertz">4 sets</div></div>
+              <div class="mi"><div class="mi-l" id="t-rsspan">구조 스팬</div><div class="mi-v" id="rs-span">2400mm</div></div>
+              <div class="mi"><div class="mi-l" id="t-rsgov">결정 기준</div><div class="mi-v c-ac" id="rs-gov" style="font-size:13px;">Hertz</div></div>
             </div>
             <div class="mi rs-actual-box">
               <div style="flex:1;min-width:0;">
                 <div class="mi-l" id="t-lasets" style="margin-bottom:4px;">실제 설치된 롤러 세트 수</div>
-                <input class="fi rs-actual-inp" type="number" id="i-asets" value="" min="1" max="20" step="1" placeholder="—" disabled>
+                <input class="fi rs-actual-inp" type="number" id="i-asets" value="4" min="1" max="20" step="1" placeholder="4" oninput="App.updateActualSets()">
               </div>
               <div id="asets-status" class="rs-actual-status">—</div>
             </div>
           </div>
         </div>
 
-        <!-- 하단 2: 롤러 지지 성능 분석 (Beta 비활성) -->
-        <div class="card summary-card rol-card beta-disabled-card" data-beta-disabled="Beta 비활성" aria-disabled="true">
+        <!-- 하단 2: 롤러 지지 성능 분석 (Beta 샘플 표시) -->
+        <div class="card summary-card rol-card beta-sample-card" data-beta-sample="[샘플]">
           <div class="card-ttl">
             <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
             <span id="t-rolperf">롤러 지지 성능 분석</span>
@@ -422,7 +422,7 @@
         <div class="tab-bar">
           <button type="button" class="tab on" id="tab-tc" onclick="App.goTab('tc')"><span id="t-tc">규격 판정</span></button>
           <button type="button" class="tab" id="tab-tm" onclick="App.goTab('tm')"><span id="t-tm">상태 비교</span></button>
-          <button type="button" class="tab beta-disabled-tab" id="tab-td" disabled title="Beta 버전 비활성 기능"><span id="t-td">단면도</span> <span id="t-td-dis">(비활성)</span></button>
+          <button type="button" class="tab" id="tab-td" onclick="App.goTab('td')"><span id="t-td">단면도</span> <span class="beta-sample-badge" id="t-td-sample" style="margin-left:4px;">[샘플]</span></button>
           <button type="button" class="tab" id="tab-tr" onclick="App.goTab('tr')"><span id="t-tr">권고사항</span></button>
           <button type="button" class="tab" id="tab-tl" onclick="App.goTab('tl')"><span id="t-tl">체크리스트</span></button>
         </div>
@@ -432,7 +432,18 @@
         </div>
         <div class="tp" id="tm"><div id="tm-body"><div class="ph"><p id="t-ph-tm">전체 비교를 클릭하세요.</p></div></div></div>
         <div class="tp" id="td">
-          <div class="ph"><p id="t-td-disabled-msg">단면도 및 측면도는 TOA Beta v0.5에서 비활성화되어 있습니다.</p></div>
+          <div class="diag-row" style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;">
+            <div style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:6px;">
+              <div style="font-size:10px;font-weight:700;color:var(--txl);text-transform:uppercase;letter-spacing:.8px;"><span id="t-cslbl">단면도 (Cross-Section)</span> <span class="beta-sample-badge" id="t-cs-sample">[샘플]</span></div>
+              <canvas id="cvs" width="380" height="400"></canvas>
+            </div>
+            <div style="flex:1;min-width:320px;display:flex;flex-direction:column;align-items:center;gap:6px;">
+              <div style="font-size:10px;font-weight:700;color:var(--txl);text-transform:uppercase;letter-spacing:.8px;"><span id="t-svlbl">측면도 (Side View) — 롤러 세트 배치</span> <span class="beta-sample-badge" id="t-sv-sample">[샘플]</span></div>
+              <canvas id="cvs-sv" width="560" height="400" style="max-width:100%;"></canvas>
+              <div id="sv-info" style="width:100%;font-size:11px;color:var(--tx2);line-height:1.6;background:var(--inp);border-radius:var(--rs);padding:10px 14px;"></div>
+            </div>
+          </div>
+          <div id="td-ph" class="ph hide"><p id="t-ph-td">분석 후 단면도가 표시됩니다.</p></div>
         </div>
         <div class="tp" id="tr">
           <div class="recs" id="tr-body"><div class="ph"><p id="t-ph-tr">분석을 실행하면 권고사항이 표시됩니다.</p></div></div>

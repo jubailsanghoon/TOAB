@@ -16,7 +16,7 @@ const TOADiagram = (() => {
     ctx.closePath();
   }
 
-  function drawCrossSection(r, { rd = 600, theme = 'light', dmin = 0, dmax = 0, labels = {} } = {}) {
+  function drawCrossSection(r, { rd = 600, theme = 'light', dmin = 0, dmax = 0, labels = {}, sampleTag = '' } = {}) {
     const cvs = document.getElementById('cvs');
     if (!cvs || !r) return;
     const ph = document.getElementById('td-ph');
@@ -423,6 +423,7 @@ const TOADiagram = (() => {
       ctx.fillText(it.txt, lx + 19, ly + 3);
     });
     ctx.textAlign = 'left';
+    if (sampleTag) drawSampleWatermark(ctx, W, H, sampleTag);
   }
 
   function drawSideView(r, nSets, spanMm, pipeLenMm, nWelds, nActive = 0, info = {}, theme = 'light', labels = {}) {
@@ -739,12 +740,14 @@ const TOADiagram = (() => {
         ? `<br><span style="color:${(cb.liftOff || overloadCount > 0) ? 'var(--rd)' : 'var(--tx2)'}">연속보 반력(Δh=${settleMm}mm): max <b>${cb.maxKN}kN</b> (편하중 ${cb.loadFactor}×)${cb.liftOff ? ' · <b>⚠ 들뜸(LIFT-OFF) 발생</b>' : ''}${capTon > 0 ? (overloadCount > 0 ? ` · <b>⚠ 정격용량(${capTon}t=${capKN.toFixed(0)}kN) 초과!</b>` : ` · 용량(${capTon}t) OK ✓`) : ''}</span>`
         : '';
       infoEl.innerHTML =
-        `<b>권장 세트 수: ${nSets}sets</b>  │  구조 스팬: ${Math.round(span)}mm  │  L/D = ${govLd.toFixed(1)}${activeNote}`
+        (labels && labels.sampleTag ? `<span class="beta-sample-badge" style="margin:0 6px 0 0;">${labels.sampleTag}</span>` : '')
+        + `<b>권장 세트 수: ${nSets}sets</b>  │  구조 스팬: ${Math.round(span)}mm  │  L/D = ${govLd.toFixed(1)}${activeNote}`
         + `<br><span style="color:var(--txl)">결정 기준: ${govLabel}  │  처짐 허용 스팬: ${Ldfl}  │  Hertz 허용 스팬: ${shz}  │  max δ: ${deflMmShow.toFixed(2)}mm (${(deflMmShow / D * 100).toFixed(3)}%D)</span>`
         + cbNote
         + (nWelds > 0 ? `<br><span style="color:var(--txl)">Girth Weld ${nWelds}개 균등 표시${plateW > 0 ? ` (플레이트 폭 참조: ${plateW}mm)` : ''}</span>` : '')
         + plateNote;
     }
+    if (labels && labels.sampleTag) drawSampleWatermark(ctx, W, H, labels.sampleTag);
   }
 
   function drawSampleWatermark(ctx, W, H, tagText) {
