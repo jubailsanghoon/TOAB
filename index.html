@@ -1,0 +1,537 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#377feb" />
+  <meta name="application-name" content="Tubular Ovality & Roller Analysis" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="TOA Assist" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" type="image/x-icon" href="favicon.ico" />
+  <link rel="shortcut icon" href="favicon.ico" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/toa-logo-192.png" />
+  <link rel="icon" type="image/png" sizes="256x256" href="icons/toa-logo.png" />
+  <link rel="apple-touch-icon" sizes="192x192" href="icons/toa-logo-192.png" />
+  <title>Tubular Ovality &amp; Roller Analysis (TOA Beta 0.5) - ISKOREA</title>
+  <script>
+    (function () {
+      try {
+        var ua = (navigator.userAgent || "").toLowerCase();
+        if (ua.indexOf("kakaotalk") !== -1 && !/iphone|ipad|ipod/i.test(ua)) {
+          try {
+            location.href = "kakaotalk://web/openExternal?url=" + encodeURIComponent(window.location.href);
+          } catch (e) {}
+        }
+        var isDark = localStorage.getItem("HI_DARK_MODE") === "true" || localStorage.getItem("HI_THEME") === "dark";
+        document.documentElement.classList.toggle("dark", isDark);
+        document.documentElement.setAttribute("data-theme", isDark ? "dark" : "light");
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="shared-header-kit/header-kit.css?v=1.0" />
+  <link rel="stylesheet" href="css/style.css?v=1.0" />
+</head>
+<body>
+  <!-- 공용 표준 상단 헤더 (ISKOREA HeaderKit) -->
+  <header class="top-header">
+    <div class="header-inner">
+      <div class="brand-wrap" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+        <div class="app-logo-box">
+          <img src="shared-header-kit/icons/app-logo.png" alt="TOA Logo" />
+        </div>
+        <div class="brand-text">
+          <h1 id="appTitle">
+            <span class="title-full">강관 진원도 · 터닝롤러 분석기</span>
+            <span class="title-short">강관 진원도 분석</span>
+          </h1>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <span class="hdr-btn hdr-btn-ver" id="appVersionBadge">v0.5</span>
+        <button type="button" id="proBadge" class="hdr-btn hdr-btn-pro">Beta</button>
+        <div id="netStatusBadge" class="hdr-btn hdr-btn-net online" title="온라인">
+          <svg class="wifi-svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+            <path d="M12 18.5a1.8 1.8 0 1 1 0 3.6 1.8 1.8 0 0 1 0-3.6zm-4.3-3.2a6.1 6.1 0 0 1 8.6 0 .9.9 0 0 0 1.3-1.3 7.9 7.9 0 0 0-11.2 0 .9.9 0 0 0 1.3 1.3zm-2.9-2.9a10.2 10.2 0 0 1 14.4 0 .9.9 0 0 0 1.3-1.3 12 12 0 0 0-17 0 .9.9 0 0 0 1.3 1.3zm-2.9-2.9a14.3 14.3 0 0 1 20.2 0 .9.9 0 0 0 1.3-1.3 16.1 16.1 0 0 0-22.8 0 .9.9 0 0 0 1.3 1.3z"/>
+          </svg>
+        </div>
+        <button type="button" class="hdr-btn" id="btnDarkMode" title="다크 모드">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+            <path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/>
+          </svg>
+        </button>
+        <div class="lang-dropdown-wrap">
+          <button type="button" class="hdr-btn lang-btn" id="btnLangDropdown">
+            <span id="currentFlagIcon" class="flag-icon-circle"><img src="shared-header-kit/icons/flag_ko.png" alt="KO" /></span>
+            <svg class="lang-caret" viewBox="0 0 10 6" width="8" height="6" fill="currentColor"><path d="M0 0l5 5 5-5z"/></svg>
+          </button>
+          <div id="langDropdownMenu" class="lang-dropdown-menu hidden">
+            <button type="button" class="lang-item active" data-lang="ko"><span class="flag-icon-circle"><img src="shared-header-kit/icons/flag_ko.png" alt="KO" /></span><span>한국어</span></button>
+            <button type="button" class="lang-item" data-lang="en"><span class="flag-icon-circle"><img src="shared-header-kit/icons/flag_en.png" alt="EN" /></span><span>English</span></button>
+            <button type="button" class="lang-item" data-lang="zh"><span class="flag-icon-circle"><img src="shared-header-kit/icons/flag_zh.png" alt="ZH" /></span><span>中文</span></button>
+            <button type="button" class="lang-item" data-lang="ja"><span class="flag-icon-circle"><img src="shared-header-kit/icons/flag_ja.png" alt="JA" /></span><span>日本語</span></button>
+            <button type="button" class="lang-item" data-lang="es"><span class="flag-icon-circle"><img src="shared-header-kit/icons/flag_es.png" alt="ES" /></span><span>Español</span></button>
+          </div>
+        </div>
+        <button type="button" class="hdr-btn" id="btnManual" title="사용 매뉴얼">
+          <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="blue-divider"></div>
+  </header>
+
+  <!-- 카카오톡 인앱 브라우저 강제 탈출 모달/배너 -->
+  <div id="kakaoInAppOverlay" class="hidden" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:99999;justify-content:center;align-items:center;padding:20px;">
+    <div style="background:#fff;border-radius:18px;max-width:380px;width:100%;padding:24px;text-align:center;box-shadow:0 12px 32px rgba(0,0,0,.4);">
+      <div style="font-size:36px;margin-bottom:10px;">📲</div>
+      <h3 style="margin:0 0 8px 0;font-size:18px;font-weight:900;color:#191919;">기본 브라우저로 열기 안내</h3>
+      <p style="font-size:13px;color:#495057;line-height:1.55;margin:0 0 18px 0;">
+        현재 <strong>카카오톡 내부 화면</strong>에서는 홈화면 바로가기 및 오프라인 저장이 제한됩니다.<br><br>
+        아래 버튼을 눌러 <strong>기본 브라우저</strong>로 열어주세요!
+      </p>
+      <button type="button" onclick="App.escapeKakaoInApp()" style="width:100%;padding:14px;background:#377feb;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:900;cursor:pointer;margin-bottom:10px;">
+        🚀 기본 브라우저로 열기
+      </button>
+      <button type="button" onclick="document.getElementById('kakaoInAppOverlay').style.display='none'" style="background:none;border:none;color:#868e96;font-size:12px;font-weight:700;cursor:pointer;text-decoration:underline;">
+        그냥 여기서 계속 보기
+      </button>
+    </div>
+  </div>
+
+  <div id="kakaoInAppBanner" class="hidden" style="background:#fee500;border-bottom:2px solid #e6cf00;padding:10px 16px;font-size:12.5px;font-weight:800;color:#191919;display:none;justify-content:space-between;align-items:center;gap:8px;">
+    <div style="flex:1;">💡 <strong>카카오톡 내부 브라우저입니다.</strong> 오프라인 저장을 위해 <strong>[기본 브라우저]</strong>로 열어주세요.</div>
+    <button type="button" onclick="App.escapeKakaoInApp()" style="background:#191919;color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:12px;font-weight:900;cursor:pointer;">브라우저로 열기 ↗</button>
+  </div>
+
+  <!-- 상태 바 -->
+  <div class="status-bar-strip">
+    <span style="font-size:12px;font-weight:700;color:var(--tx2);">Tubular Ovality &amp; Roller Analysis · API 2B · ISO 19902 · API 5L · DNV-OS-C401</span>
+  </div>
+
+  <!-- 공용 모달 (매뉴얼 / 안내) -->
+  <div id="subPageModal" class="subpage-overlay hidden" onclick="if(event.target===this) App.closeModal()">
+    <div class="subpage-card">
+      <div class="subpage-header">
+        <strong id="subPageTitle">Modal</strong>
+        <button type="button" class="close-sub-btn" onclick="App.closeModal()">✕</button>
+      </div>
+      <div id="subPageBody"></div>
+    </div>
+  </div>
+
+  <!-- 베타버전 0.5 메인 페이지 주의 팝업 -->
+  <div id="betaNoticeModal" class="beta-popup-overlay" role="dialog" aria-modal="true" aria-labelledby="betaNoticeTitle">
+    <div class="beta-popup-card">
+      <span class="beta-popup-badge">TOA BETA v0.5</span>
+      <h2 class="beta-popup-title" id="betaNoticeTitle">베타 버전 사용 안내</h2>
+      <p class="beta-popup-msg" id="betaNoticeMsg">
+        이 앱은 베타버전으로 현장 사전 검토·롤러 세팅·품질 협의용 1차 엔지니어링 도구로는 쓸모가 크지만<br>
+        최종 설계·제작 승인(Code Sign-off)용 해석기로는 단독 사용해서는 안된다
+      </p>
+      <button type="button" class="beta-popup-btn" id="betaNoticeBtn" onclick="App.closeBetaNotice()">확인했습니다</button>
+    </div>
+  </div>
+
+  <!-- 메인 작업 영역 (상단 가로 입력 · 하단 가로 결과) -->
+  <div class="app-body">
+    <section class="top-horiz-bar" aria-label="입력 및 분석 실행">
+      <!-- 1. 강관 사양 -->
+      <div class="card top-card">
+        <div class="card-ttl">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+          <span id="t-tubspec">강관 사양</span>
+        </div>
+        <div class="g2" style="margin-bottom:8px;">
+          <div class="fg">
+            <label class="flbl" id="t-lD">직경 D (mm)</label>
+            <input class="fi" type="number" id="iD" value="8000" min="100" max="20000" step="100" oninput="App.calcDT();App.calcRollerSets()">
+          </div>
+          <div class="fg">
+            <label class="flbl" id="t-lt">두께 t (mm)</label>
+            <input class="fi" type="number" id="it" value="20" min="5" max="500" step="5" oninput="App.calcDT();App.calcRollerSets()">
+          </div>
+        </div>
+        <div class="g2" style="margin-bottom:8px;">
+          <div class="fg">
+            <label class="flbl" id="t-lplen">길이 L (mm)</label>
+            <input class="fi" type="number" id="i-plen" value="12000" min="500" max="100000" step="500" oninput="App.calcDT();App.calcRollerSets()">
+          </div>
+          <div class="fg">
+            <label class="flbl" id="t-lnweld">Girth Weld 총수</label>
+            <input class="fi" type="number" id="i-nweld" value="5" min="0" max="50" step="1" oninput="App.onWeldInput('nweld')">
+          </div>
+        </div>
+        <div class="g2">
+          <div class="fg">
+            <label class="flbl" id="t-laweld" style="color:var(--ac);font-weight:800;">진행 중인 용접 수</label>
+            <input class="fi" type="number" id="i-aweld" value="1" min="0" max="10" step="1" oninput="App.onWeldInput('aweld')" style="border-color:var(--ac);">
+          </div>
+          <div class="fg">
+            <label class="flbl" id="t-lplatespan">플레이트 폭 (mm)</label>
+            <input class="fi" type="number" id="i-platespan" value="2000" min="500" max="10000" step="100" oninput="App.calcRollerSets()">
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. 터닝롤러 Specs -->
+      <div class="card top-card">
+        <div class="card-ttl">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          <span id="t-rolspec">터닝롤러 Specs</span>
+        </div>
+        <div class="g2">
+          <div class="fg" style="grid-column:1 / -1;">
+            <label class="flbl" id="t-lsup">지지 방식</label>
+            <select class="fi" id="i-sup" onchange="App.onSupChange(true)">
+              <option value="NATURAL" id="o-nat">① 자연상태</option>
+              <option value="SADDLE120" id="o-sad">② 120° 새들</option>
+              <option value="TR2_491" id="o-t2a" disabled>③-A TR2 α=49.1° (ref) [비활성]</option>
+              <option value="TR2_45" selected id="o-t2b">③-B TR2 α=45° ★</option>
+              <option value="TR2_30" id="o-t2c" disabled>③-C TR2 α=30° [비활성]</option>
+              <option value="TR2_CUSTOM" id="o-t2d">③-D TR2 Custom</option>
+              <option value="TR4_STD" id="o-t4a" disabled>④-A TR4 4롤러 (22.5°/67.5°) [비활성]</option>
+              <option value="TR4_CUSTOM" id="o-t4b" disabled>④-B TR4 4롤러 Custom (α1/α2) [비활성]</option>
+              <option value="DOUBLE_ROLLER" id="o-dbl" disabled>⑤ 고정형 더블롤러 (4롤 피벗) [비활성]</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label class="flbl" id="t-lrmat">롤러 재질</label>
+            <select class="fi" id="i-rmat" onchange="App.onRmatChange(true)">
+              <option value="steel" id="o-rmat-s">⚙ Steel (경강)</option>
+              <option value="urethane" id="o-rmat-u">◎ Urethane (우레탄)</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label class="flbl" id="t-lrdia">롤러 직경 (mm)</label>
+            <input class="fi" type="number" id="i-rdia" value="600" min="100" max="2000" step="50" oninput="App.onRollerSpecInput()">
+          </div>
+          <div class="fg">
+            <label class="flbl" style="display:flex;align-items:center;gap:4px;flex-wrap:wrap;">
+              <span id="t-lcc">C-C 간격 (mm)</span>
+              <span id="cc-auto-lbl" style="font-size:10px;color:var(--ac);font-weight:700;">(α45° auto)</span>
+            </label>
+            <input class="fi" type="number" id="i-cc" value="1200" min="100" max="5000" step="10" oninput="App.onRollerSpecInput()">
+          </div>
+          <div class="fg">
+            <label class="flbl" id="t-lcl">접촉 길이 (mm)</label>
+            <input class="fi" type="number" id="i-cl" value="300" min="100" max="10000" step="100" oninput="App.onRollerSpecInput()">
+          </div>
+          <div class="fg" style="grid-column:1 / -1;">
+            <label class="flbl" id="t-lrcap">세트 정격용량 (ton · 선택)</label>
+            <input class="fi" type="number" id="i-rcap" value="" min="1" max="5000" step="5" placeholder="예: 100 (과부하 체크용)" oninput="App.onRollerSpecInput()">
+          </div>
+        </div>
+        <div id="rmat-note" style="margin-top:8px;padding:6px 10px;border-radius:6px;font-size:11px;background:var(--inp);color:var(--tx2);border-left:3px solid var(--ac);display:none;"></div>
+        <div id="cust-wrap" class="hide" style="margin-top:8px;">
+          <div class="sep" style="margin-bottom:8px;"></div>
+          <div class="g2 hide" id="cust-tr2">
+            <div class="fg"><label class="flbl">α (°)</label><input class="fi" type="number" id="i-a" value="45" min="10" max="80" step="0.5" oninput="App.onRollerSpecInput()"></div>
+          </div>
+          <div class="g2 hide" id="cust-tr4">
+            <div class="fg"><label class="flbl">α1 내측 (°)</label><input class="fi" type="number" id="i-a1" value="30" min="5" max="75" step="0.5" oninput="App.onRollerSpecInput()"></div>
+            <div class="fg"><label class="flbl">α2 외측 (°)</label><input class="fi" type="number" id="i-a2" value="60" min="15" max="85" step="0.5" oninput="App.onRollerSpecInput()"></div>
+          </div>
+          <div class="g2 hide" id="cust-dbl">
+            <div class="fg"><label class="flbl">α_center (°)</label><input class="fi" type="number" id="i-ac" value="45" min="20" max="65" step="0.5" oninput="App.onRollerSpecInput()"></div>
+            <div class="fg"><label class="flbl">γ_roller (°)</label><input class="fi" type="number" id="i-gr" value="10" min="1" max="20" step="1" oninput="App.onRollerSpecInput()"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. 규격 / 옵션 & 현장 실측 (선택) 상하 배치 -->
+      <div class="top-col-stack">
+        <div class="card top-card">
+          <div class="card-ttl">
+            <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg>
+            <span id="t-std">규격 / 옵션</span>
+          </div>
+          <div class="g2">
+            <div class="fg">
+              <label class="flbl" id="t-lzone">API 5L 구간</label>
+              <select class="fi" id="i-zone" onchange="App.onMeasuredInput()">
+                <option value="body" id="o-body">본체 (Body)</option>
+                <option value="end" id="o-end">끝단 (End)</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label class="flbl" id="t-lfat">DNV 피로</label>
+              <select class="fi" id="i-fat" onchange="App.onMeasuredInput()">
+                <option value="false" id="o-fn">일반</option>
+                <option value="true" id="o-ff">피로 민감</option>
+              </select>
+            </div>
+            <div class="fg">
+              <label class="flbl" id="t-lclim">합의 허용치 (%)</label>
+              <input class="fi" type="number" id="i-custom-lim" value="" min="0.05" max="10" step="0.05" placeholder="선택 (예: 0.5)" oninput="App.onMeasuredInput()">
+            </div>
+            <div class="fg">
+              <label class="flbl" id="t-lsettle">롤러 단차 Δh (mm)</label>
+              <input class="fi" type="number" id="i-settle" value="0" min="0" max="50" step="0.5" oninput="App.onRollerSpecInput()">
+            </div>
+          </div>
+        </div>
+
+        <div class="card top-card">
+          <div class="card-ttl">
+            <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            <span id="t-field">현장 실측 (선택)</span>
+          </div>
+          <div class="g2" style="margin-bottom:8px;">
+            <div class="fg"><label class="flbl" id="t-ldmin">D_min (OD, mm)</label><input class="fi" type="number" id="i-dmin" step="any" placeholder="—" oninput="App.onMeasuredInput('abs')"></div>
+            <div class="fg"><label class="flbl" id="t-ldmax">D_max (OD, mm)</label><input class="fi" type="number" id="i-dmax" step="any" placeholder="—" oninput="App.onMeasuredInput('abs')"></div>
+          </div>
+          <div class="g2">
+            <div class="fg"><label class="flbl" id="t-ldevmin">기준 D 대비 −편차 (mm)</label><input class="fi" type="number" id="i-devmin" step="any" placeholder="예: -2" oninput="App.onMeasuredInput('dev')"></div>
+            <div class="fg"><label class="flbl" id="t-ldevmax">기준 D 대비 +편차 (mm)</label><input class="fi" type="number" id="i-devmax" step="any" placeholder="예: +2" oninput="App.onMeasuredInput('dev')"></div>
+          </div>
+          <details class="meas-adv">
+            <summary id="t-madv">📐 다단면(좌·중·우) / 용접 전·후 비교</summary>
+            <div class="g3" style="margin-top:6px;">
+              <div class="fg"><label class="flbl" id="t-lml">좌단 Oval</label><input class="fi" type="number" id="i-ml" placeholder="mm" step="0.1" min="0" oninput="App.onMeasuredInput()"></div>
+              <div class="fg"><label class="flbl" id="t-lmm">중앙 Oval</label><input class="fi" type="number" id="i-mm" placeholder="mm" step="0.1" min="0" oninput="App.onMeasuredInput()"></div>
+              <div class="fg"><label class="flbl" id="t-lmr">우단 Oval</label><input class="fi" type="number" id="i-mr" placeholder="mm" step="0.1" min="0" oninput="App.onMeasuredInput()"></div>
+            </div>
+            <div class="g2" style="margin-top:6px;">
+              <div class="fg"><label class="flbl" id="t-lmbef">용접 전 (mm)</label><input class="fi" type="number" id="i-mbef" placeholder="Before" step="0.1" min="0" oninput="App.onMeasuredInput()"></div>
+              <div class="fg"><label class="flbl" id="t-lmaft">용접 후 (mm)</label><input class="fi" type="number" id="i-maft" placeholder="After" step="0.1" min="0" oninput="App.onMeasuredInput()"></div>
+            </div>
+            <div id="meas-weld-delta" class="meas-weld-delta hide"></div>
+          </details>
+        </div>
+      </div>
+
+      <!-- 4. D / t 패널 (우측) -->
+      <div class="card summary-card summary-dt">
+        <div class="card-ttl">
+          <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          <span>D / t</span>
+          <span class="dt-cls" id="dt-cls">Thin-Wall</span>
+        </div>
+        <div class="dt-panel">
+          <div class="mi dt-hero">
+            <div class="mi-l">D / t Ratio</div>
+            <div class="mi-v dt-num" id="dt-val">400.00</div>
+          </div>
+          <div class="m4 dt-grid">
+            <div class="mi"><div class="mi-l">R (mm)</div><div class="mi-v" id="dt-R">3990</div></div>
+            <div class="mi"><div class="mi-l">ISO limit</div><div class="mi-v" id="dt-iso">≤0.5%</div></div>
+            <div class="mi"><div class="mi-l">Brazier</div><div class="mi-v" id="dt-braz">HIGH</div></div>
+            <div class="mi"><div class="mi-l">L / D</div><div class="mi-v" id="dt-ld">1.50</div></div>
+          </div>
+          <div id="dt-brazier-alert" class="dt-brazier-alert hidden"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 하단 가로 결과 영역 -->
+    <main class="bottom-horiz-area">
+      <!-- 타원화 및 굽힘(Ovalization & Bending) 적극 경고 배너 -->
+      <div id="oval-bend-alert" class="ob-alert hide" role="alert"></div>
+      <div class="bottom-summary-row">
+        <!-- 하단 1: 최소 권장 롤러 세트 (Beta 비활성) -->
+        <div class="card summary-card summary-rs beta-disabled-card" data-beta-disabled="Beta 비활성" aria-disabled="true">
+          <div class="card-ttl">
+            <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="14" rx="2"/><circle cx="8" cy="20" r="2"/><circle cx="16" cy="20" r="2"/></svg>
+            <span id="t-rspanel">최소 권장 롤러 세트</span>
+            <span id="rs-sets" class="card-ttl-badge">—</span>
+          </div>
+          <div id="rs-panel">
+            <div class="m4">
+              <div class="mi"><div class="mi-l" id="t-rsdefl">처짐 기준</div><div class="mi-v" id="rs-defl">—</div></div>
+              <div class="mi"><div class="mi-l" id="t-rshertz">Hertz 기준</div><div class="mi-v" id="rs-hertz">—</div></div>
+              <div class="mi"><div class="mi-l" id="t-rsspan">구조 스팬</div><div class="mi-v" id="rs-span">—</div></div>
+              <div class="mi"><div class="mi-l" id="t-rsgov">결정 기준</div><div class="mi-v c-ac" id="rs-gov" style="font-size:13px;">—</div></div>
+            </div>
+            <div class="mi rs-actual-box">
+              <div style="flex:1;min-width:0;">
+                <div class="mi-l" id="t-lasets" style="margin-bottom:4px;">실제 설치된 롤러 세트 수</div>
+                <input class="fi rs-actual-inp" type="number" id="i-asets" value="" min="1" max="20" step="1" placeholder="—" disabled>
+              </div>
+              <div id="asets-status" class="rs-actual-status">—</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 하단 2: 롤러 지지 성능 분석 (Beta 비활성) -->
+        <div class="card summary-card rol-card beta-disabled-card" data-beta-disabled="Beta 비활성" aria-disabled="true">
+          <div class="card-ttl">
+            <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            <span id="t-rolperf">롤러 지지 성능 분석</span>
+            <span class="stab idle card-ttl-right" id="stab">—</span>
+          </div>
+          <div class="m4" id="metrics">
+            <div class="mi"><div class="mi-l" id="t-ma">접촉각</div><div class="mi-v">—<span class="mi-u">°</span></div></div>
+            <div class="mi"><div class="mi-l" id="t-ml">롤러당 하중</div><div class="mi-v">—<span class="mi-u">kN</span></div></div>
+            <div class="mi"><div class="mi-l" id="t-ms">접촉 응력</div><div class="mi-v">—<span class="mi-u">MPa</span></div></div>
+            <div class="mi"><div class="mi-l" id="t-md">국부 변형</div><div class="mi-v">—<span class="mi-u">mm</span></div></div>
+          </div>
+          <div id="rol-note" style="margin-top:10px;font-size:11.5px;line-height:1.45;color:var(--tx2);"></div>
+        </div>
+
+        <!-- 하단 3: 예측 진원도 -->
+        <div class="card summary-card pred-section">
+          <div class="card-ttl">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18"/></svg>
+            <span id="t-predsec">예측 진원도</span>
+            <span class="pred-sub card-ttl-right" id="t-predsub">자연상태 · 지지상태 · 현장실측</span>
+          </div>
+          <div class="top-row">
+            <div class="rc-nat" id="card-nat">
+              <div class="rc-lbl"><span class="rc-dot" id="dot-nat"></span><span id="t-nat">자연상태</span></div>
+              <div id="nat-body"><div class="ph"><div class="ico">⦿</div><p id="t-ph1">분석을 실행하세요</p></div></div>
+            </div>
+            <div class="rc-sup" id="card-sup">
+              <div class="rc-lbl"><span class="rc-dot" id="dot-sup"></span><span id="sup-lbl">지지 상태</span></div>
+              <div id="sup-body"><div class="ph"><div class="ico">⦿</div><p id="t-ph2">분석을 실행하세요</p></div></div>
+            </div>
+            <div class="rc-meas no-data" id="card-meas">
+              <div class="rc-lbl"><span class="rc-dot" id="dot-meas"></span><span id="t-meas">현장 실측</span></div>
+              <div id="meas-body"><div class="ph"><div class="ico">📐</div><p id="t-ph3">D_min / D_max 입력 후<br>분석을 실행하세요</p></div></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 하단 4: 분석 실행 · 전체 지지 상태 비교 및 판정 상태 (예측 진원도 우측) -->
+        <div class="top-col-stack exec-col-stack">
+          <div class="card top-card top-card-exec">
+            <div class="card-ttl">
+              <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <span>분석 실행</span>
+            </div>
+            <div class="exec-btns">
+              <button type="button" class="btn-run" onclick="App.runAnalysis()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <span id="t-run">분석 실행</span>
+              </button>
+              <button type="button" class="btn-sec" id="t-cmp" onclick="App.runCompare()">전체 지지 상태 비교</button>
+              <button type="button" class="btn-sec btn-save-exec" id="t-save" onclick="App.doSave()">💾 Save</button>
+            </div>
+          </div>
+          <div class="status-pill idle" id="stat-pill">
+            <span id="stat-ico">⦿</span>
+            <span id="stat-txt">대기중</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 하단 상세 결과 탭 (5탭) -->
+      <div class="card bottom-tabs-row">
+        <div class="tab-bar">
+          <button type="button" class="tab on" id="tab-tc" onclick="App.goTab('tc')"><span id="t-tc">규격 판정</span></button>
+          <button type="button" class="tab" id="tab-tm" onclick="App.goTab('tm')"><span id="t-tm">상태 비교</span></button>
+          <button type="button" class="tab beta-disabled-tab" id="tab-td" disabled title="Beta 버전 비활성 기능"><span id="t-td">단면도</span> <span id="t-td-dis">(비활성)</span></button>
+          <button type="button" class="tab" id="tab-tr" onclick="App.goTab('tr')"><span id="t-tr">권고사항</span></button>
+          <button type="button" class="tab" id="tab-tl" onclick="App.goTab('tl')"><span id="t-tl">체크리스트</span></button>
+        </div>
+
+        <div class="tp on" id="tc">
+          <div id="tc-body"><div class="ph"><p id="t-ph-tc">분석을 실행하면 결과가 표시됩니다.</p></div></div>
+        </div>
+        <div class="tp" id="tm"><div id="tm-body"><div class="ph"><p id="t-ph-tm">전체 비교를 클릭하세요.</p></div></div></div>
+        <div class="tp" id="td">
+          <div class="ph"><p id="t-td-disabled-msg">단면도 및 측면도는 TOA Beta v0.5에서 비활성화되어 있습니다.</p></div>
+        </div>
+        <div class="tp" id="tr">
+          <div class="recs" id="tr-body"><div class="ph"><p id="t-ph-tr">분석을 실행하면 권고사항이 표시됩니다.</p></div></div>
+          <div id="tr-reinf" class="reinf-panel hide">
+            <div id="tr-reinf-meta"></div>
+            <div class="reinf-diag-row">
+              <div class="reinf-diag-box"><div class="reinf-diag-lbl" id="t-reinf-cs">보강 단면도 (Ring + Spider Brace) [샘플]</div><canvas id="cvs-reinf-cs" width="380" height="360"></canvas></div>
+              <div class="reinf-diag-box sv"><div class="reinf-diag-lbl" id="t-reinf-sv">보강 측면도 (보강링 · 스파이더 · 롤러 위치) [샘플]</div><canvas id="cvs-reinf-sv" width="540" height="360"></canvas></div>
+            </div>
+            <div class="reinf-note" id="tr-reinf-note"></div>
+          </div>
+        </div>
+        <div class="tp" id="tl"><div id="tl-body"><div class="ph"><p id="t-ph-tl">분석 후 체크리스트가 표시됩니다.</p></div></div></div>
+      </div>
+
+      <!-- 하단 별도 위치 1: 리포트 발행 (PDF 샘플만 활성화) -->
+      <div class="card report-panel" id="rpt-panel">
+        <div class="shdr">
+          <div class="sttl" id="t-rptcard">리포트 발행 (Beta · PDF [샘플])</div>
+        </div>
+        <div class="data-toolbar">
+          <div class="fg data-rpt-fg" style="flex:1;min-width:220px;">
+            <label class="flbl" id="t-rptsel">리포트 발행 대상 선택</label>
+            <select class="fi" id="i-rpt-target">
+              <option value="SAMPLE">[샘플] 임의 작성 리포트 샘플 (PDF 전용)</option>
+            </select>
+          </div>
+          <div class="data-btns">
+            <button type="button" class="btn-sm beta-disabled-btn" id="t-csv" disabled title="Beta 버전 비활성">📊 CSV</button>
+            <button type="button" class="btn-sm g beta-disabled-btn" id="t-xls" disabled title="Beta 버전 비활성">📗 XLS</button>
+            <button type="button" class="btn-sm" id="t-pdf" onclick="App.doPdfExport()">📕 PDF [샘플]</button>
+          </div>
+        </div>
+        <div class="rpt-opts-bar">
+          <span class="rpt-opts-lbl" id="t-rptinc">리포트 포함 항목</span>
+          <label class="rpt-chk"><input type="checkbox" id="rpt-inc-comp" checked><span id="t-ri-comp">규격 판정</span></label>
+          <label class="rpt-chk"><input type="checkbox" id="rpt-inc-cmp" checked><span id="t-ri-cmp">상태 비교</span></label>
+          <label class="rpt-chk" style="opacity:.45;cursor:not-allowed;"><input type="checkbox" id="rpt-inc-diag" disabled><span id="t-ri-diag">단면도</span></label>
+          <label class="rpt-chk"><input type="checkbox" id="rpt-inc-recs" checked><span id="t-ri-recs">권고사항</span></label>
+          <label class="rpt-chk"><input type="checkbox" id="rpt-inc-chk" checked><span id="t-ri-chk">체크리스트</span></label>
+        </div>
+        <div class="rpt-meta-bar" style="margin-bottom:0;">
+          <div class="fg"><label class="flbl" id="t-lproj">프로젝트명</label><input class="fi" type="text" id="i-proj" placeholder="예: Offshore Monopile" oninput="App.saveLastState()"></div>
+          <div class="fg"><label class="flbl" id="t-lpipeno">Pipe / Can No.</label><input class="fi" type="text" id="i-pipeno" placeholder="예: MP-01 / CAN-03" oninput="App.saveLastState()"></div>
+          <div class="fg"><label class="flbl" id="t-lprep">작성자 (Prepared)</label><input class="fi" type="text" id="i-prep" placeholder="Name" oninput="App.saveLastState()"></div>
+          <div class="fg"><label class="flbl" id="t-lrev">검토/승인 (Reviewed)</label><input class="fi" type="text" id="i-rev" placeholder="QC / Lead" oninput="App.saveLastState()"></div>
+        </div>
+      </div>
+
+      <!-- 하단 별도 위치 2: 저장된 기록 (접기/펼치기) -->
+      <div class="card data-save-panel" id="ts">
+        <div class="shdr ts-shdr" onclick="if(event.target.id!=='btn-ts-toggle'&&!event.target.closest('#btn-ts-toggle'))App.toggleSavedCollapse()">
+          <div class="sttl" id="t-savlist">저장된 기록</div>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span class="sav-cnt" id="sav-cnt">0 / 5</span>
+            <button type="button" class="btn-ts-toggle" id="btn-ts-toggle" onclick="App.toggleSavedCollapse()">
+              <span id="t-tstog">▲ 접기</span>
+            </button>
+          </div>
+        </div>
+        <div class="ts-collapse-wrap" id="ts-collapse-wrap">
+          <div class="data-toolbar">
+            <div class="fg data-name-fg">
+              <label class="flbl" id="t-rname">측정 기록 이름</label>
+              <input class="fi" type="text" id="i-rname" placeholder="예: Pile-01 #1">
+            </div>
+            <div class="data-btns">
+              <button type="button" class="btn-sm o" id="t-imp" onclick="App.doImport()">📂 Import</button>
+              <button type="button" class="btn-sm" id="t-exp" onclick="App.doExport()">📤 Export</button>
+              <button type="button" class="btn-sm r" id="t-clr" onclick="App.doClear()">🗑 Clear</button>
+            </div>
+            <input type="file" id="file-inp" accept=".json" class="hide" onchange="App.onFileLoad(event)">
+          </div>
+          <div class="sav-list" id="ts-body"><div class="ph"><p id="t-ph-ts">저장된 기록이 없습니다.</p></div></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <footer>
+    <div class="fl">Tubular Ovality &amp; Roller Analysis &nbsp;|&nbsp; <span style="color:var(--ac);font-family:'JetBrains Mono',monospace;">v0.5 Beta</span></div>
+    <div class="fr">Copyright © 2026 ISKOREA. All rights reserved.</div>
+  </footer>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="shared-header-kit/header-kit.js?v=0.5"></script>
+  <script src="js/engine.js?v=0.5"></script>
+  <script src="js/i18n.js?v=0.5"></script>
+  <script src="js/data_store.js?v=0.5"></script>
+  <script src="js/license.js?v=0.5"></script>
+  <script src="js/diagram.js?v=0.5"></script>
+  <script src="js/manual.js?v=0.5"></script>
+  <script src="js/main.js?v=0.5"></script>
+  <script>
+    if (!sessionStorage.getItem("iskHit_toab")) {
+      sessionStorage.setItem("iskHit_toab", "1");
+      fetch("https://stats.iskorea.org/hit?app=toab", { method: "POST", keepalive: true }).catch(function () {});
+    }
+  </script>
+</body>
+</html>

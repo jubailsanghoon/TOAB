@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>TOA Manual — Tubular Ovality & Roller Analysis</title>
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/toa-logo-192.png">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+:root{
+  --bg:#f0f2f7;--card:#fff;--hdr:#1e2340;--bdr:#e2e6ef;
+  --tx:#1a2340;--tx2:#6b7a99;--txl:#9aa3bc;
+  --ac:#2563eb;--acbg:#eff4ff;
+  --gn:#16a34a;--gnbg:#f0fdf4;
+  --rd:#dc2626;--rdbg:#fef2f2;
+  --or:#d97706;--orbg:#fffbeb;
+  --r:14px;--rs:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:15px;scroll-behavior:smooth;}
+body{font-family:"Inter",sans-serif;background:var(--bg);color:var(--tx);line-height:1.7;}
+.wrap{display:grid;grid-template-columns:256px 1fr;min-height:100vh;}
+nav{position:sticky;top:0;height:100vh;overflow-y:auto;background:var(--hdr);padding:20px 0;}
+nav .logo{padding:0 20px 18px;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:10px;}
+nav .logo h1{font-size:13px;font-weight:800;color:#fff;line-height:1.5;}
+nav .logo p{font-size:10.5px;color:rgba(255,255,255,.72);margin-top:3px;font-weight:600;}
+nav ul{list-style:none;}
+nav ul li a{display:block;padding:6px 20px;font-size:12px;font-weight:600;color:rgba(255,255,255,.82);text-decoration:none;border-left:2px solid transparent;transition:all .15s;}
+nav ul li a:hover{color:#fff;background:rgba(255,255,255,.08);}
+nav ul li a.on{color:#93c5fd;border-left-color:#60a5fa;background:rgba(59,130,246,.18);font-weight:700;}
+nav ul .sec{padding:12px 20px 4px;font-size:10px;font-weight:800;letter-spacing:1.1px;text-transform:uppercase;color:#93c5fd;}
+main{padding:40px 48px;max-width:960px;}
+.hero{background:linear-gradient(135deg,#1e3a8a,#1d4ed8 55%,#2563eb);border-radius:var(--r);padding:32px 40px;color:#fff;margin-bottom:40px;box-shadow:0 6px 24px rgba(29,78,216,.22);}
+.hero h1{font-size:25px;font-weight:800;color:#fff;margin-bottom:8px;text-shadow:0 1px 2px rgba(0,0,0,.2);}
+.hero p{font-size:14px;font-weight:600;color:#f8fafc;opacity:1;margin-bottom:16px;max-width:680px;line-height:1.6;}
+.hero .tags{display:flex;gap:8px;flex-wrap:wrap;}
+.tag{padding:4px 12px;border-radius:20px;font-size:11.5px;font-weight:700;background:rgba(255,255,255,.22);border:1px solid rgba(255,255,255,.4);color:#fff;white-space:nowrap;}
+.tag.g{background:#dcfce7;border-color:#86efac;color:#14532d;}
+.tag.o{background:#fef3c7;border-color:#fde68a;color:#78350f;}
+section{margin-bottom:48px;}
+.sec-hdr{display:flex;align-items:center;gap:10px;margin-bottom:20px;padding-bottom:12px;border-bottom:2px solid var(--bdr);}
+.sec-hdr h2{font-size:19px;font-weight:800;color:var(--tx);}
+.sec-num{width:28px;height:28px;border-radius:8px;background:var(--ac);color:#fff;font-size:12px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+h3{font-size:14px;font-weight:700;color:var(--tx);margin:22px 0 10px;}
+h4{font-size:11px;font-weight:800;color:var(--ac);margin:16px 0 8px;text-transform:uppercase;letter-spacing:.7px;}
+p{font-size:13px;color:var(--tx2);margin-bottom:10px;}
+ul{padding-left:20px;margin-bottom:10px;}
+li{font-size:13px;color:var(--tx2);margin-bottom:4px;line-height:1.6;}
+b,strong{color:var(--tx);}
+code{background:var(--acbg);color:var(--ac);font-family:"JetBrains Mono",monospace;font-size:11px;padding:2px 7px;border-radius:4px;}
+.callout{border-left:3px solid var(--ac);background:var(--acbg);border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0;}
+.callout.warn{border-color:var(--or);background:var(--orbg);}
+.callout.danger{border-color:var(--rd);background:var(--rdbg);}
+.callout.ok{border-color:var(--gn);background:var(--gnbg);}
+.callout p{margin:0;font-size:12px;color:var(--tx2);}
+.callout strong{display:block;margin-bottom:4px;font-size:12px;color:var(--tx);}
+.tbl-wrap{overflow-x:auto;margin:10px 0 18px;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+thead th{background:var(--hdr);color:rgba(255,255,255,.85);padding:9px 14px;text-align:left;font-weight:700;font-size:11px;letter-spacing:.4px;}
+thead th:first-child{border-radius:8px 0 0 0;}
+thead th:last-child{border-radius:0 8px 0 0;}
+tbody td{padding:9px 14px;border-bottom:1px solid var(--bdr);color:var(--tx);vertical-align:top;}
+tbody tr:last-child td{border-bottom:none;}
+tbody tr:nth-child(even) td{background:var(--bg);}
+tbody tr:hover td{background:var(--acbg);}
+.mono{font-family:"JetBrains Mono",monospace;font-size:11px;}
+.pill-p{display:inline-block;padding:2px 8px;border-radius:12px;background:var(--gnbg);color:var(--gn);font-size:10px;font-weight:700;}
+.pill-f{display:inline-block;padding:2px 8px;border-radius:12px;background:var(--rdbg);color:var(--rd);font-size:10px;font-weight:700;}
+/* ── FORMULA TABLE ── */
+.ftbl{width:100%;border-collapse:collapse;margin:10px 0 18px;border-radius:var(--rs);overflow:hidden;border:1px solid var(--bdr);}
+.ftbl .frow td:first-child{width:46%;background:var(--hdr);font-family:"JetBrains Mono",monospace;font-size:13px;font-weight:600;color:#e2e8f8;padding:11px 16px;line-height:1.8;vertical-align:middle;}
+.ftbl .frow td:last-child{background:var(--card);font-size:12px;color:var(--tx2);padding:11px 16px;line-height:1.7;vertical-align:middle;border-bottom:1px solid var(--bdr);}
+.ftbl .frow:last-child td:last-child{border-bottom:none;}
+.ftbl .frow:nth-child(even) td:first-child{background:#252d48;}
+.ftbl .fgroup td{background:var(--acbg);color:var(--ac);font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;padding:6px 16px;border-bottom:1px solid var(--bdr);}
+.ftbl .fgroup td:first-child{border-right:1px solid var(--bdr);}
+.ftbl .highlight td:first-child{background:#1e3a5f;color:#7dd3fc;}
+.ftbl .result td:first-child{background:#1a4731;color:#6ee7b7;}
+/* ── INPUT GRID ── */
+.inp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin:10px 0 18px;}
+.inp-box{background:var(--card);border:1px solid var(--bdr);border-radius:var(--rs);padding:13px;}
+.inp-box .lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.7px;color:var(--txl);margin-bottom:5px;}
+.inp-box .name{font-size:13px;font-weight:700;color:var(--tx);margin-bottom:3px;}
+.inp-box .range{font-size:11px;color:var(--tx2);}
+.inp-box .id{font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--ac);margin-top:5px;}
+/* ── SUPPORT GRID ── */
+.sup-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px;margin:10px 0;}
+.sup-card{background:var(--card);border:1px solid var(--bdr);border-radius:var(--rs);padding:13px;}
+.sup-card.best{border-color:var(--ac);background:var(--acbg);}
+.sup-card .code{font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--ac);margin-bottom:4px;}
+.sup-card .lbl{font-size:13px;font-weight:700;color:var(--tx);margin-bottom:5px;}
+.sup-card .desc{font-size:11px;color:var(--tx2);line-height:1.5;}
+/* ── STD BLOCKS ── */
+.std-row{display:grid;grid-template-columns:110px 1fr 110px;gap:0;margin-bottom:6px;border-radius:var(--rs);overflow:hidden;border:1px solid var(--bdr);}
+.std-code{background:var(--hdr);color:#fff;padding:10px 14px;font-size:12px;font-weight:700;display:flex;align-items:center;}
+.std-body{padding:10px 14px;background:var(--card);}
+.std-body .title{font-size:12px;font-weight:700;color:var(--tx);margin-bottom:2px;}
+.std-body .sub{font-size:11px;color:var(--tx2);}
+.std-lim{background:var(--acbg);padding:10px 14px;display:flex;align-items:center;justify-content:center;font-family:"JetBrains Mono",monospace;font-size:14px;font-weight:800;color:var(--ac);}
+.back-btn{position:fixed;bottom:24px;right:24px;width:40px;height:40px;border-radius:50%;background:var(--ac);color:#fff;border:none;font-size:17px;cursor:pointer;box-shadow:0 4px 16px rgba(37,99,235,.4);display:flex;align-items:center;justify-content:center;transition:transform .15s;z-index:99;}
+.back-btn:hover{transform:scale(1.1);}
+/* ── MAIN-MATCHING LANGUAGE DROPDOWN ── */
+.lang-dropdown-wrap{position:relative;display:inline-block;}
+.hdr-btn.lang-btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;height:36px;padding:0 10px;border-radius:10px;border:1px solid var(--bdr);background:var(--card);color:var(--tx);cursor:pointer;transition:background .15s,border-color .15s;}
+.hdr-btn.lang-btn:hover{background:var(--acbg);border-color:var(--ac);}
+.flag-icon-circle{width:22px;height:22px;border-radius:50%;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;border:1px solid rgba(0,0,0,.08);}
+.flag-icon-circle img{width:100%;height:100%;object-fit:cover;display:block;}
+.lang-caret{opacity:.65;transition:transform .2s ease;}
+.lang-dropdown-wrap.open .lang-caret{transform:rotate(180deg);}
+.lang-dropdown-menu{position:absolute;top:calc(100% + 6px);right:0;min-width:144px;background:var(--card);border:1px solid var(--bdr);border-radius:12px;padding:5px;box-shadow:0 10px 26px rgba(15,23,42,.14);z-index:200;}
+.lang-dropdown-menu.hidden{display:none !important;}
+.lang-item{width:100%;display:flex;align-items:center;gap:9px;padding:8px 10px;border:none;border-radius:8px;background:transparent;color:var(--tx);font-size:12.5px;font-weight:600;cursor:pointer;text-align:left;}
+.lang-item:hover{background:var(--acbg);}
+.lang-item.active{background:var(--acbg);color:#ff7f00;font-weight:800;}
+@media(max-width:860px){.wrap{grid-template-columns:1fr;}nav{position:relative;height:auto;}main{padding:24px 18px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<nav>
+  <div class="logo"><h1>Tubular Ovality<br>&amp; Roller Analysis</h1><p>v0.5 Beta · ISK · 2026</p></div>
+  <ul>
+    <li class="sec" data-i18n="navStart">시작하기</li>
+    <li><a href="#s1">1. 앱 개요</a></li><li><a href="#s2">2. 강관 사양</a></li>
+    <li class="sec" data-i18n="navSupport">지지 방식</li>
+    <li><a href="#s3">3. 터닝롤러 Specs</a></li><li><a href="#s4">4. 규격 / 옵션</a></li><li><a href="#s5">5. 현장 실측</a></li>
+    <li class="sec" data-i18n="navResults">결과 분석</li>
+    <li><a href="#s6">6. 예측 진원도 · 판정</a></li><li><a href="#s7">7. 롤러 세트 최적화</a></li><li><a href="#s8">8. 출력 탭 가이드</a></li>
+    <li class="sec" data-i18n="navStd">규격 · 공식</li>
+    <li><a href="#s9">9. 규격 판정 기준</a></li><li><a href="#s10">10. 핵심 계산 공식</a></li>
+    <li class="sec" data-i18n="navAppendix">부록</li>
+    <li><a href="#s11">11. TR2 각도별 진원도표</a></li><li><a href="#s12">12. 체크리스트</a></li><li><a href="#s13">13. 실무 지침</a></li>
+  </ul>
+</nav>
+<main>
+
+<div style="display:flex;justify-content:flex-end;margin-bottom:12px;">
+  <div class="lang-dropdown-wrap" id="manLangWrap">
+    <button type="button" class="hdr-btn lang-btn" id="btnLangDropdown" aria-label="Language">
+      <span id="currentFlagIcon" class="flag-icon-circle"><img src="shared-header-kit/icons/flag_ko.png" alt="KO" /></span>
+      <svg class="lang-caret" viewBox="0 0 10 6" width="8" height="6" fill="currentColor"><path d="M0 0l5 5 5-5z"/></svg>
+    </button>
+    <div id="langDropdownMenu" class="lang-dropdown-menu hidden">
+      <button type="button" class="lang-item active" data-lang="ko"><span class="flag-icon-circle"><img src="shared-header-kit/icons/flag_ko.png" alt="KO" /></span><span>한국어</span></button>
+      <button type="button" class="lang-item" data-lang="en"><span class="flag-icon-circle"><img src="shared-header-kit/icons/flag_en.png" alt="EN" /></span><span>English</span></button>
+      <button type="button" class="lang-item" data-lang="zh"><span class="flag-icon-circle"><img src="shared-header-kit/icons/flag_zh.png" alt="ZH" /></span><span>中文</span></button>
+      <button type="button" class="lang-item" data-lang="ja"><span class="flag-icon-circle"><img src="shared-header-kit/icons/flag_ja.png" alt="JA" /></span><span>日本語</span></button>
+      <button type="button" class="lang-item" data-lang="es"><span class="flag-icon-circle"><img src="shared-header-kit/icons/flag_es.png" alt="ES" /></span><span>Español</span></button>
+    </div>
+  </div>
+</div>
+<div class="hero">
+  <h1 data-i18n="heroTitle">📖 TOA 전문 매뉴얼</h1>
+  <p data-i18n="heroSub">Carbon Steel 대형 강관 진원도 분석 · 터닝롤러 최적화 · 규격 판정 완전 가이드</p>
+  <div class="tags">
+    <span class="tag">API 2B</span><span class="tag">ISO 19902</span><span class="tag">API 5L</span><span class="tag">DNV-OS-C401</span>
+    <span class="tag g">Roark 9th Ed.</span><span class="tag g">Castigliano</span><span class="tag o">Φ3,000~15,000mm</span>
+  </div>
+</div>
+
+<div class="callout warn" style="margin-bottom:22px;">
+  <strong data-i18n="scopeTitle">⚠ 적용 범위 및 엔지니어링 한계 안내 (Engineering Scope &amp; Limitations)</strong>
+  <p data-i18n="scopeBody">본 애플리케이션은 현장 사전 검토·롤러 세팅·품질 협의를 위한 1차 엔지니어링 검토 도구로 즉시 활용 가능하나, 2D 선형 탄성 링 이론 기반의 특성상 최종 설계·제작 승인(Code Sign-off)용 해석기로 단독 사용할 수 없습니다. 최종 제작 승인 전에는 반드시 적용 규격 조항 대조, 3D FEA 및 현장 계측 검증을 병행하시기 바랍니다.</p>
+</div>
+
+<section id="s1">
+  <div class="sec-hdr"><div class="sec-num">1</div><h2>앱 개요 및 화면 구성</h2></div>
+  <div class="sec-body" id="b-s1">
+<div class="tbl-wrap"><table>
+    <thead><tr><th>항목</th><th>내용</th></tr></thead>
+    <tbody>
+      <tr><td><b>적용 이론</b></td><td>Roark's Formulas 9th Ed. (I_ring = t³/12) · Castigliano 에너지법(M_A·N_A 동시 해석 · 반경방향 반력) · 전방위 Green 함수 적분(θ∈[0°,90°]) · Hertz 선접촉</td></tr>
+      <tr><td><b>적용 규격</b></td><td>API 2B · ISO 19902 · API 5L (D&gt;1,422mm As Agreed 주석) · DNV-OS-C401</td></tr>
+      <tr><td><b>직경 범위</b></td><td class="mono">Φ 3,000 ~ 15,000 mm (Carbon Steel)</td></tr>
+      <tr><td><b>재료 상수</b></td><td class="mono">E = 206,000 MPa · γ = 7.85×10⁻⁵ N/mm³ · ν = 0.3</td></tr>
+      <tr><td><b>링 관성모멘트</b></td><td class="mono">I_ring = t³ / 12 (단위 폭 선형 탄성 링, 보 처짐은 전단면 I_beam 사용)</td></tr>
+    </tbody>
+  </table></div>
+  <h3>1-1. 상·하단 화면 배치 (Unified Sub-Cards)</h3>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>영역</th><th>좌 → 우 4열 구성 및 위치</th></tr></thead>
+    <tbody>
+      <tr><td><b>상단 가로 바</b><br><small>입력 영역</small></td><td>① <b>강관 사양</b> · ② <b>터닝롤러 Specs</b> · ③ <b>규격/옵션 + 현장 실측(선택)</b> 상하 배치 · ④ <b>D / t</b> 실시간 패널(우측)</td></tr>
+      <tr><td><b>하단 요약 행</b><br><small>핵심 결과</small></td><td>① <b>최소 권장 롤러 세트</b> · ② <b>롤러 지지 성능 분석</b> · ③ <b>예측 진원도</b>(자연·지지·실측) · ④ <b>분석 실행 · 전체 지지 상태 비교 · 데이터 저장(💾 Save)</b> 3단 버튼 + 하단 종합 판정 배지(<b>PASS/FAIL</b>)</td></tr>
+      <tr><td><b>하단 결과 탭 · 저장 카드</b><br><small>5탭 + 별도</small></td><td><b>규격 판정</b> · <b>상태 비교</b> · <b>단면도</b> · <b>권고사항</b> · <b>체크리스트</b> (5탭) + 아래쪽 독립 <b>저장된 기록</b> 접기/펼치기 카드</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout ok"><strong>✓ 해석 모델 검증 기준</strong><p>상부 정점 M_A·N_A 부정정 동시 해법으로 Roark Case 1(대칭 집중하중)·Case 15(바닥 지지 자중) 엄밀해와 일치하며, 모든 롤러/새들 지지 상태에서 수직 힘 평형(∑Fy = W, 평형 잔차 0.00%)을 만족합니다.</p></div>
+  </div>
+</section>
+
+<section id="s2">
+  <div class="sec-hdr"><div class="sec-num">2</div><h2>강관 사양 입력 · D/t 실시간 패널</h2></div>
+  <div class="sec-body" id="b-s2">
+<h3>2-1. 입력 필드</h3>
+  <div class="inp-grid">
+    <div class="inp-box"><div class="lbl">직경</div><div class="name">D (mm)</div><div class="range">100~20,000 · step 100</div><div class="id">id: iD</div></div>
+    <div class="inp-box"><div class="lbl">두께</div><div class="name">t (mm)</div><div class="range">5~500 · step 5</div><div class="id">id: it</div></div>
+    <div class="inp-box" style="border-color:var(--ac);"><div class="lbl" style="color:var(--ac);">길이</div><div class="name">L (mm)</div><div class="range">500~100,000 · step 500</div><div class="id">id: i-plen</div></div>
+    <div class="inp-box"><div class="lbl">Girth Weld 총수 (시각화)</div><div class="name">총 용접 수</div><div class="range">0~50 · step 1 · 기본 5</div><div class="id">id: i-nweld</div></div>
+    <div class="inp-box" style="border-color:var(--ac);background:var(--acbg);"><div class="lbl" style="color:var(--ac);font-weight:800;">진행 중인 용접 수 ★</div><div class="name">Active Welds</div><div class="range">0~10 · step 1 · 기본 1</div><div class="id">id: i-aweld</div></div>
+    <div class="inp-box"><div class="lbl">플레이트 폭 (참조)</div><div class="name">Plate Width (mm)</div><div class="range">500~10,000 · step 100</div><div class="id">id: i-platespan</div></div>
+  </div>
+  <h3>2-2. D/t 실시간 패널 (상단 바 4열 우측 · Brazier 경고 포함)</h3>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>항목</th><th>계산식 / 기준</th><th>색상 및 경고</th></tr></thead>
+    <tbody>
+      <tr><td><b>D / t Ratio</b></td><td class="mono">D ÷ t</td><td>&gt;300 빨강 · &gt;200 주황 · &gt;120 파랑 · 기타 초록</td></tr>
+      <tr><td><b>Thin / Thick 배지</b></td><td class="mono">D/t ≥ 20</td><td>파랑 Thin-Wall · 주황 Thick-Wall</td></tr>
+      <tr><td><b>R (mm)</b></td><td class="mono">(D − t) / 2</td><td>평균 반경 (중립축)</td></tr>
+      <tr><td><b>ISO limit</b></td><td class="mono">D/t &gt; 120 → ≤ 0.5%</td><td>주황 / 초록</td></tr>
+      <tr><td><b>Brazier</b></td><td class="mono">D/t &gt; 300 HIGH · &gt;200 MOD</td><td>HIGH ⚠ 빨강 · MOD △ 주황 · LOW 초록 (+ 실시간 배너 <code>dt-brazier-alert</code>)</td></tr>
+      <tr><td><b>L / D</b></td><td class="mono">L ÷ D</td><td>&gt;10 주황 · &gt;6 파랑 · 기타 초록</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+</section>
+
+<section id="s3">
+  <div class="sec-hdr"><div class="sec-num">3</div><h2>터닝롤러 Specs</h2></div>
+  <div class="sec-body" id="b-s3">
+<h3>3-1. 지지 방식 7종 (하부 지지만 적용 · 반경방향 법선 반력)</h3>
+  <div class="sup-grid">
+    <div class="sup-card"><div class="code">NATURAL</div><div class="lbl">① 자연상태</div><div class="desc">Roark Ring 자중 변형 (전방위 D_max−D_min). 기준값 비교용.</div></div>
+    <div class="sup-card"><div class="code">SADDLE120</div><div class="lbl">② 120° 새들</div><div class="desc">균일 반경방향 접촉압(2α=120°) 링 적분. 자연상태의 ≈49.6%. 보관·운반.</div></div>
+    <div class="sup-card"><div class="code">TR2_491 (ref)</div><div class="lbl">③-A TR2 α=49.1° (ref)</div><div class="desc">구 모델(수직반력·N_A 누락) 참조각. 실제 전방위 비율 ≈21.2% (최적 아님).</div></div>
+    <div class="sup-card best"><div class="code">TR2_45 ★</div><div class="lbl">③-B TR2 α=45° ★</div><div class="desc">이론·현장 최적(m=2 상쇄, δv=δh). 45° 대각 자중 굽힘 잔류로 전방위 ≈5.7%.</div></div>
+    <div class="sup-card"><div class="code">TR2_30</div><div class="lbl">③-C TR2 α=30°</div><div class="desc">스팬 60° (자연상태의 ≈56.5%).</div></div>
+    <div class="sup-card"><div class="code">TR2_CUSTOM</div><div class="lbl">③-D TR2 Custom</div><div class="desc">α 직접 입력 10°~80°.</div></div>
+    <div class="sup-card best"><div class="code">TR4_STD</div><div class="lbl">④-A TR4 4롤러 (22.5°/67.5°)</div><div class="desc">하부 4점 독립 지지(22.5°/67.5°). 전방위 진원도 자연상태의 약 0.35% 수준으로 대폭 저감.</div></div>
+    <div class="sup-card"><div class="code">TR4_CUSTOM</div><div class="lbl">④-B TR4 4롤러 Custom (α1/α2)</div><div class="desc">내측(α1)·외측(α2) 4점 지지각을 사용자 지정(예: 30°/60°).</div></div>
+    <div class="sup-card"><div class="code">DOUBLE_ROLLER</div><div class="lbl">⑤ 고정형 더블롤러 (4롤 피벗)</div><div class="desc">하부 4점(α_center±γ). 대칭 피벗 보기 평형(N1=N2), 최적 α_c=45° (≈4.3%).</div></div>
+  </div>
+  <h3>3-2. 롤러 파라미터</h3>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>파라미터</th><th>ID</th><th>범위</th><th>기본값</th><th>설명</th></tr></thead>
+    <tbody>
+      <tr><td><b>롤러 재질</b></td><td class="mono">i-rmat</td><td>steel / urethane</td><td class="mono">steel</td><td>D≥6000mm 또는 P_max&gt;500MPa 시 우레탄(Shore 80A~90A) 필수</td></tr>
+      <tr><td><b>롤러 직경</b></td><td class="mono">i-rdia</td><td class="mono">100~2,000mm</td><td class="mono">600mm</td><td>Hertz 접촉 응력 및 허용 스팬 계산</td></tr>
+      <tr><td><b>C-C 간격</b></td><td class="mono">i-cc</td><td class="mono">100~5,000mm</td><td>자동 (R×√2)</td><td>α=45° 기준 자동 설정</td></tr>
+      <tr><td><b>접촉 길이</b></td><td class="mono">i-cl</td><td class="mono">100~10,000mm</td><td class="mono">300mm</td><td>롤러 축방향 유효폭. Hertz 계산 사용.</td></tr>
+      <tr><td><b>α (Custom)</b></td><td class="mono">i-a</td><td class="mono">10°~80°</td><td class="mono">45°</td><td>TR2_CUSTOM 선택 시 표시</td></tr>
+      <tr><td><b>α_center (DR)</b></td><td class="mono">i-ac</td><td class="mono">20°~65°</td><td class="mono">45°</td><td>더블롤러 프레임 중심각 (피벗 보지 평형 최적 45.0°)</td></tr>
+      <tr><td><b>γ_roller (DR)</b></td><td class="mono">i-gr</td><td class="mono">1°~20°</td><td class="mono">10°</td><td>프레임 내 반개각 (N1=N2 평형 시 θ-분산 최소화)</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+</section>
+
+<section id="s4">
+  <div class="sec-hdr"><div class="sec-num">4</div><h2>규격 / 옵션 (상단 3열 상부)</h2></div>
+  <div class="sec-body" id="b-s4">
+<p>상단 가로 바 3번째 열(<code>D / t</code> 왼쪽)에서 <b>현장 실측 (선택)</b> 카드 위쪽에 수직 배치됩니다.</p>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>옵션</th><th>ID</th><th>값</th><th>허용 한계</th></tr></thead>
+    <tbody>
+      <tr><td><b>API 5L 구간</b></td><td class="mono">i-zone</td><td>body / end</td><td>body ≤ 1.5% · end ≤ 1.0% (D&gt;1,422mm As Agreed 주석)</td></tr>
+      <tr><td><b>DNV 피로</b></td><td class="mono">i-fat</td><td>false / true</td><td>일반 ≤ 1.0% · 피로 민감 ≤ 0.5%</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+</section>
+
+<section id="s5">
+  <div class="sec-hdr"><div class="sec-num">5</div><h2>현장 실측 입력 (상단 3열 하부)</h2></div>
+  <div class="sec-body" id="b-s5">
+<p>규격 / 옵션 카드 바로 아래에 배치되며, 상단 행에 <b>D_min (OD, mm)</b>(좌) · <b>D_max (OD, mm)</b>(우) 절대치 입력란, 하단 행에 <b>기준 D 대비 −편차 / +편차 (mm)</b> 입력란(<code>id: i-devmin</code>, <code>i-devmax</code>)이 제공됩니다. 두 행은 양방향으로 자동 동기화되므로 편차 칸에 예컨대 <code>-2</code>, <code>+2</code>를 입력하면 <code>D=8,000mm</code> 기준 <code>D_min=7,998mm</code>, <code>D_max=8,002mm</code>가 즉시 계산되며, 반대로 절대치 입력 시 편차가 자동 산출됩니다. <b>D_max &lt; D_min</b> 역전 시 오류 경고를 즉시 표시하고, 정상 입력 시 <b>예측 진원도 → 현장 실측 카드</b>·<b>단면도(초록 일점쇄선)</b>·<b>규격 판정 탭</b>에 실시간 반영됩니다.</p>
+  <table class="ftbl">
+    <tr class="frow"><td>D_min = D + ΔD_min · D_max = D + ΔD_max</td><td>기준 직경 D 대비 −/+ 편차 입력과 절대 외경 간 양방향 자동 동기화</td></tr>
+    <tr class="frow"><td>Ovality (%) = (D_max − D_min) / D_nominal × 100</td><td>동일 단면 외경(OD) 실측 기반 진원도 (D_max ≥ D_min 필수)</td></tr>
+  </table>
+  </div>
+</section>
+
+<section id="s6">
+  <div class="sec-hdr"><div class="sec-num">6</div><h2>예측 진원도 카드 (3개) · 좌굴 경고 · 종합 판정</h2></div>
+  <div class="sec-body" id="b-s6">
+<div class="tbl-wrap"><table>
+    <thead><tr><th>카드</th><th>상단 테두리</th><th>내용</th><th>좌굴위험 경고 및 색상 기준</th></tr></thead>
+    <tbody>
+      <tr><td><b>자연상태</b></td><td>빨강 (<code>#ef4444</code>)</td><td>전방위 Roark 자중 진원도 (mm, %)</td><td>&gt;1% 빨강 / 0.3~1% 주황 / ≤0.3% 파랑 · Brazier 좌굴 경고 배지</td></tr>
+      <tr><td><b>지지 상태</b></td><td>파랑 (<code>--ac</code>)</td><td>선택 방식 전방위 예측값 + vsNatural(%)</td><td>&gt;1% 빨강 / 0.3~1% 주황 / ≤0.3% 파랑 · Brazier 좌굴 경고 배지</td></tr>
+      <tr><td><b>현장 실측</b></td><td>초록 (<code>#10b981</code>)</td><td>실측 진원도 + API 2B / ISO / DNV 배지</td><td>PASS 초록 / FAIL 빨강 · Brazier 좌굴 경고 배지</td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout warn"><strong>⚠ 좌굴위험 경고 표시 (각 항목 실시간 평가)</strong>
+    <p><code>TOAEngine.evaluateStateBuckling</code>이 각 상태 카드(자연상태·지지 상태·현장 실측)마다 D/t 및 변형 수준을 평가하여, <b>D/t &gt; 300</b> 또는 편평화 과다 시 빨간 <b>⚠ 좌굴위험 (Brazier High)</b>, <b>D/t &gt; 200</b> 이상 시 주황 <b>⚠ 좌굴주의 (Brazier Caution)</b> 테두리와 경고 박스를 표시합니다.</p>
+    <p style="margin-top:6px;">또한 <code>TOAEngine.evaluateOvalBendingRisk</code>가 타원화(%), 박벽(D/t), 링 자중 굽힘응력(<b>σ_b = 6M_max/t²</b>), 축방향 보 처짐(δ)을 종합 평가하여 위험 조건 시 상단에 <b>타원화·굽힘 적극 경고 배너(CRITICAL 펄스 / WARNING)</b>와 보강 설계·도면 바로가기 버튼을 즉시 띄웁니다.</p></div>
+  <div class="callout ok"><strong>▶ 우측 '분석 실행' 카드 및 하단 종합 판정 배지 (<code>#stat-pill</code>)</strong>
+    <p>하단 요약 행 4번째 열(<b>예측 진원도</b> 우측)에 <b>분석 실행</b> · <b>전체 지지 상태 비교</b> · <b>데이터 저장(💾 Save)</b> 3단 버튼 카드가 위치하며, 그 바로 아래쪽에 종합 규격 판정 배지(<code>⦿ 대기중</code> / <code>✓ 통과 (PASS)</code> / <code>⚠ 불합격 (FAIL)</code>)가 배치됩니다.</p></div>
+  </div>
+</section>
+
+<section id="s7">
+  <div class="sec-hdr"><div class="sec-num">7</div><h2>롤러 세트 최적화 — 구조 기준 스팬 · 지지 성능</h2></div>
+  <div class="sec-body" id="b-s7">
+<div class="callout ok"><strong>✓ 핵심 원칙 &amp; 하단 배치</strong>
+    <p>하단 요약 행 1열 <b>최소 권장 롤러 세트</b> 바로 오른쪽(2열)에 <b>롤러 지지 성능 분석</b>(접촉각 · 롤러당 하중 · 접촉 응력 · 국부 변형 및 ∑Fy=W 평형 잔차)이 배치됩니다. 대경관은 플레이트 폭(≈2m)으로 Girth Weld 간격이 짧더라도 완료 용접부는 일체화 단면이므로 세트 수에 영향을 주지 않고, <b>구조 기준</b>과 <b>진행 중인 용접 수</b>로만 결정됩니다.</p></div>
+  <h3>7-1. 입력 구분</h3>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>입력</th><th>ID</th><th>역할</th><th>세트 수 영향</th></tr></thead>
+    <tbody>
+      <tr><td><b>Girth Weld 총수</b><br><small>시각화용</small></td><td class="mono">i-nweld</td><td>측면도에 ▽ 위치 표시 · 0이면 단관 처리</td><td><span class="pill-p">effNA 상한 제한</span></td></tr>
+      <tr><td><b>진행 중인 용접 수</b> ★</td><td class="mono">i-aweld</td><td>현재 활성 조인트 수 (effNA = min(active, nW))</td><td><span class="pill-f">세트 수 결정</span></td></tr>
+      <tr><td><b>플레이트 폭</b><br><small>참조용</small></td><td class="mono">i-platespan</td><td>Girth Weld 간격 참조 · 측면도 정보 표시</td><td><span class="pill-p">없음</span></td></tr>
+    </tbody>
+  </table></div>
+  <h3>7-2. 결정 로직</h3>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>#</th><th>기준</th><th>공식</th><th>비고</th></tr></thead>
+    <tbody>
+      <tr><td>①</td><td><b>처짐 기준</b></td><td class="mono">L_defl = ⁴√(384·E·I_beam·0.0005D / 5·w)</td><td>D=8000, t=25 → L_defl ≈ 50.3m</td></tr>
+      <tr><td>②</td><td><b>Hertz 기준</b></td><td class="mono">span_hz = [600²·π·cl·R_eff / (E_eff·w)] × 2·cos45°</td><td>세트당 2롤러 반경방향 분담 (P≤600 MPa)</td></tr>
+      <tr><td>③</td><td><b>L/D 및 간격</b></td><td class="mono">≤2→2 / 2~4→3 / 4~7→4 / 7~10→5 / &gt;10→6 · 간격 ≤ 2.5D</td><td>현장 실무 최소 기준</td></tr>
+      <tr><td>④</td><td><b>진행 중인 용접</b> ★</td><td class="mono">n ≥ min(max(effNA + 3, 4), n_max_phys)</td><td>용접부 좌우 2세트씩 (단관·단척 예외)</td></tr>
+    </tbody>
+  </table></div>
+  <h3>7-3. 최종 결정 공식</h3>
+  <table class="ftbl">
+    <tr class="fgroup"><td colspan="2">구조 기준 (처짐 · Hertz · L/D · 스팬≤2.5D)</td></tr>
+    <tr class="frow"><td>n_struct = max(n_defl, n_hertz, n_LD, n_span, 2)</td><td>완료된 Girth Weld 수 포함하지 않음</td></tr>
+    <tr class="fgroup"><td colspan="2">진행 중인 용접 기준 (유효 활성 용접 effNA = min(active, nW) &gt; 0 일 때만)</td></tr>
+    <tr class="frow"><td>n_active = min(max(effNA + 3, 4), n_max_phys)</td><td>Girth Weld = 0 단관은 effNA=0 · 단척은 물리적 최대 세트 제한</td></tr>
+    <tr class="frow"><td>n_overhang = min(max(ceil(L / 3D) − 1, 4), n_max_phys)</td><td>끝단 오버행 ≤ 1.5D 보장 (물리적 배치 한계 내)</td></tr>
+    <tr class="fgroup"><td colspan="2">물리적 배치 한계 &amp; 최종</td></tr>
+    <tr class="frow"><td>n_max_phys = max(2, floor(L / max(cl·1.5, 500)))</td><td>롤러 접촉폭(cl) 간섭 방지 (예: L=1,000mm → 2세트)</td></tr>
+    <tr class="frow result"><td>n_rec = max(n_struct, n_active, n_overhang, 2)</td><td>권장 세트 수</td></tr>
+    <tr class="frow result"><td>span = L / (n_rec + 1)&nbsp;&nbsp;&nbsp;[mm]</td><td>균등 배치 간격</td></tr>
+  </table>
+  <div class="callout danger"><strong>⚠ 용접 진행 중 최소 4세트가 필요한 이유 · 단관/단척 예외</strong>
+    <p>용접부는 통상 파이프 중앙 부근에 위치합니다. 4세트 배치 시 용접부 좌우에 각 2세트가 위치해 ① 회전 안정성 ② Fit-up 갭·개선각도 균일 유지 ③ 열변형 편심 안정화가 확보됩니다. <b>단, Girth Weld 총수가 0인 단관</b>이거나 <b>길이 L이 짧은 단척 파이프(L &lt; 4·minPitch, 예: L=1,000mm)</b>에서는 활성 용접 4세트 규칙이 적용되지 않으며 물리적 배치 한계(2세트)가 우선 적용됩니다.</p></div>
+  <h3>7-4. 케이스 예시</h3>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>케이스</th><th>Girth Weld</th><th>진행 중</th><th>구조 기준</th><th>권장 세트</th></tr></thead>
+    <tbody>
+      <tr><td>D=8000 t=25, L=20m</td><td>9개 (2m 간격)</td><td>1개</td><td>3세트 (L/D=2.5→3)</td><td class="mono"><b>4 sets</b></td></tr>
+      <tr><td>D=5000 t=20, L=18m</td><td>8개 (2m 간격)</td><td>1개</td><td>3세트 (L/D=3.6)</td><td class="mono"><b>4 sets</b></td></tr>
+      <tr><td>D=3000 t=10, L=12m</td><td>5개 (2m 간격)</td><td>2개</td><td>3세트 (L/D=4.0)</td><td class="mono"><b>5 sets</b></td></tr>
+      <tr><td>D=8000 t=20, L=1m</td><td><b>0개</b></td><td><b>0개</b></td><td>2세트 (단관·물리한계)</td><td class="mono"><b>2 sets</b></td></tr>
+    </tbody>
+  </table></div>
+  <div class="callout ok"><strong>✓ 완료된 Girth Weld는 세트 수에 영향 없음</strong>
+    <p>플레이트 폭 2m → Girth Weld 9개 → 처짐 허용 스팬 ≈50.3m(D=8000, t=25). 완료 용접부는 일체화 단면이므로 별도 지지 불필요.</p></div>
+  <h3>7-5. 측면도 (Side View)</h3>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>시각 요소</th><th>설명</th></tr></thead>
+    <tbody>
+      <tr><td><b>파이프 외형</b></td><td>Roark 단순보 처짐 분포함수로 처짐 곡선 시각화</td></tr>
+      <tr><td><b>터닝롤러 S1, S2…</b></td><td>V형 프레임 + 좌우 롤러. 세트 번호 표시.</td></tr>
+      <tr><td><b>용접부 W1, W2…</b></td><td>노란 점선 + ▽ 심볼. Girth Weld 총수 기준 균등 배치.</td></tr>
+      <tr><td><b>스팬 치수선</b></td><td>첫 번째 스팬에 ↔ 치수 자동 표시</td></tr>
+      <tr><td><b>max δ</b></td><td>우하단에 최대 처짐(mm, %D). 허용 초과 시 빨강.</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+</section>
+
+<section id="s8">
+  <div class="sec-hdr"><div class="sec-num">8</div><h2>출력 탭 (5탭) · 저장된 기록</h2></div>
+  <div class="sec-body" id="b-s8">
+<div class="tbl-wrap"><table>
+    <thead><tr><th>탭</th><th>내용</th><th>활성화</th></tr></thead>
+    <tbody>
+      <tr><td><b>규격 판정</b></td><td>API 2B · ISO · API 5L · DNV PASS/FAIL + 현장 실측 판정</td><td>분석 실행 후</td></tr>
+      <tr><td><b>상태 비교</b></td><td>5개 지지 상태 막대 차트 + 전방위 진원도·vs 자연(%) 비교 표</td><td>분석 / 전체 비교 후</td></tr>
+      <tr><td><b>단면도</b></td><td><b>3색 예상 원주선</b> [자연상태(빨간 점선 <code>#ef4444</code>) · 지지상태(파란 실선 <code>#377feb</code>) · 현장 실측(초록 일점쇄선 <code>#10b981</code>)] + 하단 3열 범례 + 측면도</td><td>분석 실행 후</td></tr>
+      <tr><td><b>권고사항</b></td><td>CRITICAL / WARNING / CAUTION / INFO · 불합격 시 보강링·Spider Brace·지지 간격 예비 치수/위치 제안, 전용 단면·측면도 및 <b>적용 가이드(③ 단독 / ③+①·② 택1 / ①+②+③ 병행)</b> 자동 표시</td><td>분석 실행 후</td></tr>
+      <tr><td><b>체크리스트</b></td><td>현장 작업 체크리스트 및 γ_eff · Brazier · Hertz · Beam δ 지표 (구 '대경관' 탭)</td><td>분석 실행 후</td></tr>
+      <tr><td><b>저장된 기록 (하단 별도 카드)</b></td><td>5탭 아래 별도 카드: <b>현장 실측(절대값·편차) 포함 저장/복원</b> · Import · Export · <b>리포트 대상 선택(<code>#i-rpt-target</code>)</b> · <b>포함 항목 5종 체크박스(규격·비교·단면도·권고·체크리스트)</b> · CSV/XLS/PDF(PRO) · Clear · <b>▲ 접기 / ▼ 펼치기</b></td><td>상시</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+</section>
+
+<section id="s9">
+  <div class="sec-hdr"><div class="sec-num">9</div><h2>규격 판정 기준</h2></div>
+  <div class="sec-body" id="b-s9">
+<div class="std-row"><div class="std-code">API 2B</div><div class="std-body"><div class="title">구조용 강관 제작 표준</div><div class="sub">t ≤ 50.8mm → max 6.4mm · D ≥ 1219mm → max 12.7mm · t &gt; 50.8mm → Ovality/t ≤ 1:8</div></div><div class="std-lim">≤ 1.0%</div></div>
+  <div class="std-row" style="margin-top:6px;"><div class="std-code">ISO 19902</div><div class="std-body"><div class="title">해양 구조물 · D/t ≤ 120</div><div class="sub">Offshore jacket, monopile 기본 기준</div></div><div class="std-lim">≤ 1.0%</div></div>
+  <div class="std-row" style="margin-top:6px;"><div class="std-code">ISO 19902</div><div class="std-body"><div class="title">해양 구조물 · D/t &gt; 120</div><div class="sub">박벽 대경관 강화 기준</div></div><div class="std-lim" style="color:var(--or);">≤ 0.5%</div></div>
+  <div class="std-row" style="margin-top:6px;"><div class="std-code">API 5L</div><div class="std-body"><div class="title">라인 파이프 · Body / End</div><div class="sub">끝단(End) 기준이 본체보다 엄격 · D &gt; 1,422mm 미입력 시 자동 PASS 대신 <b>AGREEMENT REQUIRED</b> 표시 (1.5%/1.0%는 참고용)</div></div><div class="std-lim">1.5% / 1.0%*</div></div>
+  <div class="std-row" style="margin-top:6px;"><div class="std-code">DNV</div><div class="std-body"><div class="title">DNV-OS-C401 · 일반 / 피로</div><div class="sub">해양 피로 하중 구조는 0.5% 이하 필수</div></div><div class="std-lim">1.0% / 0.5%</div></div>
+  <div class="callout"><strong>※ 규격 검토·엔진 가정 주석</strong><p>본 프로그램은 단위 폭 선형 탄성 링 이론(I=t³/12) 기반의 개념·비교 검토용입니다(ΔD/D &gt; 5%는 선형 이론 경고 기준, Brazier D/t는 예비 위험도 지표). 최종 제작·승인 시 프로젝트 규격 적용 판본·조항 대조 및 FEA/실측 검증이 필요합니다.</p></div>
+  </div>
+</section>
+
+<section id="s10">
+  <div class="sec-hdr"><div class="sec-num">10</div><h2>핵심 계산 공식</h2></div>
+  <div class="sec-body" id="b-s10">
+<h4>기본 변수</h4>
+  <table class="ftbl">
+    <tr class="frow"><td>D_mean = D − t</td><td>평균 직경 (mm)</td></tr>
+    <tr class="frow"><td>R = (D − t) / 2</td><td>평균 반경 (mm)</td></tr>
+    <tr class="frow"><td>A = π(D² − ID²) / 4</td><td>단면적 (mm²)</td></tr>
+    <tr class="frow"><td>w = γ × A</td><td>단위 길이당 자중 (N/mm) · γ = 7.85×10⁻⁵ N/mm³</td></tr>
+    <tr class="frow"><td>I_ring = t³ / 12</td><td>링 단위 폭 관성모멘트 (mm⁴/mm) — 전 지지상태 링 해석 공통</td></tr>
+    <tr class="frow"><td>I_beam = π(D⁴ − ID⁴) / 64</td><td>원형 단면 2차 모멘트 (mm⁴) — 단순보 축방향 처짐 계산용</td></tr>
+  </table>
+  <h4>자연상태 — Roark Ring</h4>
+  <table class="ftbl">
+    <tr class="frow"><td>dDv = −0.1488 · w · R³ / (E·I_ring)</td><td>수직경 변화량 (mm)</td></tr>
+    <tr class="frow"><td>dDh = +0.1369 · w · R³ / (E·I_ring)</td><td>수평경 변화량 (mm)</td></tr>
+    <tr class="frow highlight"><td>oval = 0.2857 · w · R³ / (E·I_ring)</td><td>전방위 진원도 = D_max − D_min (반링 자중 적분으로 바닥 반력 R_base = 2V_B 독립 검증)</td></tr>
+  </table>
+  <h4>120° 새들 — 균일 반경방향 접촉압 (2α = 120°)</h4>
+  <table class="ftbl">
+    <tr class="frow highlight"><td>oval_saddle ≈ oval_natural × 0.4956</td><td>접촉호 2α=120° 반경방향 분포압을 링 Green 함수로 직접 적분</td></tr>
+  </table>
+  <h4>터닝롤러 — Castigliano · 전방위 링 적분 (N=2,000, 0.5° 격자 + 황금분할 탐색)</h4>
+  <table class="ftbl">
+    <tr class="fgroup"><td colspan="2">반경방향 법선 반력 &amp; 대칭 피벗 보기 가정 (∑Fy = W)</td></tr>
+    <tr class="frow"><td>TR2: N = W / (2·cosα)</td><td>단일 롤러 반경방향 법선 반력 (수직성분 N·cosα = W/2)</td></tr>
+    <tr class="frow"><td>Double Roller: N₁ = N₂ = W / [4·cos(α_c)·cos(γ)]</td><td>등간격 대칭 피벗 보기(L₁=L₂) 가정 시 내·외측 롤러 등분배 (∑Fy = W)</td></tr>
+    <tr class="fgroup"><td colspan="2">부정정 (M_A, N_A) 동시 해법 &amp; 전방위 진원도</td></tr>
+    <tr class="frow"><td>∫₀ᵖ M(φ)dφ = 0 · ∫₀ᵖ M(φ)·(1−cosφ)dφ = 0</td><td>상부 단면 휨모멘트 M_A·축력 N_A 연립 해석</td></tr>
+    <tr class="frow"><td>D(θ) = D + ΔD(θ)</td><td>θ ∈ [0°, 90°] 0.5° 격자(181점) + 황금분할 극값 보정(tol = 10⁻⁴ rad)</td></tr>
+    <tr class="frow"><td>oval = max D(θ) − min D(θ)</td><td>수직·수평뿐 아니라 45° 대각 타원화까지 포착</td></tr>
+    <tr class="frow highlight"><td>수치 최적화 검증: α_opt = 45.0° ★</td><td>argmin_α [D_max(α)−D_min(α)] = 45.0° (m=2 상쇄, 전방위 ≈ 자연의 5.68%)</td></tr>
+  </table>
+  <h4>Hertz 접촉 응력 (선접촉 · 세트 분담 길이 반영)</h4>
+  <table class="ftbl">
+    <tr class="frow"><td>α = arcsin(C-C / (D + rd))</td><td>강관 외경(D)과 롤러 외경(rd) 중심거리 기반 지지각</td></tr>
+    <tr class="frow"><td>F = N_per_mm × (L / n_sets)</td><td>롤러 1개 부담 하중 (세트당 분담 길이 L_trib = L / n_sets)</td></tr>
+    <tr class="frow"><td>R_eff = Rp·Rr / (Rp + Rr)</td><td>유효 접촉 반경</td></tr>
+    <tr class="frow"><td>1 / E_eff = (1−ν_p²)/E_p + (1−ν_r²)/E_r</td><td>일반 유효 탄성 계수 (Steel / Urethane / Rubber 반영)</td></tr>
+    <tr class="frow"><td>b = √(4·F·R_eff / π·cl·E_eff)</td><td>접촉 반폭 (mm)</td></tr>
+    <tr class="frow highlight"><td>P_max = 2·F / (π·cl·b)</td><td>최대 접촉 응력 — Steel 기준 안정 &lt; 600 MPa (D≥6000 또는 &gt;500MPa 우레탄 권장)</td></tr>
+  </table>
+  <h4>롤러 세트 최적화 (구조 기준 스팬)</h4>
+  <table class="ftbl">
+    <tr class="fgroup"><td colspan="2">구조 기준 허용 스팬</td></tr>
+    <tr class="frow"><td>δ_allow = 0.0005 · D</td><td>허용 처짐 (0.05%D)</td></tr>
+    <tr class="frow"><td>L_defl = ⁴√(384·E·I_beam·δ_allow / 5·w)</td><td>처짐 기준 허용 스팬</td></tr>
+    <tr class="frow"><td>span_hz = [600²·π·cl·R_eff / (E_eff·w)] × 2·cos45°</td><td>Hertz 기준 허용 스팬 (세트당 2롤러 반경방향 하중, P = 600 MPa)</td></tr>
+    <tr class="fgroup"><td colspan="2">세트 수 결정</td></tr>
+    <tr class="frow"><td>n_struct = max(n_defl, n_hertz, n_LD, n_span, 2)</td><td>구조 기준 (완료 Girth Weld 미포함)</td></tr>
+    <tr class="frow"><td>n_active = min(max(effNA + 3, 4), n_max_phys)</td><td>유효 진행 용접 effNA = min(active, nW) &gt; 0 시 (단척 물리 상한 적용)</td></tr>
+    <tr class="frow result"><td>n_rec = max(n_struct, n_active, n_overhang, 2)</td><td>최종 권장 세트 수</td></tr>
+    <tr class="frow result"><td>span = L / (n_rec + 1)&nbsp;&nbsp;&nbsp;[mm]</td><td>균등 배치 간격</td></tr>
+  </table>
+  </div>
+</section>
+
+<section id="s11">
+  <div class="sec-hdr"><div class="sec-num">11</div><h2>TR2 각도별 진원도 (D=3,000mm, t=10mm · 전방위)</h2></div>
+  <div class="sec-body" id="b-s11">
+<div class="tbl-wrap"><table>
+    <thead><tr><th>α (°)</th><th>스팬 (°)</th><th>δv (mm)</th><th>δh (mm)</th><th>진원도 (mm)</th><th>진원도 (%)</th><th>vs 자연</th><th>비고</th></tr></thead>
+    <tbody>
+      <tr><td>30</td><td>60</td><td class="mono">−55.38</td><td class="mono">+60.25</td><td class="mono">115.63</td><td class="mono">3.8542</td><td class="mono">56.46%</td><td>—</td></tr>
+      <tr><td>40</td><td>80</td><td class="mono">−17.82</td><td class="mono">+27.38</td><td class="mono">45.20</td><td class="mono">1.5066</td><td class="mono">22.07%</td><td>—</td></tr>
+      <tr style="background:var(--acbg);"><td><b>45.0</b></td><td><b>90.0</b></td><td class="mono"><b>+5.47</b></td><td class="mono"><b>+5.47</b></td><td class="mono"><b>11.64</b></td><td class="mono"><b>0.3879</b></td><td class="mono"><b>5.68%</b></td><td><b>★ 이론·현장 최적 (m=2 상쇄)</b></td></tr>
+      <tr><td>49.1</td><td>98.2</td><td class="mono">+27.40</td><td class="mono">−16.02</td><td class="mono">43.46</td><td class="mono">1.4486</td><td class="mono">21.22%</td><td>구 모델 참조각 (ref)</td></tr>
+      <tr><td>55</td><td>110</td><td class="mono">+64.88</td><td class="mono">−54.22</td><td class="mono">119.09</td><td class="mono">3.9698</td><td class="mono">58.15%</td><td>—</td></tr>
+      <tr><td>60</td><td>120</td><td class="mono">+104.35</td><td class="mono">−95.92</td><td class="mono">200.27</td><td class="mono">6.6757</td><td class="mono">97.78%</td><td>—</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+</section>
+
+<section id="s12">
+  <div class="sec-hdr"><div class="sec-num">12</div><h2>현장 작업 체크리스트 (체크리스트 탭)</h2></div>
+  <div class="sec-body" id="b-s12">
+<div class="tbl-wrap"><table>
+    <thead><tr><th>No</th><th>항목</th><th>기준</th><th>조치</th></tr></thead>
+    <tbody>
+      <tr><td>1</td><td><b>γ_eff 계산</b></td><td>피벗 보지 평형(N1=N2): 최적 α_center = 45.0°</td><td>레이저 레벨기 ±2° 이내 설치</td></tr>
+      <tr><td>2</td><td><b>Brazier 위험도</b></td><td>D/t &gt; 300 → 좌굴위험 · &gt;200 → 주의</td><td>내부 스파이더 / Stiffener Ring 간격 ≤ 4D</td></tr>
+      <tr><td>3</td><td><b>Hertz 접촉압</b></td><td>P_max &gt; 500 MPa → 위험</td><td>우레탄 라이닝 (Shore 80A~90A)</td></tr>
+      <tr><td>4</td><td><b>지지 스팬</b></td><td>권장 ≤ D/2</td><td>롤러 쌍 3개 이상 배치</td></tr>
+      <tr><td>5</td><td><b>γ 수렴</b></td><td>γ &lt; 5° → 주의</td><td>가변폭 터닝롤러 사용</td></tr>
+      <tr><td>6</td><td><b>복합 열변형</b></td><td>비선형 중첩</td><td>냉각 전·후 레이저 프로파일러</td></tr>
+      <tr><td>7</td><td><b>최종 판정</b></td><td>API 2B ≤ 1.0%<br>ISO D/t&gt;120 → ≤ 0.5%</td><td>PASS 확인 후 규격 판정 하단 패널에 저장</td></tr>
+    </tbody>
+  </table></div>
+  </div>
+</section>
+
+<section id="s13">
+  <div class="sec-hdr"><div class="sec-num">13</div><h2>실무 지침</h2></div>
+  <div class="sec-body" id="b-s13">
+<h3>지지 방식 선택 (vs 자연상태 비율)</h3>
+  <div class="tbl-wrap"><table>
+    <thead><tr><th>상황</th><th>권장 방식</th><th>자연 대비 진원도</th></tr></thead>
+    <tbody>
+      <tr><td>단순 보관·이송</td><td>② 120° 새들</td><td class="mono">≈ 49.6% (균일 반경방향 압력)</td></tr>
+      <tr><td>제작·용접 회전 (최적)</td><td>③-B TR2 α=45° ★</td><td class="mono">≈ 5.7% (m=2 상쇄)</td></tr>
+      <tr><td>구 모델 참조 비교</td><td>③-A TR2 α=49.1° (ref)</td><td class="mono">≈ 21.2%</td></tr>
+      <tr><td>고중량 대형</td><td>④ 더블롤러 α_c=45°</td><td class="mono">≈ 4.3% (피벗 평형 N1=N2)</td></tr>
+    </tbody>
+  </table></div>
+  <h3>용접 작업 권고</h3>
+  <ul>
+    <li><b>용접 진행 중:</b> 최소 4세트 — 용접부 좌우 2세트씩 배치</li>
+    <li><b>다수 터닝롤러 설치:</b> 용접 중 또는 단순 거치(보관·대기) 상태이더라도 진원도 개선을 위해서는 가능한 많은 터닝롤러를 설치할 필요가 있습니다.</li>
+    <li><b>원주방향 용접:</b> 대칭 스킵 용접 적용 — 잔류응력 균형</li>
+    <li><b>새들 → TR2 전환:</b> 회전 용접 시 반드시 터닝롤러 TR2로 교체</li>
+    <li><b>용접 전 측정:</b> D_min · D_max 또는 기준 D 대비 편차 입력 후 API 2B 기준 이내 확인</li>
+  </ul>
+  <div class="callout danger"><strong>⚠ FAIL 발생 시 교정</strong>
+    <p>① Mechanical Cold Fitting — 기계적 냉간 교정<br>② Heat Straightening — 열교정<br>③ Internal Stiffener Ring — 내부 보강링 설치 후 재측정</p></div>
+  </div>
+</section>
+
+  <div style="text-align:center;padding:32px 0 12px;color:var(--txl);font-size:11px;">
+    Tubular Ovality &amp; Roller Analysis · v0.5 Beta · ISK · © 2026 ISK. All rights reserved.
+  </div>
+</main>
+</div>
+<button class="back-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Top">↑</button>
+<script>
+// ── I18N DATA ──────────────────────────────────────────────
+var I18N={
+  "ko": {
+    "heroTitle": "📖 TOA 전문 매뉴얼",
+    "heroSub": "Carbon Steel 대형 강관 진원도 분석 · 터닝롤러 최적화 · 규격 판정 완전 가이드",
+    "scopeTitle": "⚠ 적용 범위 및 엔지니어링 한계 안내 (Engineering Scope & Limitations)",
+    "scopeBody": "본 애플리케이션은 현장 사전 검토·롤러 세팅·품질 협의를 위한 1차 엔지니어링 검토 도구로 즉시 활용 가능하나, 2D 선형 탄성 링 이론 기반의 특성상 최종 설계·제작 승인(Code Sign-off)용 해석기로 단독 사용할 수 없습니다. 최종 제작 승인 전에는 반드시 적용 규격 조항 대조, 3D FEA 및 현장 계측 검증을 병행하시기 바랍니다.",
+    "navStart": "시작하기",
+    "navSupport": "지지 방식",
+    "navResults": "결과 분석",
+    "navStd": "규격 · 공식",
+    "navAppendix": "부록",
+    "s1": "앱 개요 및 화면 구성",
+    "s2": "강관 사양 입력 · D/t 실시간 패널",
+    "s3": "터닝롤러 Specs",
+    "s4": "규격 / 옵션 (상단 3열 상부)",
+    "s5": "현장 실측 입력 (상단 3열 하부)",
+    "s6": "예측 진원도 카드 (3개) · 좌굴 경고 · 종합 판정",
+    "s7": "롤러 세트 최적화 — 구조 기준 스팬 · 지지 성능",
+    "s8": "출력 탭 (5탭) · 저장된 기록",
+    "s9": "규격 판정 기준",
+    "s10": "핵심 계산 공식",
+    "s11": "TR2 각도별 진원도 (D=3,000mm, t=10mm · 전방위)",
+    "s12": "현장 작업 체크리스트 (체크리스트 탭)",
+    "s13": "실무 지침",
+    "nav": {
+      "s1": "1. 앱 개요",
+      "s2": "2. 강관 사양",
+      "s3": "3. 터닝롤러 Specs",
+      "s4": "4. 규격 / 옵션",
+      "s5": "5. 현장 실측",
+      "s6": "6. 예측 진원도 · 판정",
+      "s7": "7. 롤러 세트 최적화",
+      "s8": "8. 출력 탭 가이드",
+      "s9": "9. 규격 판정 기준",
+      "s10": "10. 핵심 계산 공식",
+      "s11": "11. TR2 각도별 진원도표",
+      "s12": "12. 체크리스트",
+      "s13": "13. 실무 지침"
+    }
+  },
+  "en": {
+    "heroTitle": "📖 TOA Reference Manual",
+    "heroSub": "Carbon Steel Large Pipe Ovality Analysis · Turning Roller Optimization · Code Compliance Guide",
+    "scopeTitle": "⚠ Engineering Scope & Limitations",
+    "scopeBody": "This application is a practical first-pass engineering tool for shop planning, turning roller setup, and quality alignment; however, due to its 2D linear elastic ring basis, it cannot be used standalone for final design or fabrication Code Sign-off. Always verify governing specification clauses with 3D FEA and field dimensional inspection before final approval.",
+    "navStart": "Getting Started",
+    "navSupport": "Support Types",
+    "navResults": "Results",
+    "navStd": "Codes & Formulas",
+    "navAppendix": "Appendix",
+    "s1": "App Overview & UI Layout",
+    "s2": "Tubular Specs & D/t Panel",
+    "s3": "Turning Roller Specs",
+    "s4": "Standards / Options",
+    "s5": "Field Measurement Input",
+    "s6": "Predicted Ovality, Buckling & PASS/FAIL",
+    "s7": "Roller Set Optimization & Performance",
+    "s8": "Output Tabs (5) & Saved Panel",
+    "s9": "Code Compliance Criteria",
+    "s10": "Key Calculation Formulas",
+    "s11": "TR2 Angle vs Ovality (D=3,000mm, t=10mm · Full Azimuth)",
+    "s12": "Field Work Checklist (Checklist Tab)",
+    "s13": "Field Guidelines",
+    "nav": {
+      "s1": "1. App Overview",
+      "s2": "2. Tubular Specs",
+      "s3": "3. Roller Specs",
+      "s4": "4. Code / Options",
+      "s5": "5. Field Measurement",
+      "s6": "6. Ovality & Verdict",
+      "s7": "7. Roller Optimization",
+      "s8": "8. Output Tabs",
+      "s9": "9. Code Criteria",
+      "s10": "10. Key Formulas",
+      "s11": "11. TR2 Angle Table",
+      "s12": "12. Checklist",
+      "s13": "13. Field Guidelines"
+    },
+    "body": {
+      "s1": "<div class=\"tbl-wrap\"><table>\n    <thead><tr><th>Item</th><th>Description</th></tr></thead>\n    <tbody>\n      <tr><td><b>Governing Theory</b></td><td>Roark's Formulas 9th Ed. (I_ring = t³/12) · Castigliano Energy Method (coupled M_A·N_A · radial roller reactions) · Full-Azimuth Green's Integration (θ∈[0°,90°]) · Hertz Line Contact</td></tr>\n      <tr><td><b>Applicable Codes</b></td><td>API 2B · ISO 19902 · API 5L (D&gt;1,422mm As Agreed note) · DNV-OS-C401</td></tr>\n      <tr><td><b>Diameter Range</b></td><td class=\"mono\">Φ 3,000 ~ 15,000 mm (Carbon Steel)</td></tr>\n      <tr><td><b>Material Constants</b></td><td class=\"mono\">E = 206,000 MPa · γ = 7.85×10⁻⁵ N/mm³ · ν = 0.3</td></tr>\n      <tr><td><b>Ring Moment of Inertia</b></td><td class=\"mono\">I_ring = t³ / 12 (unit-width linear elastic ring; beam deflection uses full-section I_beam)</td></tr>\n    </tbody>\n  </table></div>\n  <h3>1-1. Top-to-Bottom Workspace Layout (Unified Sub-Cards)</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>Zone</th><th>Left → Right 4-Column Layout</th></tr></thead>\n    <tbody>\n      <tr><td><b>Top Input Bar</b><br><small>Parameters</small></td><td>① <b>Tubular Specs</b> · ② <b>Turning Roller Specs</b> · ③ <b>Standards/Options + Field Measurement (opt.)</b> stacked · ④ <b>D / t</b> live panel (right)</td></tr>\n      <tr><td><b>Bottom Summary Row</b><br><small>Key Results</small></td><td>① <b>Min. Recommended Roller Sets</b> · ② <b>Roller Support Performance</b> · ③ <b>Predicted Ovality</b> (Natural · Supported · Measured) · ④ <b>Run Analysis · Compare All · 💾 Save</b> buttons + overall <b>PASS/FAIL</b> pill below</td></tr>\n      <tr><td><b>Detail Tabs &amp; Saved</b><br><small>5 Tabs + Panel</small></td><td><b>Compliance</b> · <b>Compare</b> · <b>Diagram</b> · <b>Recommendations</b> · <b>Checklist</b> (5 Tabs) + standalone collapsible <b>Saved Records</b> card below</td></tr>\n    </tbody>\n  </table></div>\n  <div class=\"callout ok\"><strong>✓ Model Verification</strong><p>Coupled M_A·N_A top-section solution exactly reproduces Roark Case 1 (diametral load) and Case 15 (self-weight on base), and satisfies vertical equilibrium (∑Fy = W, residual 0.00%) across all roller and saddle modes.</p></div>",
+      "s2": "<h3>2-1. Input Fields</h3>\n  <div class=\"inp-grid\">\n    <div class=\"inp-box\"><div class=\"lbl\">Diameter</div><div class=\"name\">D (mm)</div><div class=\"range\">100~20,000 · step 100</div><div class=\"id\">id: iD</div></div>\n    <div class=\"inp-box\"><div class=\"lbl\">Thickness</div><div class=\"name\">t (mm)</div><div class=\"range\">5~500 · step 5</div><div class=\"id\">id: it</div></div>\n    <div class=\"inp-box\" style=\"border-color:var(--ac);\"><div class=\"lbl\" style=\"color:var(--ac);\">Length</div><div class=\"name\">L (mm)</div><div class=\"range\">500~100,000 · step 500</div><div class=\"id\">id: i-plen</div></div>\n    <div class=\"inp-box\"><div class=\"lbl\">Total Girth Welds</div><div class=\"name\">Weld Count</div><div class=\"range\">0~50 · step 1 · def 5</div><div class=\"id\">id: i-nweld</div></div>\n    <div class=\"inp-box\" style=\"border-color:var(--ac);background:var(--acbg);\"><div class=\"lbl\" style=\"color:var(--ac);font-weight:800;\">Active Welds ★</div><div class=\"name\">In Progress</div><div class=\"range\">0~10 · step 1 · def 1</div><div class=\"id\">id: i-aweld</div></div>\n    <div class=\"inp-box\"><div class=\"lbl\">Plate Width (Ref.)</div><div class=\"name\">Plate Width (mm)</div><div class=\"range\">500~10,000 · step 100</div><div class=\"id\">id: i-platespan</div></div>\n  </div>\n  <h3>2-2. D/t Live Panel (Top Right Column · Includes Brazier Alerts)</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>Metric</th><th>Formula / Rule</th><th>Color &amp; Alert</th></tr></thead>\n    <tbody>\n      <tr><td><b>D / t Ratio</b></td><td class=\"mono\">D ÷ t</td><td>&gt;300 Red · &gt;200 Orange · &gt;120 Blue · else Green</td></tr>\n      <tr><td><b>Thin / Thick Badge</b></td><td class=\"mono\">D/t ≥ 20</td><td>Blue Thin-Wall · Orange Thick-Wall</td></tr>\n      <tr><td><b>R (mm)</b></td><td class=\"mono\">(D − t) / 2</td><td>Mean neutral-axis radius</td></tr>\n      <tr><td><b>ISO limit</b></td><td class=\"mono\">D/t &gt; 120 → ≤ 0.5%</td><td>Orange / Green</td></tr>\n      <tr><td><b>Brazier</b></td><td class=\"mono\">D/t &gt; 300 HIGH · &gt;200 MOD</td><td>HIGH ⚠ Red · MOD △ Orange · LOW Green (+ live banner <code>dt-brazier-alert</code>)</td></tr>\n      <tr><td><b>L / D</b></td><td class=\"mono\">L ÷ D</td><td>&gt;10 Orange · &gt;6 Blue · else Green</td></tr>\n    </tbody>\n  </table></div>",
+      "s3": "<h3>3-1. 7 Support Types (Bottom Support Only · Radial Normal Reactions)</h3>\n  <div class=\"sup-grid\">\n    <div class=\"sup-card\"><div class=\"code\">NATURAL</div><div class=\"lbl\">① Natural State</div><div class=\"desc\">Roark self-weight ring deflection (full-azimuth D_max−D_min). Baseline.</div></div>\n    <div class=\"sup-card\"><div class=\"code\">SADDLE120</div><div class=\"lbl\">② 120° Saddle</div><div class=\"desc\">Uniform radial pressure (2α=120°) integrated on ring. ~49.6% of natural. Storage/transport.</div></div>\n    <div class=\"sup-card\"><div class=\"code\">TR2_491 (ref)</div><div class=\"lbl\">③-A TR2 α=49.1° (ref)</div><div class=\"desc\">Legacy reference angle (vertical-only reaction, N_A omitted). ~21.2% full-azimuth (not optimal).</div></div>\n    <div class=\"sup-card best\"><div class=\"code\">TR2_45 ★</div><div class=\"lbl\">③-B TR2 α=45° ★</div><div class=\"desc\">Analytical &amp; field optimum (m=2 cancelled, δv=δh). ~5.7% full-azimuth due to 45° bending.</div></div>\n    <div class=\"sup-card\"><div class=\"code\">TR2_30</div><div class=\"lbl\">③-C TR2 α=30°</div><div class=\"desc\">60° span (~56.5% of natural).</div></div>\n    <div class=\"sup-card\"><div class=\"code\">TR2_CUSTOM</div><div class=\"lbl\">③-D TR2 Custom</div><div class=\"desc\">Custom α input from 10° to 80°.</div></div>\n    <div class=\"sup-card best\"><div class=\"code\">TR4_STD</div><div class=\"lbl\">④-A TR4 4-Roll (22.5°/67.5°)</div><div class=\"desc\">4-point turning roller support (22.5°/67.5°). Reduces full-azimuth ovality to ~0.35% of natural.</div></div>\n    <div class=\"sup-card\"><div class=\"code\">TR4_CUSTOM</div><div class=\"lbl\">④-B TR4 4-Roll Custom (α1/α2)</div><div class=\"desc\">User-defined inner (α1) and outer (α2) 4-point roller angles (e.g., 30°/60°).</div></div>\n    <div class=\"sup-card\"><div class=\"code\">DOUBLE_ROLLER</div><div class=\"lbl\">⑤ Double Roller (4-Roll Pivot)</div><div class=\"desc\">4-point bogie support (α_c±γ). Equalized (N1=N2), optimal α_c=45° (~4.3%).</div></div>\n  </div>\n  <h3>3-2. Roller Parameters</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>Parameter</th><th>ID</th><th>Range</th><th>Default</th><th>Description</th></tr></thead>\n    <tbody>\n      <tr><td><b>Roller Material</b></td><td class=\"mono\">i-rmat</td><td>steel / urethane</td><td class=\"mono\">steel</td><td>Urethane (Shore 80A~90A) required for D≥6000mm or P_max&gt;500MPa</td></tr>\n      <tr><td><b>Roller Dia</b></td><td class=\"mono\">i-rdia</td><td class=\"mono\">100~2,000mm</td><td class=\"mono\">600mm</td><td>Used for Hertz contact stress &amp; allowable span</td></tr>\n      <tr><td><b>C-C Spacing</b></td><td class=\"mono\">i-cc</td><td class=\"mono\">100~5,000mm</td><td>Auto (R×√2)</td><td>Auto-calculated for α=45°</td></tr>\n      <tr><td><b>Contact Length</b></td><td class=\"mono\">i-cl</td><td class=\"mono\">100~10,000mm</td><td class=\"mono\">300mm</td><td>Effective axial contact length for Hertz stress</td></tr>\n      <tr><td><b>α (Custom)</b></td><td class=\"mono\">i-a</td><td class=\"mono\">10°~80°</td><td class=\"mono\">45°</td><td>Shown when TR2_CUSTOM is selected</td></tr>\n      <tr><td><b>α_center (DR)</b></td><td class=\"mono\">i-ac</td><td class=\"mono\">20°~65°</td><td class=\"mono\">45°</td><td>Bogie frame center angle (45.0° optimal under N1=N2)</td></tr>\n      <tr><td><b>γ_roller (DR)</b></td><td class=\"mono\">i-gr</td><td class=\"mono\">1°~20°</td><td class=\"mono\">10°</td><td>Half-angle spread inside pivoted bogie frame</td></tr>\n    </tbody>\n  </table></div>",
+      "s4": "<p>Stacked vertically in column 3 of the top bar (left of <code>D / t</code>), directly above <b>Field Measurement (opt.)</b>.</p>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>Option</th><th>ID</th><th>Values</th><th>Allowable Limit</th></tr></thead>\n    <tbody>\n      <tr><td><b>API 5L Zone</b></td><td class=\"mono\">i-zone</td><td>body / end</td><td>body ≤ 1.5% · end ≤ 1.0% (D&gt;1,422mm As Agreed note)</td></tr>\n      <tr><td><b>DNV Fatigue</b></td><td class=\"mono\">i-fat</td><td>false / true</td><td>Normal ≤ 1.0% · Fatigue sensitive ≤ 0.5%</td></tr>\n    </tbody>\n  </table></div>",
+      "s5": "<p>Located directly below Standards/Options. Top row takes absolute <b>D_min (OD, mm)</b> (left) and <b>D_max (OD, mm)</b> (right); bottom row takes <b>−/+ deviation from nominal D (mm)</b> (<code>id: i-devmin</code>, <code>i-devmax</code>). Both rows synchronize two-way automatically (e.g., entering <code>-2</code> and <code>+2</code> at <code>D=8,000mm</code> sets <code>D_min=7,998mm</code> and <code>D_max=8,002mm</code>). If <b>D_max &lt; D_min</b>, an input error alert is shown immediately; valid inputs update the <b>Field Measured Card</b>, <b>Diagram (green dash-dot curve)</b>, and <b>Compliance Tab</b> live.</p>\n  <table class=\"ftbl\">\n    <tr class=\"frow\"><td>D_min = D + ΔD_min · D_max = D + ΔD_max</td><td>Two-way synchronization between deviation and OD inputs</td></tr>\n    <tr class=\"frow\"><td>Ovality (%) = (D_max − D_min) / D_nominal × 100</td><td>Measured cross-section ovality (requires D_max ≥ D_min)</td></tr>\n  </table>",
+      "s6": "<div class=\"tbl-wrap\"><table>\n    <thead><tr><th>Card</th><th>Top Accent</th><th>Content</th><th>Buckling Warning &amp; Color Rule</th></tr></thead>\n    <tbody>\n      <tr><td><b>Natural State</b></td><td>Red (<code>#ef4444</code>)</td><td>Full-azimuth Roark self-weight ovality (mm, %)</td><td>&gt;1% Red / 0.3~1% Orange / ≤0.3% Blue · Live Brazier warning badge</td></tr>\n      <tr><td><b>Supported State</b></td><td>Blue (<code>--ac</code>)</td><td>Selected support ovality + vsNatural(%)</td><td>&gt;1% Red / 0.3~1% Orange / ≤0.3% Blue · Live Brazier warning badge</td></tr>\n      <tr><td><b>Field Measured</b></td><td>Green (<code>#10b981</code>)</td><td>Measured ovality + API 2B / ISO / DNV pills</td><td>PASS Green / FAIL Red · Live Brazier warning badge</td></tr>\n    </tbody>\n  </table></div>\n  <div class=\"callout warn\"><strong>⚠ Per-Card Buckling Risk / Caution Alerts</strong>\n    <p><code>TOAEngine.evaluateStateBuckling</code> evaluates each card independently by D/t and strain, displaying red <b>⚠ Buckling Risk (Brazier High)</b> when D/t &gt; 300 or flattening is severe, and orange <b>⚠ Buckling Caution (Brazier)</b> when D/t &gt; 200.</p>\n    <p style=\"margin-top:6px;\">In addition, <code>TOAEngine.evaluateOvalBendingRisk</code> evaluates ovalization %, D/t, ring bending stress (<b>σ_b = 6M_max/t²</b>), and beam sag (δ) to trigger a top-level <b>Ovalization &amp; Bending Alert Banner (CRITICAL pulse / WARNING)</b> with a one-click jump to reinforcement proposals.</p></div>\n  <div class=\"callout ok\"><strong>▶ Action Stack &amp; Overall Verdict Badge (<code>#stat-pill</code>)</strong>\n    <p>Column 4 of the bottom summary row holds <b>Run Analysis</b> · <b>Compare All</b> · <b>💾 Save</b> stacked above the overall code compliance badge (<code>⦿ Idle</code> / <code>✓ PASS</code> / <code>⚠ FAIL</code>).</p></div>",
+      "s7": "<div class=\"callout ok\"><strong>✓ Governing Span Principle &amp; Layout</strong>\n    <p><b>Roller Support Performance</b> (contact angle, load/roller, Hertz stress, local deformation, and ∑Fy=W equilibrium check) sits directly to the right of <b>Min. Recommended Roller Sets</b>. Completed girth welds do not increase required roller sets; only structural span limits and active in-progress welds govern.</p></div>\n  <h3>7-1. Weld Input Distinction</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>Input</th><th>ID</th><th>Role</th><th>Effect on Roller Sets</th></tr></thead>\n    <tbody>\n      <tr><td><b>Girth Welds</b><br><small>Visual</small></td><td class=\"mono\">i-nweld</td><td>Draws ▽ weld markers · 0 means seamless single pipe</td><td><span class=\"pill-p\">Caps effNA</span></td></tr>\n      <tr><td><b>Active Welds</b> ★</td><td class=\"mono\">i-aweld</td><td>Welds currently in progress (effNA = min(active, nW))</td><td><span class=\"pill-f\">Governs Sets</span></td></tr>\n      <tr><td><b>Plate Width</b><br><small>Reference</small></td><td class=\"mono\">i-platespan</td><td>Reference plate width shown in side-view notes</td><td><span class=\"pill-p\">None</span></td></tr>\n    </tbody>\n  </table></div>\n  <h3>7-2. Governing Criteria</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>#</th><th>Criterion</th><th>Formula</th><th>Notes</th></tr></thead>\n    <tbody>\n      <tr><td>①</td><td><b>Deflection</b></td><td class=\"mono\">L_defl = ⁴√(384·E·I_beam·0.0005D / 5·w)</td><td>D=8000, t=25 → L_defl ≈ 50.3m</td></tr>\n      <tr><td>②</td><td><b>Hertz Stress</b></td><td class=\"mono\">span_hz = [600²·π·cl·R_eff / (E_eff·w)] × 2·cos45°</td><td>2 rollers/set radial share (P ≤ 600 MPa)</td></tr>\n      <tr><td>③</td><td><b>L/D &amp; Spacing</b></td><td class=\"mono\">≤2→2 / 2~4→3 / 4~7→4 / 7~10→5 / &gt;10→6 · Span ≤ 2.5D</td><td>Practical alignment rules</td></tr>\n      <tr><td>④</td><td><b>Active Welds</b> ★</td><td class=\"mono\">n ≥ min(max(effNA + 3, 4), n_max_phys)</td><td>2 sets each side of weld (capped on short pipes)</td></tr>\n    </tbody>\n  </table></div>\n  <h3>7-3. Final Set Count Equations</h3>\n  <table class=\"ftbl\">\n    <tr class=\"fgroup\"><td colspan=\"2\">Structural Criteria (Deflection · Hertz · L/D · Span ≤ 2.5D)</td></tr>\n    <tr class=\"frow\"><td>n_struct = max(n_defl, n_hertz, n_LD, n_span, 2)</td><td>Independent of completed girth welds</td></tr>\n    <tr class=\"fgroup\"><td colspan=\"2\">Active Welding Criteria (only when effNA = min(active, nW) &gt; 0)</td></tr>\n    <tr class=\"frow\"><td>n_active = min(max(effNA + 3, 4), n_max_phys)</td><td>effNA=0 if Girth Welds=0; capped by physical length</td></tr>\n    <tr class=\"frow\"><td>n_overhang = min(max(ceil(L / 3D) − 1, 4), n_max_phys)</td><td>Keeps end overhang ≤ 1.5D within physical limit</td></tr>\n    <tr class=\"fgroup\"><td colspan=\"2\">Physical Spacing Limit &amp; Output</td></tr>\n    <tr class=\"frow\"><td>n_max_phys = max(2, floor(L / max(cl·1.5, 500)))</td><td>Prevents roller overlap (e.g. L=1,000mm → 2 sets)</td></tr>\n    <tr class=\"frow result\"><td>n_rec = max(n_struct, n_active, n_overhang, 2)</td><td>Recommended roller sets</td></tr>\n    <tr class=\"frow result\"><td>span = L / (n_rec + 1)&nbsp;&nbsp;&nbsp;[mm]</td><td>Uniform center-to-center span</td></tr>\n  </table>\n  <div class=\"callout danger\"><strong>⚠ Why 4 Sets During Active Welding &amp; Single/Short Pipe Exception</strong>\n    <p>When welding a center girth seam, 4 sets place 2 sets on each side to maintain rotation stability, uniform root gap, and thermal distortion control. <b>However, when Girth Welds = 0 (single pipe) or L is short (e.g., L=1,000mm, L &lt; 4·minPitch)</b>, the 4-set active-weld rule does not apply and physical spacing limit (2 sets) governs.</p></div>\n  <h3>7-4. Example Cases</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>Case</th><th>Girth Welds</th><th>Active</th><th>Structural</th><th>Recommended</th></tr></thead>\n    <tbody>\n      <tr><td>D=8000 t=25, L=20m</td><td>9 (2m spacing)</td><td>1</td><td>3 sets (L/D=2.5→3)</td><td class=\"mono\"><b>4 sets</b></td></tr>\n      <tr><td>D=5000 t=20, L=18m</td><td>8 (2m spacing)</td><td>1</td><td>3 sets (L/D=3.6)</td><td class=\"mono\"><b>4 sets</b></td></tr>\n      <tr><td>D=3000 t=10, L=12m</td><td>5 (2m spacing)</td><td>2</td><td>3 sets (L/D=4.0)</td><td class=\"mono\"><b>5 sets</b></td></tr>\n      <tr><td>D=8000 t=20, L=1m</td><td><b>0</b></td><td><b>0</b></td><td>2 sets (single/short pipe)</td><td class=\"mono\"><b>2 sets</b></td></tr>\n    </tbody>\n  </table></div>\n  <div class=\"callout ok\"><strong>✓ Completed Welds Do Not Govern Roller Count</strong>\n    <p>With 2m plates and 9 completed welds vs. L_defl ≈ 50.3m (D=8000, t=25), completed welds act as a continuous beam and require no extra supports.</p></div>\n  <h3>7-5. Side View Legend</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>Visual Element</th><th>Description</th></tr></thead>\n    <tbody>\n      <tr><td><b>Pipe Profile</b></td><td>Elastic beam bending curve across roller spans</td></tr>\n      <tr><td><b>Turning Rollers S1, S2…</b></td><td>V-frame roller cradles numbered along pipe length</td></tr>\n      <tr><td><b>Welds W1, W2…</b></td><td>Yellow dashed vertical lines + ▽ symbols evenly spaced</td></tr>\n      <tr><td><b>Span Dimension</b></td><td>↔ center-to-center spacing displayed on first span</td></tr>\n      <tr><td><b>max δ</b></td><td>Maximum sag (mm, %D) bottom-right; red if over limit</td></tr>\n    </tbody>\n  </table></div>",
+      "s8": "<div class=\"tbl-wrap\"><table>\n    <thead><tr><th>Tab</th><th>Content</th><th>Availability</th></tr></thead>\n    <tbody>\n      <tr><td><b>Compliance</b></td><td>API 2B · ISO · API 5L · DNV PASS/FAIL + field check</td><td>After run</td></tr>\n      <tr><td><b>Compare</b></td><td>5-state horizontal bar chart + full-azimuth ovality &amp; % vs. natural table</td><td>After run / Compare All</td></tr>\n      <tr><td><b>Diagram</b></td><td><b>3-Color Circumferences</b> [Natural (red dashed <code>#ef4444</code>) · Supported (blue solid <code>#377feb</code>) · Measured (green dash-dot <code>#10b981</code>)] + 3-col legend + Side View</td><td>After run</td></tr>\n      <tr><td><b>Recommendations</b></td><td>CRITICAL / WARNING / CAUTION / INFO · auto preliminary Stiffener Ring, Spider Brace &amp; support span sizing + diagrams + <b>application guide (③ alone / ③+choose ① or ② / combine all)</b></td><td>After run</td></tr>\n      <tr><td><b>Checklist</b></td><td>Field work checklist + γ_eff, Brazier, Hertz, and Beam δ tiles</td><td>After run</td></tr>\n      <tr><td><b>Saved Records (Standalone Card)</b></td><td>Standalone card below 5 tabs: <b>saves/restores field measured values &amp; deviations</b> · Import · Export · <b>Report Target (<code>#i-rpt-target</code>)</b> · <b>5-section report checkboxes</b> · CSV/XLS/PDF (PRO) · Clear · <b>▲ Collapse / ▼ Expand</b></td><td>Always</td></tr>\n    </tbody>\n  </table></div>",
+      "s9": "<div class=\"std-row\"><div class=\"std-code\">API 2B</div><div class=\"std-body\"><div class=\"title\">Structural Pipe Fabrication</div><div class=\"sub\">t ≤ 50.8mm → max 6.4mm · D ≥ 1219mm → max 12.7mm · t &gt; 50.8mm → Ovality/t ≤ 1:8</div></div><div class=\"std-lim\">≤ 1.0%</div></div>\n  <div class=\"std-row\" style=\"margin-top:6px;\"><div class=\"std-code\">ISO 19902</div><div class=\"std-body\"><div class=\"title\">Offshore Structures · D/t ≤ 120</div><div class=\"sub\">Standard jackets and monopiles</div></div><div class=\"std-lim\">≤ 1.0%</div></div>\n  <div class=\"std-row\" style=\"margin-top:6px;\"><div class=\"std-code\">ISO 19902</div><div class=\"std-body\"><div class=\"title\">Offshore Structures · D/t &gt; 120</div><div class=\"sub\">Stricter requirement for thin-walled large tubulars</div></div><div class=\"std-lim\" style=\"color:var(--or);\">≤ 0.5%</div></div>\n  <div class=\"std-row\" style=\"margin-top:6px;\"><div class=\"std-code\">API 5L</div><div class=\"std-body\"><div class=\"title\">Line Pipe · Body / End</div><div class=\"sub\">Stricter end tolerance for girth-weld fit-up · D &gt; 1,422mm outputs <b>AGREEMENT REQUIRED</b> unless agreed limit is entered</div></div><div class=\"std-lim\">1.5% / 1.0%*</div></div>\n  <div class=\"std-row\" style=\"margin-top:6px;\"><div class=\"std-code\">DNV</div><div class=\"std-body\"><div class=\"title\">DNV-OS-C401 · Normal / Fatigue</div><div class=\"sub\">Fatigue-sensitive offshore members require ≤ 0.5%</div></div><div class=\"std-lim\">1.0% / 0.5%</div></div>\n  <div class=\"callout\"><strong>※ Engineering Disclaimer</strong><p>Conceptual &amp; comparative tool based on unit-width linear elastic ring theory (I = t³/12). Note: ΔD/D &gt; 5% is a program warning threshold; Brazier D/t is a screening indicator. Verify governing code clauses and perform FEA / dimensional checks prior to fabrication approval.</p></div>",
+      "s10": "<h4>Base Parameters</h4>\n  <table class=\"ftbl\">\n    <tr class=\"frow\"><td>D_mean = D − t</td><td>Mean ring diameter (mm)</td></tr>\n    <tr class=\"frow\"><td>R = (D − t) / 2</td><td>Mean neutral radius (mm)</td></tr>\n    <tr class=\"frow\"><td>A = π(D² − ID²) / 4</td><td>Cross-sectional steel area (mm²)</td></tr>\n    <tr class=\"frow\"><td>w = γ × A</td><td>Self-weight per unit length (N/mm) · γ = 7.85×10⁻⁵ N/mm³</td></tr>\n    <tr class=\"frow\"><td>I_ring = t³ / 12</td><td>Unit-width ring second moment (mm⁴/mm) — all ring ovality modes</td></tr>\n    <tr class=\"frow\"><td>I_beam = π(D⁴ − ID⁴) / 64</td><td>Full-section second moment (mm⁴) — axial beam sag</td></tr>\n  </table>\n  <h4>Natural State — Roark Ring</h4>\n  <table class=\"ftbl\">\n    <tr class=\"frow\"><td>dDv = −0.1488 · w · R³ / (E·I_ring)</td><td>Vertical diameter change (mm)</td></tr>\n    <tr class=\"frow\"><td>dDh = +0.1369 · w · R³ / (E·I_ring)</td><td>Horizontal diameter change (mm)</td></tr>\n    <tr class=\"frow highlight\"><td>oval = 0.2857 · w · R³ / (E·I_ring)</td><td>Full-azimuth ovality = D_max − D_min (base reaction R_base=2V_B independently verified by shear integral)</td></tr>\n  </table>\n  <h4>120° Saddle — Uniform Radial Contact Pressure (2α = 120°)</h4>\n  <table class=\"ftbl\">\n    <tr class=\"frow highlight\"><td>oval_saddle ≈ oval_natural × 0.4956</td><td>Direct Green's function integration of uniform 120° radial arc load</td></tr>\n  </table>\n  <h4>Turning Roller — Castigliano Full-Azimuth Integration (N=2,000, 0.5° Grid + Golden-Section)</h4>\n  <table class=\"ftbl\">\n    <tr class=\"fgroup\"><td colspan=\"2\">Radial Normal Reactions &amp; Equal-Arm Pivoted Bogie Assumption (∑Fy = W)</td></tr>\n    <tr class=\"frow\"><td>TR2: N = W / (2·cosα)</td><td>Single roller normal reaction (vertical component N·cosα = W/2)</td></tr>\n    <tr class=\"frow\"><td>Double Roller: N₁ = N₂ = W / [4·cos(α_c)·cos(γ)]</td><td>Assumes symmetric equal-arm pivoted bogie hinge (L₁=L₂, ∑Fy = W)</td></tr>\n    <tr class=\"fgroup\"><td colspan=\"2\">Coupled Redundants (M_A, N_A) &amp; Full-Azimuth Ovality</td></tr>\n    <tr class=\"frow\"><td>∫₀ᵖ M(φ)dφ = 0 · ∫₀ᵖ M(φ)·(1−cosφ)dφ = 0</td><td>Simultaneous solution for top-section bending M_A and axial force N_A</td></tr>\n    <tr class=\"frow\"><td>D(θ) = D + ΔD(θ)</td><td>θ ∈ [0°, 90°] sampled every 0.5° (181 pts) + Golden-Section refinement (tol = 10⁻⁴ rad)</td></tr>\n    <tr class=\"frow\"><td>oval = max D(θ) − min D(θ)</td><td>Captures both 0°/90° modes and 45° diagonal self-weight flattening</td></tr>\n    <tr class=\"frow highlight\"><td>Numerical Optimization: α_opt = 45.0° ★</td><td>argmin_α [D_max(α)−D_min(α)] = 45.0° (m=2 cancelled, ~5.68% of natural)</td></tr>\n  </table>\n  <h4>Hertz Line Contact Stress (Tributary Span Load)</h4>\n  <table class=\"ftbl\">\n    <tr class=\"frow\"><td>α = arcsin(C-C / (D + rd))</td><td>Exact support angle using pipe-to-roller center distance (D+rd)/2</td></tr>\n    <tr class=\"frow\"><td>F = N_per_mm × (L / n_sets)</td><td>Single roller load based on tributary length L_trib = L / n_sets</td></tr>\n    <tr class=\"frow\"><td>R_eff = Rp·Rr / (Rp + Rr)</td><td>Effective contact radius</td></tr>\n    <tr class=\"frow\"><td>1 / E_eff = (1−ν_p²)/E_p + (1−ν_r²)/E_r</td><td>General effective modulus (Steel / Urethane / Rubber)</td></tr>\n    <tr class=\"frow\"><td>b = √(4·F·R_eff / π·cl·E_eff)</td><td>Contact half-width (mm)</td></tr>\n    <tr class=\"frow highlight\"><td>P_max = 2·F / (π·cl·b)</td><td>Peak contact pressure — stable &lt; 600 MPa (urethane recommended &gt;500 MPa or D≥6000)</td></tr>\n  </table>\n  <h4>Roller Set Optimization (Structural Span)</h4>\n  <table class=\"ftbl\">\n    <tr class=\"fgroup\"><td colspan=\"2\">Allowable Structural Spans</td></tr>\n    <tr class=\"frow\"><td>δ_allow = 0.0005 · D</td><td>Allowable sag (0.05%D)</td></tr>\n    <tr class=\"frow\"><td>L_defl = ⁴√(384·E·I_beam·δ_allow / 5·w)</td><td>Deflection-governed allowable span</td></tr>\n    <tr class=\"frow\"><td>span_hz = [600²·π·cl·R_eff / (E_eff·w)] × 2·cos45°</td><td>Hertz-governed allowable span (2 radial rollers/set, P = 600 MPa)</td></tr>\n    <tr class=\"fgroup\"><td colspan=\"2\">Required Set Count</td></tr>\n    <tr class=\"frow\"><td>n_struct = max(n_defl, n_hertz, n_LD, n_span, 2)</td><td>Structural sets (completed girth welds excluded)</td></tr>\n    <tr class=\"frow\"><td>n_active = min(max(effNA + 3, 4), n_max_phys)</td><td>Active weld sets for effNA = min(active, nW) &gt; 0 (physically capped)</td></tr>\n    <tr class=\"frow result\"><td>n_rec = max(n_struct, n_active, n_overhang, 2)</td><td>Final recommended roller sets</td></tr>\n    <tr class=\"frow result\"><td>span = L / (n_rec + 1)&nbsp;&nbsp;&nbsp;[mm]</td><td>Equal center-to-center spacing</td></tr>\n  </table>",
+      "s11": "<div class=\"tbl-wrap\"><table>\n    <thead><tr><th>α (°)</th><th>Span (°)</th><th>δv (mm)</th><th>δh (mm)</th><th>Ovality (mm)</th><th>Ovality (%)</th><th>vs Nat</th><th>Notes</th></tr></thead>\n    <tbody>\n      <tr><td>30</td><td>60</td><td class=\"mono\">−55.38</td><td class=\"mono\">+60.25</td><td class=\"mono\">115.63</td><td class=\"mono\">3.8542</td><td class=\"mono\">56.46%</td><td>—</td></tr>\n      <tr><td>40</td><td>80</td><td class=\"mono\">−17.82</td><td class=\"mono\">+27.38</td><td class=\"mono\">45.20</td><td class=\"mono\">1.5066</td><td class=\"mono\">22.07%</td><td>—</td></tr>\n      <tr style=\"background:var(--acbg);\"><td><b>45.0</b></td><td><b>90.0</b></td><td class=\"mono\"><b>+5.47</b></td><td class=\"mono\"><b>+5.47</b></td><td class=\"mono\"><b>11.64</b></td><td class=\"mono\"><b>0.3879</b></td><td class=\"mono\"><b>5.68%</b></td><td><b>★ Optimum (m=2 cancelled)</b></td></tr>\n      <tr><td>49.1</td><td>98.2</td><td class=\"mono\">+27.40</td><td class=\"mono\">−16.02</td><td class=\"mono\">43.46</td><td class=\"mono\">1.4486</td><td class=\"mono\">21.22%</td><td>Legacy reference (ref)</td></tr>\n      <tr><td>55</td><td>110</td><td class=\"mono\">+64.88</td><td class=\"mono\">−54.22</td><td class=\"mono\">119.09</td><td class=\"mono\">3.9698</td><td class=\"mono\">58.15%</td><td>—</td></tr>\n      <tr><td>60</td><td>120</td><td class=\"mono\">+104.35</td><td class=\"mono\">−95.92</td><td class=\"mono\">200.27</td><td class=\"mono\">6.6757</td><td class=\"mono\">97.78%</td><td>—</td></tr>\n    </tbody>\n  </table></div>",
+      "s12": "<div class=\"tbl-wrap\"><table>\n    <thead><tr><th>No</th><th>Item</th><th>Criterion</th><th>Required Action</th></tr></thead>\n    <tbody>\n      <tr><td>1</td><td><b>γ_eff Check</b></td><td>Bogie equilibrium (N1=N2): optimal α_center = 45.0°</td><td>Align roller frames with laser level within ±2°</td></tr>\n      <tr><td>2</td><td><b>Brazier Risk</b></td><td>D/t &gt; 300 → High Risk · &gt;200 → Caution</td><td>Install internal spider / stiffener rings ≤ 4D spacing</td></tr>\n      <tr><td>3</td><td><b>Hertz Stress</b></td><td>P_max &gt; 500 MPa → High contact stress</td><td>Use urethane lining (Shore 80A~90A)</td></tr>\n      <tr><td>4</td><td><b>Support Span</b></td><td>Recommended ≤ D/2</td><td>Deploy ≥ 3 roller pairs along span</td></tr>\n      <tr><td>5</td><td><b>γ Convergence</b></td><td>γ &lt; 5° → Caution</td><td>Use variable-width turning rollers</td></tr>\n      <tr><td>6</td><td><b>Thermal Distortion</b></td><td>Nonlinear weld shrinkage superposition</td><td>Laser-profile cross-section before &amp; after cooling</td></tr>\n      <tr><td>7</td><td><b>Final Check</b></td><td>API 2B ≤ 1.0%<br>ISO D/t&gt;120 → ≤ 0.5%</td><td>Verify PASS and save record in Compliance panel</td></tr>\n    </tbody>\n  </table></div>",
+      "s13": "<h3>Support Selection Guide (% of Natural Ovality)</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>Scenario</th><th>Recommended Support</th><th>Ovality vs Natural</th></tr></thead>\n    <tbody>\n      <tr><td>Storage &amp; Transport</td><td>② 120° Saddle</td><td class=\"mono\">≈ 49.6% (uniform radial arc)</td></tr>\n      <tr><td>Welding &amp; Rotation (Optimum)</td><td>③-B TR2 α=45° ★</td><td class=\"mono\">≈ 5.7% (m=2 cancelled)</td></tr>\n      <tr><td>Legacy Ref Comparison</td><td>③-A TR2 α=49.1° (ref)</td><td class=\"mono\">≈ 21.2%</td></tr>\n      <tr><td>Heavy Large Diameter</td><td>④ Double Roller α_c=45°</td><td class=\"mono\">≈ 4.3% (bogie N1=N2)</td></tr>\n    </tbody>\n  </table></div>\n  <h3>Field Welding Guidelines</h3>\n  <ul>\n    <li><b>During Welding:</b> Minimum 4 sets (2 sets on each side of active weld, unless short single pipe).</li>\n    <li><b>Install Maximum Rollers:</b> Even during welding or simple resting/storage, installing as many turning rollers as possible is recommended to improve ovality.</li>\n    <li><b>Girth Seams:</b> Apply symmetrical skip welding to balance residual shrinkage.</li>\n    <li><b>Saddle → TR2:</b> Always switch from saddles to TR2 turning rollers before rotation welding.</li>\n    <li><b>Pre-Weld Check:</b> Enter D_min/D_max or ± deviation from D to confirm API 2B compliance beforehand.</li>\n  </ul>\n  <div class=\"callout danger\"><strong>⚠ Corrective Actions on FAIL</strong>\n    <p>① Mechanical Cold Fitting — hydraulic/jacking correction<br>② Heat Straightening — controlled thermal correction<br>③ Internal Stiffener Ring — install rings and re-measure</p></div>"
+    }
+  },
+  "zh": {
+    "heroTitle": "📖 TOA 专业参考手册",
+    "heroSub": "碳钢大径管椭圆度分析 · 滚轮架优化 · 规范合规完整指南",
+    "scopeTitle": "⚠ 适用范围与工程局限说明 (Engineering Scope & Limitations)",
+    "scopeBody": "本应用非常适合作为现场预评估、滚轮布置调试及质量沟通的一线工程辅助工具；但受限于二维线弹性圆环理论，不可单独作为最终设计与制造审批（Code Sign-off）的计算依据。最终审批前须结合现行项目规范条款、三维 FEA 及现场实测进行复核。",
+    "navStart": "快速入门",
+    "navSupport": "支撑方式",
+    "navResults": "结果分析",
+    "navStd": "规范·公式",
+    "navAppendix": "附录",
+    "s1": "应用概述与界面布局",
+    "s2": "管道规格与 D/t 面板",
+    "s3": "转动滚轮规格",
+    "s4": "标准 / 选项",
+    "s5": "现场实测输入",
+    "s6": "预测椭圆度 · 屈曲警告 · 综合判定",
+    "s7": "滚轮组优化与支撑性能",
+    "s8": "输出选项卡 (5个) 与保存面板",
+    "s9": "规范判定标准",
+    "s10": "核心计算公式",
+    "s11": "TR2 角度对应椭圆度 (D=3,000mm, t=10mm · 全向)",
+    "s12": "现场作业检查清单",
+    "s13": "实务指南",
+    "nav": {
+      "s1": "1. 应用概述",
+      "s2": "2. 管道规格",
+      "s3": "3. 滚轮规格",
+      "s4": "4. 规范 / 选项",
+      "s5": "5. 现场实测",
+      "s6": "6. 预测与判定",
+      "s7": "7. 滚轮组优化",
+      "s8": "8. 输出选项卡",
+      "s9": "9. 规范标准",
+      "s10": "10. 核心公式",
+      "s11": "11. TR2 角度表",
+      "s12": "12. 检查清单",
+      "s13": "13. 实务指南"
+    },
+    "body": {
+      "s1": "<div class=\"tbl-wrap\"><table>\n    <thead><tr><th>项目</th><th>内容</th></tr></thead>\n    <tbody>\n      <tr><td><b>适用理论</b></td><td>Roark's Formulas 第9版 (I_ring = t³/12) · Castigliano 能量法（联立求解 M_A·N_A 及径向反力）· 全向格林函数积分 (θ∈[0°,90°]) · Hertz 线接触</td></tr>\n      <tr><td><b>适用规范</b></td><td>API 2B · ISO 19902 · API 5L（D&gt;1,422mm As Agreed 注释）· DNV-OS-C401</td></tr>\n      <tr><td><b>外径范围</b></td><td class=\"mono\">Φ 3,000 ~ 15,000 mm (Carbon Steel)</td></tr>\n      <tr><td><b>材料常数</b></td><td class=\"mono\">E = 206,000 MPa · γ = 7.85×10⁻⁵ N/mm³ · ν = 0.3</td></tr>\n      <tr><td><b>圆环惯性矩</b></td><td class=\"mono\">I_ring = t³ / 12（单位宽度线弹性圆环；梁挠度计算采用全截面 I_beam）</td></tr>\n    </tbody>\n  </table></div>\n  <h3>1-1. 上下工作区布局 (Unified Sub-Cards)</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>区域</th><th>从左到右 4 列结构</th></tr></thead>\n    <tbody>\n      <tr><td><b>顶部横向栏</b><br><small>输入区</small></td><td>① <b>管道规格</b> · ② <b>转动滚轮规格</b> · ③ <b>标准/选项 + 现场实测（上下叠加）</b> · ④ <b>D / t</b> 实时面板（右侧）</td></tr>\n      <tr><td><b>底部摘要行</b><br><small>核心结果</small></td><td>① <b>最低建议滚轮组数</b> · ② <b>滚轮支撑性能分析</b> · ③ <b>预测椭圆度</b>（自然·支撑·实测）· ④ <b>运行分析 / 比较全部 / 💾 保存</b> 按钮组及下方综合 <b>PASS/FAIL</b> 徽章</td></tr>\n      <tr><td><b>详情选项卡与保存卡</b><br><small>5标签 + 独立</small></td><td><b>规范判定</b> · <b>状态比较</b> · <b>截面图</b> · <b>建议</b> · <b>检查清单</b>（5项）+ 下方独立可折叠<b>保存的记录</b>卡片</td></tr>\n    </tbody>\n  </table></div>\n  <div class=\"callout ok\"><strong>✓ 解析模型验证基准</strong><p>顶部 M_A·N_A 耦合冗余解与 Roark Case 1（对径载荷）及 Case 15（底部支承自重）精确吻合，并在所有滚轮及鞍座支撑下严格满足竖向静力平衡（∑Fy = W，残差 0.00%）。</p></div>",
+      "s2": "<h3>2-1. 输入字段</h3>\n  <div class=\"inp-grid\">\n    <div class=\"inp-box\"><div class=\"lbl\">外径</div><div class=\"name\">D (mm)</div><div class=\"range\">100~20,000 · 步长 100</div><div class=\"id\">id: iD</div></div>\n    <div class=\"inp-box\"><div class=\"lbl\">壁厚</div><div class=\"name\">t (mm)</div><div class=\"range\">5~500 · 步长 5</div><div class=\"id\">id: it</div></div>\n    <div class=\"inp-box\" style=\"border-color:var(--ac);\"><div class=\"lbl\" style=\"color:var(--ac);\">管长</div><div class=\"name\">L (mm)</div><div class=\"range\">500~100,000 · 步长 500</div><div class=\"id\">id: i-plen</div></div>\n    <div class=\"inp-box\"><div class=\"lbl\">环焊缝总数</div><div class=\"name\">总焊缝数</div><div class=\"range\">0~50 · 步长 1 · 默认 5</div><div class=\"id\">id: i-nweld</div></div>\n    <div class=\"inp-box\" style=\"border-color:var(--ac);background:var(--acbg);\"><div class=\"lbl\" style=\"color:var(--ac);font-weight:800;\">进行中焊接数 ★</div><div class=\"name\">Active Welds</div><div class=\"range\">0~10 · 步长 1 · 默认 1</div><div class=\"id\">id: i-aweld</div></div>\n    <div class=\"inp-box\"><div class=\"lbl\">板宽（参考）</div><div class=\"name\">Plate Width (mm)</div><div class=\"range\">500~10,000 · 步长 100</div><div class=\"id\">id: i-platespan</div></div>\n  </div>\n  <h3>2-2. D/t 实时面板（顶部右列 · 含 Brazier 预警）</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>指标</th><th>计算式 / 标准</th><th>颜色与预警</th></tr></thead>\n    <tbody>\n      <tr><td><b>D / t Ratio</b></td><td class=\"mono\">D ÷ t</td><td>&gt;300 红 · &gt;200 橙 · &gt;120 蓝 · 其余绿</td></tr>\n      <tr><td><b>薄壁/厚壁徽章</b></td><td class=\"mono\">D/t ≥ 20</td><td>蓝 Thin-Wall · 橙 Thick-Wall</td></tr>\n      <tr><td><b>R (mm)</b></td><td class=\"mono\">(D − t) / 2</td><td>中性面平均半径</td></tr>\n      <tr><td><b>ISO limit</b></td><td class=\"mono\">D/t &gt; 120 → ≤ 0.5%</td><td>橙 / 绿</td></tr>\n      <tr><td><b>Brazier</b></td><td class=\"mono\">D/t &gt; 300 HIGH · &gt;200 MOD</td><td>HIGH ⚠ 红 · MOD △ 橙 · LOW 绿（含实时横幅 <code>dt-brazier-alert</code>）</td></tr>\n      <tr><td><b>L / D</b></td><td class=\"mono\">L ÷ D</td><td>&gt;10 橙 · &gt;6 蓝 · 其余绿</td></tr>\n    </tbody>\n  </table></div>",
+      "s3": "<h3>3-1. 7 种支撑方式（仅底部支撑 · 径向法向反力）</h3>\n  <div class=\"sup-grid\">\n    <div class=\"sup-card\"><div class=\"code\">NATURAL</div><div class=\"lbl\">① 自然状态</div><div class=\"desc\">Roark 圆环自重变形（全向 D_max−D_min），用作比较基准。</div></div>\n    <div class=\"sup-card\"><div class=\"code\">SADDLE120</div><div class=\"lbl\">② 120° 鞍座</div><div class=\"desc\">均匀径向接触压（2α=120°）圆环积分，约自然状态的 49.6%，用于存放运输。</div></div>\n    <div class=\"sup-card\"><div class=\"code\">TR2_491 (ref)</div><div class=\"lbl\">③-A TR2 α=49.1° (ref)</div><div class=\"desc\">旧模型（忽略水平分力及 N_A）参考角，实际全向占比约 21.2%（非最优）。</div></div>\n    <div class=\"sup-card best\"><div class=\"code\">TR2_45 ★</div><div class=\"lbl\">③-B TR2 α=45° ★</div><div class=\"desc\">理论与现场最优（抵消 m=2 分量，δv=δh），含 45° 对角自重弯曲约自然 5.7%。</div></div>\n    <div class=\"sup-card\"><div class=\"code\">TR2_30</div><div class=\"lbl\">③-C TR2 α=30°</div><div class=\"desc\">支撑跨角 60°（约自然状态的 56.5%）。</div></div>\n    <div class=\"sup-card\"><div class=\"code\">TR2_CUSTOM</div><div class=\"lbl\">③-D TR2 自定义</div><div class=\"desc\">自定义输入 α（10°~80°）。</div></div>\n    <div class=\"sup-card best\"><div class=\"code\">TR4_STD</div><div class=\"lbl\">④-A TR4 四滚轮 (22.5°/67.5°)</div><div class=\"desc\">底部 4 点独立支撑 (22.5°/67.5°)，全向椭圆度降至自然状态约 0.35%。</div></div>\n    <div class=\"sup-card\"><div class=\"code\">TR4_CUSTOM</div><div class=\"lbl\">④-B TR4 四滚轮自定义 (α1/α2)</div><div class=\"desc\">自定义内侧(α1)与外侧(α2) 4 点滚轮支撑角（如 30°/60°）。</div></div>\n    <div class=\"sup-card\"><div class=\"code\">DOUBLE_ROLLER</div><div class=\"lbl\">⑤ 固定双滚轮 (四轮枢轴)</div><div class=\"desc\">底部 4 点支撑（α_c±γ），枢轴转向架平衡（N1=N2），最优 α_c=45°（约 4.3%）。</div></div>\n  </div>\n  <h3>3-2. 滚轮参数</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>参数</th><th>ID</th><th>范围</th><th>默认值</th><th>说明</th></tr></thead>\n    <tbody>\n      <tr><td><b>滚轮材质</b></td><td class=\"mono\">i-rmat</td><td>steel / urethane</td><td class=\"mono\">steel</td><td>D≥6000mm 或 P_max&gt;500MPa 时必须使用聚氨酯衬层（Shore 80A~90A）</td></tr>\n      <tr><td><b>滚轮直径</b></td><td class=\"mono\">i-rdia</td><td class=\"mono\">100~2,000mm</td><td class=\"mono\">600mm</td><td>用于计算 Hertz 接触应力及允许跨距</td></tr>\n      <tr><td><b>中心距</b></td><td class=\"mono\">i-cc</td><td class=\"mono\">100~5,000mm</td><td>自动 (R×√2)</td><td>按 α=45° 自动计算</td></tr>\n      <tr><td><b>接触长度</b></td><td class=\"mono\">i-cl</td><td class=\"mono\">100~10,000mm</td><td class=\"mono\">300mm</td><td>滚轮轴向有效接触长度，用于 Hertz 计算</td></tr>\n      <tr><td><b>α (自定义)</b></td><td class=\"mono\">i-a</td><td class=\"mono\">10°~80°</td><td class=\"mono\">45°</td><td>选择 TR2_CUSTOM 时显示</td></tr>\n      <tr><td><b>α_center (DR)</b></td><td class=\"mono\">i-ac</td><td class=\"mono\">20°~65°</td><td class=\"mono\">45°</td><td>双滚轮架中心角（枢轴平衡最优 45.0°）</td></tr>\n      <tr><td><b>γ_roller (DR)</b></td><td class=\"mono\">i-gr</td><td class=\"mono\">1°~20°</td><td class=\"mono\">10°</td><td>转向架内半开角</td></tr>\n    </tbody>\n  </table></div>",
+      "s4": "<p>位于顶部横向栏第 3 列（<code>D / t</code> 左侧）上方，<b>现场实测（可选）</b>卡片正上方。</p>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>选项</th><th>ID</th><th>取值</th><th>允许限值</th></tr></thead>\n    <tbody>\n      <tr><td><b>API 5L 区段</b></td><td class=\"mono\">i-zone</td><td>body / end</td><td>管体 ≤ 1.5% · 管端 ≤ 1.0%（D&gt;1,422mm 显示 As Agreed 注释）</td></tr>\n      <tr><td><b>DNV 疲劳</b></td><td class=\"mono\">i-fat</td><td>false / true</td><td>普通 ≤ 1.0% · 疲劳敏感 ≤ 0.5%</td></tr>\n    </tbody>\n  </table></div>",
+      "s5": "<p>位于标准/选项卡片正下方。上行输入外径绝对值 <b>D_min (OD, mm)</b>（左）与 <b>D_max (OD, mm)</b>（右）；下行输入<b>相对基准 D 的 −/+ 偏差 (mm)</b>（<code>id: i-devmin</code>, <code>i-devmax</code>）。两行双向自动联动（例如在 <code>D=8,000mm</code> 时偏差输入 <code>-2</code> 和 <code>+2</code>，则自动算出 <code>D_min=7,998mm</code>、<code>D_max=8,002mm</code>）。若 <b>D_max &lt; D_min</b> 将立即提示输入错误；有效数据实时同步至<b>实测卡片</b>、<b>截面图（绿色点划线）</b>与<b>规范判定</b>选项卡。</p>\n  <table class=\"ftbl\">\n    <tr class=\"frow\"><td>D_min = D + ΔD_min · D_max = D + ΔD_max</td><td>绝对外径与相对 D 偏差之间的双向自动同步</td></tr>\n    <tr class=\"frow\"><td>椭圆度 (%) = (D_max − D_min) / D_nominal × 100</td><td>同一截面实测外径椭圆度（需满足 D_max ≥ D_min）</td></tr>\n  </table>",
+      "s6": "<div class=\"tbl-wrap\"><table>\n    <thead><tr><th>卡片</th><th>顶部边框</th><th>显示内容</th><th>屈曲警告与颜色标准</th></tr></thead>\n    <tbody>\n      <tr><td><b>自然状态</b></td><td>红 (<code>#ef4444</code>)</td><td>全向 Roark 自重椭圆度 (mm, %)</td><td>&gt;1% 红 / 0.3~1% 橙 / ≤0.3% 蓝 · 实时 Brazier 警告徽章</td></tr>\n      <tr><td><b>支撑状态</b></td><td>蓝 (<code>--ac</code>)</td><td>所选支撑全向预测值 + vs自然(%)</td><td>&gt;1% 红 / 0.3~1% 橙 / ≤0.3% 蓝 · 实时 Brazier 警告徽章</td></tr>\n      <tr><td><b>现场实测</b></td><td>绿 (<code>#10b981</code>)</td><td>实测椭圆度 + API 2B / ISO / DNV 徽章</td><td>PASS 绿 / FAIL 红 · 实时 Brazier 警告徽章</td></tr>\n    </tbody>\n  </table></div>\n  <div class=\"callout warn\"><strong>⚠ 逐项屈曲风险 / 注意警告</strong>\n    <p><code>TOAEngine.evaluateStateBuckling</code> 会针对各卡片分别评估 D/t 与扁平化程度：D/t &gt; 300 或过度扁平时显示红色 <b>⚠ 屈曲风险 (Brazier High)</b>，D/t &gt; 200 时显示橙色 <b>⚠ 屈曲注意 (Brazier Caution)</b>。</p>\n    <p style=\"margin-top:6px;\">此外 <code>TOAEngine.evaluateOvalBendingRisk</code> 综合评估椭圆度%、D/t、圆环弯曲应力(<b>σ_b = 6M_max/t²</b>)与梁挠度(δ)，在高风险时于顶部主动弹出 <b>椭圆化与弯曲警报横幅 (CRITICAL/WARNING)</b> 并直达补强设计。</p></div>\n  <div class=\"callout ok\"><strong>▶ 右侧运行操作卡及底部综合判定条 (<code>#stat-pill</code>)</strong>\n    <p>底部摘要行第 4 列依次排列<b>运行分析</b> · <b>比较所有支撑状态</b> · <b>💾 保存</b> 按钮，其正下方显示综合合格判定条（<code>待机</code> / <code>合格 PASS</code> / <code>不合格 FAIL</code>）。</p></div>",
+      "s7": "<div class=\"callout ok\"><strong>✓ 结构跨度原则与布局</strong>\n    <p><b>滚轮支撑性能分析</b>（接触角、每轮荷载、接触应力、局部变形与 ∑Fy=W 静力残差）位于<b>最低建议滚轮组数</b>右侧第 2 列。已完成环焊缝视作连续一体截面，不影响组数；组数仅由结构允许跨度及进行中焊接数决定。</p></div>\n  <h3>7-1. 焊缝输入区分</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>输入</th><th>ID</th><th>作用</th><th>对组数的影响</th></tr></thead>\n    <tbody>\n      <tr><td><b>环焊缝总数</b><br><small>可视化</small></td><td class=\"mono\">i-nweld</td><td>绘制 ▽ 标记 · 为 0 时按无环焊单管处理</td><td><span class=\"pill-p\">限制 effNA 上限</span></td></tr>\n      <tr><td><b>进行中焊接数</b> ★</td><td class=\"mono\">i-aweld</td><td>当前活跃焊口数 (effNA = min(active, nW))</td><td><span class=\"pill-f\">决定滚轮组数</span></td></tr>\n      <tr><td><b>板宽</b><br><small>参考</small></td><td class=\"mono\">i-platespan</td><td>仅作侧面图参考说明</td><td><span class=\"pill-p\">无影响</span></td></tr>\n    </tbody>\n  </table></div>\n  <h3>7-2. 判定逻辑</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>#</th><th>基准</th><th>公式</th><th>说明</th></tr></thead>\n    <tbody>\n      <tr><td>①</td><td><b>挠度基准</b></td><td class=\"mono\">L_defl = ⁴√(384·E·I_beam·0.0005D / 5·w)</td><td>D=8000, t=25 → L_defl ≈ 50.3m</td></tr>\n      <tr><td>②</td><td><b>Hertz 基准</b></td><td class=\"mono\">span_hz = [600²·π·cl·R_eff / (E_eff·w)] × 2·cos45°</td><td>每组 2 滚轮径向分担 (P ≤ 600 MPa)</td></tr>\n      <tr><td>③</td><td><b>L/D 与间距</b></td><td class=\"mono\">≤2→2 / 2~4→3 / 4~7→4 / 7~10→5 / &gt;10→6 · 间距 ≤ 2.5D</td><td>工程经验最小组数</td></tr>\n      <tr><td>④</td><td><b>进行中焊接</b> ★</td><td class=\"mono\">n ≥ min(max(effNA + 3, 4), n_max_phys)</td><td>焊缝两侧各 2 组（单管/短管除外）</td></tr>\n    </tbody>\n  </table></div>\n  <h3>7-3. 最终计算公式</h3>\n  <table class=\"ftbl\">\n    <tr class=\"fgroup\"><td colspan=\"2\">结构基准（挠度 · Hertz · L/D · 间距≤2.5D）</td></tr>\n    <tr class=\"frow\"><td>n_struct = max(n_defl, n_hertz, n_LD, n_span, 2)</td><td>不含已完成环焊缝</td></tr>\n    <tr class=\"fgroup\"><td colspan=\"2\">活跃焊接基准（仅当 effNA = min(active, nW) &gt; 0）</td></tr>\n    <tr class=\"frow\"><td>n_active = min(max(effNA + 3, 4), n_max_phys)</td><td>Girth Welds=0 时 effNA=0；短管受物理间距上限约束</td></tr>\n    <tr class=\"frow\"><td>n_overhang = min(max(ceil(L / 3D) − 1, 4), n_max_phys)</td><td>保证端部悬伸 ≤ 1.5D</td></tr>\n    <tr class=\"fgroup\"><td colspan=\"2\">物理布置上限与结果</td></tr>\n    <tr class=\"frow\"><td>n_max_phys = max(2, floor(L / max(cl·1.5, 500)))</td><td>防止滚轮接触幅干涉（例：L=1,000mm → 2 组）</td></tr>\n    <tr class=\"frow result\"><td>n_rec = max(n_struct, n_active, n_overhang, 2)</td><td>最终建议滚轮组数</td></tr>\n    <tr class=\"frow result\"><td>span = L / (n_rec + 1)&nbsp;&nbsp;&nbsp;[mm]</td><td>均布中心间距</td></tr>\n  </table>\n  <div class=\"callout danger\"><strong>⚠ 焊接需至少 4 组的原因及单管/短管例外</strong>\n    <p>环焊缝位于管中段时，两侧各置 2 组可保障旋转稳定性、组对间隙均匀及热变形控制。<b>但当环焊缝总数 = 0（无焊缝单管）或管长 L 较短（如 L=1,000mm，L &lt; 4·minPitch）时</b>，不适用 4 组焊接规则，优先受物理可布置上限（2 组）制约。</p></div>\n  <h3>7-4. 算例</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>工况</th><th>环焊缝</th><th>进行中</th><th>结构基准</th><th>建议组数</th></tr></thead>\n    <tbody>\n      <tr><td>D=8000 t=25, L=20m</td><td>9 个 (间距 2m)</td><td>1</td><td>3 组 (L/D=2.5→3)</td><td class=\"mono\"><b>4 sets</b></td></tr>\n      <tr><td>D=5000 t=20, L=18m</td><td>8 个 (间距 2m)</td><td>1</td><td>3 组 (L/D=3.6)</td><td class=\"mono\"><b>4 sets</b></td></tr>\n      <tr><td>D=3000 t=10, L=12m</td><td>5 个 (间距 2m)</td><td>2</td><td>3 组 (L/D=4.0)</td><td class=\"mono\"><b>5 sets</b></td></tr>\n      <tr><td>D=8000 t=20, L=1m</td><td><b>0</b></td><td><b>0</b></td><td>2 组 (单管/短管)</td><td class=\"mono\"><b>2 sets</b></td></tr>\n    </tbody>\n  </table></div>\n  <div class=\"callout ok\"><strong>✓ 已完成环焊缝不影响滚轮组数</strong>\n    <p>板宽 2m 共 9 道焊缝时，结构挠度允许跨距达 ≈50.3m（D=8000, t=25），已完成焊缝无需增设支撑。</p></div>\n  <h3>7-5. 侧面图说明</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>视觉元素</th><th>说明</th></tr></thead>\n    <tbody>\n      <tr><td><b>管道外形</b></td><td>按连续简支梁公式绘制挠度曲线</td></tr>\n      <tr><td><b>滚轮 S1, S2…</b></td><td>V 型滚轮架与编号位置</td></tr>\n      <tr><td><b>焊缝 W1, W2…</b></td><td>黄色虚线 + ▽ 均匀标注焊缝</td></tr>\n      <tr><td><b>跨距尺寸</b></td><td>首跨显示 ↔ 中心距尺寸</td></tr>\n      <tr><td><b>max δ</b></td><td>右下角最大挠度 (mm, %D)，超限时标红</td></tr>\n    </tbody>\n  </table></div>",
+      "s8": "<div class=\"tbl-wrap\"><table>\n    <thead><tr><th>选项卡</th><th>内容</th><th>启用时机</th></tr></thead>\n    <tbody>\n      <tr><td><b>规范判定</b></td><td>API 2B · ISO · API 5L · DNV 判定结果 + 实测判定</td><td>运行后</td></tr>\n      <tr><td><b>状态比较</b></td><td>5 种支撑方式柱状图 + 全向椭圆度及与自然状态对比表</td><td>运行 / 比较后</td></tr>\n      <tr><td><b>截面图</b></td><td><b>三色预测圆周线</b> [自然红虚线 <code>#ef4444</code> · 支撑蓝实线 <code>#377feb</code> · 实测绿点划线 <code>#10b981</code>] + 底部三列图例 + 侧面图</td><td>运行后</td></tr>\n      <tr><td><b>建议</b></td><td>CRITICAL / WARNING / CAUTION / INFO · 不合格时自动生成加强环·Spider Brace·支撑跨距初步尺寸/布置及专用截面/侧视图</td><td>运行后</td></tr>\n      <tr><td><b>检查清单</b></td><td>现场作业检查清单与 γ_eff / Brazier / Hertz / Beam δ 指标</td><td>运行后</td></tr>\n      <tr><td><b>保存的记录 (下方独立卡片)</b></td><td>5个选项卡下方独立可折叠卡片：<b>自动保存/恢复现场实测与偏差</b> · Import · Export · <b>报告对象选择 (<code>#i-rpt-target</code>)</b> · <b>报告 5 项内容复选框</b> · CSV/XLS/PDF (PRO) · Clear · <b>▲ 收起 / ▼ 展开</b></td><td>常驻</td></tr>\n    </tbody>\n  </table></div>",
+      "s9": "<div class=\"std-row\"><div class=\"std-code\">API 2B</div><div class=\"std-body\"><div class=\"title\">结构钢管制造规范</div><div class=\"sub\">t ≤ 50.8mm → max 6.4mm · D ≥ 1219mm → max 12.7mm · t &gt; 50.8mm → Ovality/t ≤ 1:8</div></div><div class=\"std-lim\">≤ 1.0%</div></div>\n  <div class=\"std-row\" style=\"margin-top:6px;\"><div class=\"std-code\">ISO 19902</div><div class=\"std-body\"><div class=\"title\">海洋结构物 · D/t ≤ 120</div><div class=\"sub\">导管架与单桩基础标准</div></div><div class=\"std-lim\">≤ 1.0%</div></div>\n  <div class=\"std-row\" style=\"margin-top:6px;\"><div class=\"std-code\">ISO 19902</div><div class=\"std-body\"><div class=\"title\">海洋结构物 · D/t &gt; 120</div><div class=\"sub\">薄壁大径管加严限值</div></div><div class=\"std-lim\" style=\"color:var(--or);\">≤ 0.5%</div></div>\n  <div class=\"std-row\" style=\"margin-top:6px;\"><div class=\"std-code\">API 5L</div><div class=\"std-body\"><div class=\"title\">管线钢管 · 管体 / 管端</div><div class=\"sub\">管端对口要求更严 · D &gt; 1,422mm 未输入协议限值时显示 <b>AGREEMENT REQUIRED</b>（不自动判 PASS）</div></div><div class=\"std-lim\">1.5% / 1.0%*</div></div>\n  <div class=\"std-row\" style=\"margin-top:6px;\"><div class=\"std-code\">DNV</div><div class=\"std-body\"><div class=\"title\">DNV-OS-C401 · 普通 / 疲劳</div><div class=\"sub\">疲劳敏感海工结构要求 ≤ 0.5%</div></div><div class=\"std-lim\">1.0% / 0.5%</div></div>\n  <div class=\"callout\"><strong>※ 规范与模型假设说明</strong><p>本程序基于单位宽度线弹性圆环理论 (I = t³/12)，ΔD/D &gt; 5% 为程序预警基准，Brazier D/t 为初步屈曲筛查指标；最终审批前须核对项目规范条款并进行 FEA / 实测验证。</p></div>",
+      "s10": "<h4>基本参数</h4>\n  <table class=\"ftbl\">\n    <tr class=\"frow\"><td>D_mean = D − t</td><td>平均直径 (mm)</td></tr>\n    <tr class=\"frow\"><td>R = (D − t) / 2</td><td>中性轴半径 (mm)</td></tr>\n    <tr class=\"frow\"><td>A = π(D² − ID²) / 4</td><td>横截面积 (mm²)</td></tr>\n    <tr class=\"frow\"><td>w = γ × A</td><td>单位长度自重 (N/mm) · γ = 7.85×10⁻⁵ N/mm³</td></tr>\n    <tr class=\"frow\"><td>I_ring = t³ / 12</td><td>圆环单位宽度惯性矩 (mm⁴/mm)</td></tr>\n    <tr class=\"frow\"><td>I_beam = π(D⁴ − ID⁴) / 64</td><td>全截面惯性矩 (mm⁴)，用于轴向梁挠度</td></tr>\n  </table>\n  <h4>自然状态 — Roark 圆环</h4>\n  <table class=\"ftbl\">\n    <tr class=\"frow\"><td>dDv = −0.1488 · w · R³ / (E·I_ring)</td><td>垂直直径变化 (mm)</td></tr>\n    <tr class=\"frow\"><td>dDh = +0.1369 · w · R³ / (E·I_ring)</td><td>水平直径变化 (mm)</td></tr>\n    <tr class=\"frow highlight\"><td>oval = 0.2857 · w · R³ / (E·I_ring)</td><td>全向椭圆度 = D_max − D_min（通过半环自重剪力积分独立验证底部反力 R_base = 2V_B）</td></tr>\n  </table>\n  <h4>120° 鞍座 — 均匀径向接触压 (2α = 120°)</h4>\n  <table class=\"ftbl\">\n    <tr class=\"frow highlight\"><td>oval_saddle ≈ oval_natural × 0.4956</td><td>均匀 120° 径向弧面接触压格林函数直接积分</td></tr>\n  </table>\n  <h4>转动滚轮 — Castigliano 全向积分 (N=2,000, 0.5° 网格 + 黄金分割极值搜索)</h4>\n  <table class=\"ftbl\">\n    <tr class=\"fgroup\"><td colspan=\"2\">径向法向反力与对称等臂枢轴转向架假设 (∑Fy = W)</td></tr>\n    <tr class=\"frow\"><td>TR2: N = W / (2·cosα)</td><td>单滚轮法向反力（垂直分量 N·cosα = W/2）</td></tr>\n    <tr class=\"frow\"><td>Double Roller: N₁ = N₂ = W / [4·cos(α_c)·cos(γ)]</td><td>对称等臂枢轴铰接(L₁=L₂)假设下的内外等分载荷 (∑Fy = W)</td></tr>\n    <tr class=\"fgroup\"><td colspan=\"2\">联立冗余力 (M_A, N_A) 与全向椭圆度</td></tr>\n    <tr class=\"frow\"><td>∫₀ᵖ M(φ)dφ = 0 · ∫₀ᵖ M(φ)·(1−cosφ)dφ = 0</td><td>顶部截面弯矩 M_A 与轴力 N_A 联立求解</td></tr>\n    <tr class=\"frow\"><td>D(θ) = D + ΔD(θ)</td><td>θ ∈ [0°, 90°] 0.5° 网格(181点) + 黄金分割精修 (tol = 10⁻⁴ rad)</td></tr>\n    <tr class=\"frow\"><td>oval = max D(θ) − min D(θ)</td><td>同时捕捉 0°/90° 与 45° 对角自重压扁</td></tr>\n    <tr class=\"frow highlight\"><td>数值优化验证: α_opt = 45.0° ★</td><td>argmin_α [D_max(α)−D_min(α)] = 45.0°（抵消 m=2，约自然状态 5.68%）</td></tr>\n  </table>\n  <h4>Hertz 线接触应力（计入单组分担长度）</h4>\n  <table class=\"ftbl\">\n    <tr class=\"frow\"><td>α = arcsin(C-C / (D + rd))</td><td>基于管径与滚轮外径中心距 (D+rd)/2 的精确支撑角</td></tr>\n    <tr class=\"frow\"><td>F = N_per_mm × (L / n_sets)</td><td>单滚轮承载（分担长度 L_trib = L / n_sets）</td></tr>\n    <tr class=\"frow\"><td>R_eff = Rp·Rr / (Rp + Rr)</td><td>当量接触半径</td></tr>\n    <tr class=\"frow\"><td>1 / E_eff = (1−ν_p²)/E_p + (1−ν_r²)/E_r</td><td>通用当量弹性模量（支持钢/聚氨酯/橡胶）</td></tr>\n    <tr class=\"frow\"><td>b = √(4·F·R_eff / π·cl·E_eff)</td><td>接触半宽 (mm)</td></tr>\n    <tr class=\"frow highlight\"><td>P_max = 2·F / (π·cl·b)</td><td>最大接触压力 — 稳定阈值 &lt; 600 MPa（&gt;500 MPa 或 D≥6000 建议聚氨酯衬层）</td></tr>\n  </table>\n  <h4>滚轮组优化</h4>\n  <table class=\"ftbl\">\n    <tr class=\"fgroup\"><td colspan=\"2\">结构允许跨距</td></tr>\n    <tr class=\"frow\"><td>δ_allow = 0.0005 · D</td><td>允许挠度 (0.05%D)</td></tr>\n    <tr class=\"frow\"><td>L_defl = ⁴√(384·E·I_beam·δ_allow / 5·w)</td><td>挠度控制允许跨距</td></tr>\n    <tr class=\"frow\"><td>span_hz = [600²·π·cl·R_eff / (E_eff·w)] × 2·cos45°</td><td>Hertz 应力允许跨距（每组两轮分担，P = 600 MPa）</td></tr>\n    <tr class=\"fgroup\"><td colspan=\"2\">组数确定</td></tr>\n    <tr class=\"frow\"><td>n_struct = max(n_defl, n_hertz, n_LD, n_span, 2)</td><td>结构组数</td></tr>\n    <tr class=\"frow\"><td>n_active = min(max(effNA + 3, 4), n_max_phys)</td><td>effNA = min(active, nW) &gt; 0 时启用（受物理上限约束）</td></tr>\n    <tr class=\"frow result\"><td>n_rec = max(n_struct, n_active, n_overhang, 2)</td><td>最终建议滚轮组数</td></tr>\n    <tr class=\"frow result\"><td>span = L / (n_rec + 1)&nbsp;&nbsp;&nbsp;[mm]</td><td>等距中心跨距</td></tr>\n  </table>",
+      "s11": "<div class=\"tbl-wrap\"><table>\n    <thead><tr><th>α (°)</th><th>夹角 (°)</th><th>δv (mm)</th><th>δh (mm)</th><th>椭圆度 (mm)</th><th>椭圆度 (%)</th><th>vs 自然</th><th>备注</th></tr></thead>\n    <tbody>\n      <tr><td>30</td><td>60</td><td class=\"mono\">−55.38</td><td class=\"mono\">+60.25</td><td class=\"mono\">115.63</td><td class=\"mono\">3.8542</td><td class=\"mono\">56.46%</td><td>—</td></tr>\n      <tr><td>40</td><td>80</td><td class=\"mono\">−17.82</td><td class=\"mono\">+27.38</td><td class=\"mono\">45.20</td><td class=\"mono\">1.5066</td><td class=\"mono\">22.07%</td><td>—</td></tr>\n      <tr style=\"background:var(--acbg);\"><td><b>45.0</b></td><td><b>90.0</b></td><td class=\"mono\"><b>+5.47</b></td><td class=\"mono\"><b>+5.47</b></td><td class=\"mono\"><b>11.64</b></td><td class=\"mono\"><b>0.3879</b></td><td class=\"mono\"><b>5.68%</b></td><td><b>★ 最优（抵消 m=2）</b></td></tr>\n      <tr><td>49.1</td><td>98.2</td><td class=\"mono\">+27.40</td><td class=\"mono\">−16.02</td><td class=\"mono\">43.46</td><td class=\"mono\">1.4486</td><td class=\"mono\">21.22%</td><td>旧模型参考角 (ref)</td></tr>\n      <tr><td>55</td><td>110</td><td class=\"mono\">+64.88</td><td class=\"mono\">−54.22</td><td class=\"mono\">119.09</td><td class=\"mono\">3.9698</td><td class=\"mono\">58.15%</td><td>—</td></tr>\n      <tr><td>60</td><td>120</td><td class=\"mono\">+104.35</td><td class=\"mono\">−95.92</td><td class=\"mono\">200.27</td><td class=\"mono\">6.6757</td><td class=\"mono\">97.78%</td><td>—</td></tr>\n    </tbody>\n  </table></div>",
+      "s12": "<div class=\"tbl-wrap\"><table>\n    <thead><tr><th>序号</th><th>项目</th><th>判断标准</th><th>现场措施</th></tr></thead>\n    <tbody>\n      <tr><td>1</td><td><b>γ_eff 计算</b></td><td>枢轴平衡 (N1=N2): 最优 α_center = 45.0°</td><td>激光水准调平 ±2° 以内</td></tr>\n      <tr><td>2</td><td><b>Brazier 风险</b></td><td>D/t &gt; 300 高危 · &gt;200 注意</td><td>安装内部支撑架 / 加强环间距 ≤ 4D</td></tr>\n      <tr><td>3</td><td><b>Hertz 接触压</b></td><td>P_max &gt; 500 MPa 风险</td><td>加装聚氨酯衬层 (Shore 80A~90A)</td></tr>\n      <tr><td>4</td><td><b>支撑跨距</b></td><td>推荐 ≤ D/2</td><td>布置 3 对及以上滚轮</td></tr>\n      <tr><td>5</td><td><b>γ 收敛检查</b></td><td>γ &lt; 5° 注意</td><td>采用可调宽滚轮架</td></tr>\n      <tr><td>6</td><td><b>热变形监测</b></td><td>非线性焊接叠加</td><td>焊前及冷却后激光扫描检测</td></tr>\n      <tr><td>7</td><td><b>最终判定</b></td><td>API 2B ≤ 1.0%<br>ISO D/t&gt;120 → ≤ 0.5%</td><td>确认 PASS 后于底部保存面板记录</td></tr>\n    </tbody>\n  </table></div>",
+      "s13": "<h3>支撑方式选型（相对自然状态比率）</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>工况</th><th>推荐方式</th><th>相对自然椭圆度</th></tr></thead>\n    <tbody>\n      <tr><td>存放与运输</td><td>② 120° 鞍座</td><td class=\"mono\">≈ 49.6% (均匀径向压)</td></tr>\n      <tr><td>制造与旋转焊接（最优）</td><td>③-B TR2 α=45° ★</td><td class=\"mono\">≈ 5.7% (抵消 m=2)</td></tr>\n      <tr><td>旧模型对比参照</td><td>③-A TR2 α=49.1° (ref)</td><td class=\"mono\">≈ 21.2%</td></tr>\n      <tr><td>重型大径管</td><td>④ 双滚轮 α_c=45°</td><td class=\"mono\">≈ 4.3% (枢轴平衡 N1=N2)</td></tr>\n    </tbody>\n  </table></div>\n  <h3>现场焊接作业建议</h3>\n  <ul>\n    <li><b>焊接中：</b>最少布置 4 组（焊缝左右各 2 组；单管或短管除外）。</li>\n    <li><b>尽量多装滚轮：</b>即使在焊接过程或单纯静置存放状态下，为改善椭圆度也建议尽可能多地安装转动滚轮。</li>\n    <li><b>环焊缝：</b>采用对称跳焊工艺以均衡收缩应力。</li>\n    <li><b>鞍座 → TR2 切换：</b>旋转焊接必须更换为 TR2 转动滚轮架。</li>\n    <li><b>焊前复核：</b>输入 D_min/D_max 或相对 D ±偏差，确认符合 API 2B。</li>\n  </ul>\n  <div class=\"callout danger\"><strong>⚠ FAIL 时矫正措施</strong>\n    <p>① 机械冷矫正 (Mechanical Cold Fitting)<br>② 热矫正 (Heat Straightening)<br>③ 安装内部加强环 (Internal Stiffener Ring) 后复测</p></div>"
+    }
+  },
+  "es": {
+    "heroTitle": "📖 Manual Técnico TOA",
+    "heroSub": "Análisis de Ovalidad en Tubería de Acero · Optimización de Rodillos · Cumplimiento Normativo",
+    "scopeTitle": "⚠ Alcance de Ingeniería y Limitaciones",
+    "scopeBody": "Esta aplicación es muy útil como herramienta de ingeniería preliminar para planificación en taller, ajuste de rodillos y coordinación de calidad; sin embargo, al basarse en teoría lineal elástica de anillo 2D, no puede emplearse de forma exclusiva para la aprobación final de diseño/fabricación (Code Sign-off). Valide siempre con FEA 3D y medición en campo antes de la aprobación final.",
+    "navStart": "Inicio",
+    "navSupport": "Tipos de Soporte",
+    "navResults": "Resultados",
+    "navStd": "Normas · Fórmulas",
+    "navAppendix": "Apéndice",
+    "s1": "Descripción y Diseño de Interfaz",
+    "s2": "Specs Tubería y Panel D/t",
+    "s3": "Specs Rodillos Giratorios",
+    "s4": "Normas / Opciones",
+    "s5": "Medición en Campo",
+    "s6": "Ovalidad Predicha, Pandeo y Veredicto",
+    "s7": "Optimización Sets Rodillos y Rendimiento",
+    "s8": "Pestañas (5) y Registros Guardados",
+    "s9": "Criterios de Cumplimiento",
+    "s10": "Fórmulas de Cálculo",
+    "s11": "TR2 Ángulo vs Ovalidad (D=3,000mm, t=10mm · Azimut Completo)",
+    "s12": "Lista de Verificación en Campo",
+    "s13": "Directrices de Campo",
+    "nav": {
+      "s1": "1. Descripción",
+      "s2": "2. Specs Tubería",
+      "s3": "3. Specs Rodillos",
+      "s4": "4. Normas / Opc.",
+      "s5": "5. Medición Campo",
+      "s6": "6. Ovalidad y Veredicto",
+      "s7": "7. Optimización Sets",
+      "s8": "8. Pestañas",
+      "s9": "9. Criterios",
+      "s10": "10. Fórmulas",
+      "s11": "11. Tabla TR2",
+      "s12": "12. Lista Verif.",
+      "s13": "13. Directrices"
+    },
+    "body": {
+      "s1": "<div class=\"tbl-wrap\"><table>\n    <thead><tr><th>Concepto</th><th>Detalle</th></tr></thead>\n    <tbody>\n      <tr><td><b>Teoría Base</b></td><td>Roark's Formulas 9ª Ed. (I_ring = t³/12) · Método de Castigliano (acoplado M_A·N_A y reacciones radiales) · Integración de Green en todo azimut (θ∈[0°,90°]) · Contacto Hertz</td></tr>\n      <tr><td><b>Normas</b></td><td>API 2B · ISO 19902 · API 5L (nota As Agreed para D&gt;1,422mm) · DNV-OS-C401</td></tr>\n      <tr><td><b>Rango Diámetro</b></td><td class=\"mono\">Φ 3,000 ~ 15,000 mm (Acero al Carbono)</td></tr>\n      <tr><td><b>Constantes</b></td><td class=\"mono\">E = 206,000 MPa · γ = 7.85×10⁻⁵ N/mm³ · ν = 0.3</td></tr>\n      <tr><td><b>Inercia Anillo</b></td><td class=\"mono\">I_ring = t³ / 12 (anillo elástico unidad; deflexión usa I_beam completa)</td></tr>\n    </tbody>\n  </table></div>\n  <h3>1-1. Distribución de Pantalla (Sub-Cards Unificadas)</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>Zona</th><th>Disposición en 4 Columnas (Izq. → Der.)</th></tr></thead>\n    <tbody>\n      <tr><td><b>Barra Superior</b><br><small>Entradas</small></td><td>① <b>Especif. Tubular</b> · ② <b>Rodillos Giratorios</b> · ③ <b>Normas/Opciones + Medición Campo</b> · ④ Panel <b>D / t</b> en vivo (der.)</td></tr>\n      <tr><td><b>Fila Resumen</b><br><small>Resultados</small></td><td>① <b>Sets Mínimos</b> · ② <b>Rendimiento Soporte</b> · ③ <b>Ovalidad Predicha</b> · ④ <b>Ejecutar / Comparar / 💾 Guardar</b> + estado <b>PASS/FAIL</b> debajo</td></tr>\n      <tr><td><b>Pestañas y Registros</b><br><small>5 + Plegable</small></td><td><b>Cumplimiento</b> · <b>Comparar</b> · <b>Diagrama</b> · <b>Recomendaciones</b> · <b>Lista Verif.</b> (5 pestañas) + tarjeta plegable independiente <b>Registros Guardados</b> abajo</td></tr>\n    </tbody>\n  </table></div>\n  <div class=\"callout ok\"><strong>✓ Validación del Modelo</strong><p>La solución simultánea M_A·N_A reproduce exactamente los Casos 1 y 15 de Roark y satisface el equilibrio vertical (∑Fy = W, residuo 0.00%) en todos los estados de apoyo.</p></div>",
+      "s2": "<h3>2-1. Campos de Entrada</h3>\n  <div class=\"inp-grid\">\n    <div class=\"inp-box\"><div class=\"lbl\">Diámetro</div><div class=\"name\">D (mm)</div><div class=\"range\">100~20,000 · paso 100</div><div class=\"id\">id: iD</div></div>\n    <div class=\"inp-box\"><div class=\"lbl\">Espesor</div><div class=\"name\">t (mm)</div><div class=\"range\">5~500 · paso 5</div><div class=\"id\">id: it</div></div>\n    <div class=\"inp-box\" style=\"border-color:var(--ac);\"><div class=\"lbl\" style=\"color:var(--ac);\">Longitud</div><div class=\"name\">L (mm)</div><div class=\"range\">500~100,000 · paso 500</div><div class=\"id\">id: i-plen</div></div>\n    <div class=\"inp-box\"><div class=\"lbl\">Total Soldaduras</div><div class=\"name\">Girth Welds</div><div class=\"range\">0~50 · paso 1 · def 5</div><div class=\"id\">id: i-nweld</div></div>\n    <div class=\"inp-box\" style=\"border-color:var(--ac);background:var(--acbg);\"><div class=\"lbl\" style=\"color:var(--ac);font-weight:800;\">Soldaduras Activas ★</div><div class=\"name\">En Proceso</div><div class=\"range\">0~10 · paso 1 · def 1</div><div class=\"id\">id: i-aweld</div></div>\n    <div class=\"inp-box\"><div class=\"lbl\">Ancho Plancha (Ref.)</div><div class=\"name\">Plate Width (mm)</div><div class=\"range\">500~10,000 · paso 100</div><div class=\"id\">id: i-platespan</div></div>\n  </div>\n  <h3>2-2. Panel D/t en Vivo (Columna Derecha · Alerta Brazier)</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>Celda</th><th>Fórmula / Regla</th><th>Color y Alerta</th></tr></thead>\n    <tbody>\n      <tr><td><b>D / t Ratio</b></td><td class=\"mono\">D ÷ t</td><td>&gt;300 Rojo · &gt;200 Naranja · &gt;120 Azul · resto Verde</td></tr>\n      <tr><td><b>Thin / Thick</b></td><td class=\"mono\">D/t ≥ 20</td><td>Azul Thin-Wall · Naranja Thick-Wall</td></tr>\n      <tr><td><b>R (mm)</b></td><td class=\"mono\">(D − t) / 2</td><td>Radio medio</td></tr>\n      <tr><td><b>Límite ISO</b></td><td class=\"mono\">D/t &gt; 120 → ≤ 0.5%</td><td>Naranja / Verde</td></tr>\n      <tr><td><b>Brazier</b></td><td class=\"mono\">D/t &gt; 300 HIGH · &gt;200 MOD</td><td>HIGH ⚠ Rojo · MOD △ Naranja · LOW Verde (<code>dt-brazier-alert</code>)</td></tr>\n      <tr><td><b>L / D</b></td><td class=\"mono\">L ÷ D</td><td>&gt;10 Naranja · &gt;6 Azul · resto Verde</td></tr>\n    </tbody>\n  </table></div>",
+      "s3": "<h3>3-1. 7 Tipos de Soporte (Reacciones Radiales Normales)</h3>\n  <div class=\"sup-grid\">\n    <div class=\"sup-card\"><div class=\"code\">NATURAL</div><div class=\"lbl\">① Natural</div><div class=\"desc\">Deformación libre Roark por peso propio (D_max−D_min). Línea base.</div></div>\n    <div class=\"sup-card\"><div class=\"code\">SADDLE120</div><div class=\"lbl\">② Silla 120°</div><div class=\"desc\">Presión radial uniforme (2α=120°) integrada. ≈49.6% del estado natural.</div></div>\n    <div class=\"sup-card\"><div class=\"code\">TR2_491 (ref)</div><div class=\"lbl\">③-A TR2 α=49.1° (ref)</div><div class=\"desc\">Referencia del modelo anterior (sin N_A ni reacción radial). ≈21.2% real.</div></div>\n    <div class=\"sup-card best\"><div class=\"code\">TR2_45 ★</div><div class=\"lbl\">③-B TR2 α=45° ★</div><div class=\"desc\">Óptimo real (anula m=2, δv=δh). ≈5.7% del natural por flexión diagonal a 45°.</div></div>\n    <div class=\"sup-card\"><div class=\"code\">TR2_30</div><div class=\"lbl\">③-C TR2 α=30°</div><div class=\"desc\">Arco 60° (≈56.5% del natural).</div></div>\n    <div class=\"sup-card\"><div class=\"code\">TR2_CUSTOM</div><div class=\"lbl\">③-D TR2 Custom</div><div class=\"desc\">Entrada manual α de 10° a 80°.</div></div>\n    <div class=\"sup-card best\"><div class=\"code\">TR4_STD</div><div class=\"lbl\">④-A TR4 4-Rodillos (22.5°/67.5°)</div><div class=\"desc\">4 apoyos independientes (22.5°/67.5°); reduce la ovalidad a ~0.35% del natural.</div></div>\n    <div class=\"sup-card\"><div class=\"code\">TR4_CUSTOM</div><div class=\"lbl\">④-B TR4 4-Rodillos Custom (α1/α2)</div><div class=\"desc\">Ángulos interno (α1) y externo (α2) configurables (ej. 30°/60°).</div></div>\n    <div class=\"sup-card\"><div class=\"code\">DOUBLE_ROLLER</div><div class=\"lbl\">⑤ Doble Rodillo (Pivote 4-Roll)</div><div class=\"desc\">4 apoyos en bogie pivotante (N1=N2), óptimo α_c=45° (≈4.3%).</div></div>\n  </div>\n  <h3>3-2. Parámetros de Rodillos</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>Parámetro</th><th>ID</th><th>Rango</th><th>Defecto</th><th>Descripción</th></tr></thead>\n    <tbody>\n      <tr><td><b>Material</b></td><td class=\"mono\">i-rmat</td><td>steel / urethane</td><td class=\"mono\">steel</td><td>Uretano (Shore 80A~90A) requerido si D≥6000mm o P_max&gt;500MPa</td></tr>\n      <tr><td><b>Diám. Rodillo</b></td><td class=\"mono\">i-rdia</td><td class=\"mono\">100~2,000mm</td><td class=\"mono\">600mm</td><td>Cálculo de tensión Hertz y vano admisible</td></tr>\n      <tr><td><b>Sep. C-C</b></td><td class=\"mono\">i-cc</td><td class=\"mono\">100~5,000mm</td><td>Auto (R×√2)</td><td>Calculado automáticamente para α=45°</td></tr>\n      <tr><td><b>Long. Contacto</b></td><td class=\"mono\">i-cl</td><td class=\"mono\">100~10,000mm</td><td class=\"mono\">300mm</td><td>Longitud axial efectiva para Hertz</td></tr>\n      <tr><td><b>α (Custom)</b></td><td class=\"mono\">i-a</td><td class=\"mono\">10°~80°</td><td class=\"mono\">45°</td><td>Visible en TR2_CUSTOM</td></tr>\n      <tr><td><b>α_center (DR)</b></td><td class=\"mono\">i-ac</td><td class=\"mono\">20°~65°</td><td class=\"mono\">45°</td><td>Ángulo central del bogie (óptimo 45.0°)</td></tr>\n      <tr><td><b>γ_roller (DR)</b></td><td class=\"mono\">i-gr</td><td class=\"mono\">1°~20°</td><td class=\"mono\">10°</td><td>Semiángulo entre pares del bogie</td></tr>\n    </tbody>\n  </table></div>",
+      "s4": "<p>Ubicada en la parte superior de la 3.ª columna (a la izquierda de <code>D / t</code>), sobre <b>Medición Campo (opc.)</b>.</p>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>Opción</th><th>ID</th><th>Valores</th><th>Límite Admisible</th></tr></thead>\n    <tbody>\n      <tr><td><b>Zona API 5L</b></td><td class=\"mono\">i-zone</td><td>body / end</td><td>body ≤ 1.5% · end ≤ 1.0% (D&gt;1,422mm nota As Agreed)</td></tr>\n      <tr><td><b>DNV Fatiga</b></td><td class=\"mono\">i-fat</td><td>false / true</td><td>Normal ≤ 1.0% · Fatiga ≤ 0.5%</td></tr>\n    </tbody>\n  </table></div>",
+      "s5": "<p>Situada bajo Normas/Opciones. Arriba se ingresan valores absolutos <b>D_min (OD, mm)</b> (izq.) y <b>D_max (OD, mm)</b> (der.); abajo se ingresan <b>desviaciones −/+ respecto a D nominal (mm)</b> (<code>id: i-devmin</code>, <code>i-devmax</code>). Ambas filas se sincronizan bidireccionalmente (ej.: <code>-2</code> y <code>+2</code> en <code>D=8,000mm</code> producen <code>D_min=7,998mm</code> y <code>D_max=8,002mm</code>). Si <b>D_max &lt; D_min</b> se muestra alerta inmediata.</p>\n  <table class=\"ftbl\">\n    <tr class=\"frow\"><td>D_min = D + ΔD_min · D_max = D + ΔD_max</td><td>Sincronización bidireccional entre desviación y OD</td></tr>\n    <tr class=\"frow\"><td>Oval(%) = (D_max − D_min) / D_nominal × 100</td><td>Ovalidad medida en la misma sección (D_max ≥ D_min)</td></tr>\n  </table>",
+      "s6": "<div class=\"tbl-wrap\"><table>\n    <thead><tr><th>Tarjeta</th><th>Borde</th><th>Contenido</th><th>Pandeo y Criterio de Color</th></tr></thead>\n    <tbody>\n      <tr><td><b>Estado Natural</b></td><td>Rojo (<code>#ef4444</code>)</td><td>Ovalidad Roark en todo azimut (mm, %)</td><td>&gt;1% Rojo / 0.3~1% Naranja / ≤0.3% Azul · Insignia Brazier</td></tr>\n      <tr><td><b>Soportado</b></td><td>Azul (<code>--ac</code>)</td><td>Ovalidad soportada + % vs Natural</td><td>&gt;1% Rojo / 0.3~1% Naranja / ≤0.3% Azul · Insignia Brazier</td></tr>\n      <tr><td><b>Medido Campo</b></td><td>Verde (<code>#10b981</code>)</td><td>Ovalidad medida + insignias API / ISO / DNV</td><td>PASS Verde / FAIL Rojo · Insignia Brazier</td></tr>\n    </tbody>\n  </table></div>\n  <div class=\"callout warn\"><strong>⚠ Alertas de Riesgo / Precaución de Pandeo</strong>\n    <p><code>TOAEngine.evaluateStateBuckling</code> evalúa cada tarjeta según D/t y deformación: muestra rojo <b>⚠ Riesgo Pandeo (Brazier High)</b> si D/t &gt; 300 y naranja <b>⚠ Precaución Pandeo (Brazier)</b> si D/t &gt; 200.</p>\n    <p style=\"margin-top:6px;\">Además, <code>TOAEngine.evaluateOvalBendingRisk</code> analiza ovalidad%, D/t, tensión de flexión del anillo (<b>σ_b = 6M_max/t²</b>) y flecha (δ), activando un <b>banner superior de alerta (CRITICAL/WARNING)</b> con acceso directo a la propuesta de refuerzo.</p></div>\n  <div class=\"callout ok\"><strong>▶ Panel de Ejecución e Insignia Global (<code>#stat-pill</code>)</strong>\n    <p>La 4.ª columna agrupa <b>Ejecutar Análisis</b> · <b>Comparar Todos</b> · <b>💾 Guardar</b> con la insignia global <code>Inactivo / APROBADO / FALLADO</code> justo debajo.</p></div>",
+      "s7": "<div class=\"callout ok\"><strong>✓ Principio de Vano Estructural</strong>\n    <p><b>Rendimiento del Soporte</b> se sitúa a la derecha de <b>Sets Mínimos Recomendados</b>. Las soldaduras circunferenciales completadas no exigen más rodillos; solo rigen el vano estructural y las soldaduras activas.</p></div>\n  <h3>7-1. Entradas de Soldadura</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>Campo</th><th>ID</th><th>Función</th><th>Impacto en Sets</th></tr></thead>\n    <tbody>\n      <tr><td><b>Girth Welds</b><br><small>Visual</small></td><td class=\"mono\">i-nweld</td><td>Dibuja marcas ▽ · 0 indica tubo continuo sin junta</td><td><span class=\"pill-p\">Limita effNA</span></td></tr>\n      <tr><td><b>Soldaduras Activas</b> ★</td><td class=\"mono\">i-aweld</td><td>Juntas en curso (effNA = min(active, nW))</td><td><span class=\"pill-f\">Define Sets</span></td></tr>\n      <tr><td><b>Ancho Plancha</b><br><small>Ref.</small></td><td class=\"mono\">i-platespan</td><td>Referencia informativa en vista lateral</td><td><span class=\"pill-p\">Ninguno</span></td></tr>\n    </tbody>\n  </table></div>\n  <h3>7-2. Criterios de Cálculo</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>#</th><th>Criterio</th><th>Fórmula</th><th>Notas</th></tr></thead>\n    <tbody>\n      <tr><td>①</td><td><b>Deflexión</b></td><td class=\"mono\">L_defl = ⁴√(384·E·I_beam·0.0005D / 5·w)</td><td>D=8000, t=25 → L_defl ≈ 50.3m</td></tr>\n      <tr><td>②</td><td><b>Tensión Hertz</b></td><td class=\"mono\">span_hz = [600²·π·cl·R_eff / (E_eff·w)] × 2·cos45°</td><td>Reparto radial entre 2 rodillos/set (P ≤ 600 MPa)</td></tr>\n      <tr><td>③</td><td><b>L/D y Vano</b></td><td class=\"mono\">≤2→2 / 2~4→3 / 4~7→4 / 7~10→5 / &gt;10→6 · Vano ≤ 2.5D</td><td>Criterio empírico de alineación</td></tr>\n      <tr><td>④</td><td><b>Sold. Activa</b> ★</td><td class=\"mono\">n ≥ min(max(effNA + 3, 4), n_max_phys)</td><td>2 sets por lado (con tope físico en tramos cortos)</td></tr>\n    </tbody>\n  </table></div>\n  <h3>7-3. Ecuaciones Finales</h3>\n  <table class=\"ftbl\">\n    <tr class=\"fgroup\"><td colspan=\"2\">Criterios Estructurales</td></tr>\n    <tr class=\"frow\"><td>n_struct = max(n_defl, n_hertz, n_LD, n_span, 2)</td><td>Independiente de juntas ya soldadas</td></tr>\n    <tr class=\"fgroup\"><td colspan=\"2\">Criterio de Soldadura Activa (solo si effNA = min(active, nW) &gt; 0)</td></tr>\n    <tr class=\"frow\"><td>n_active = min(max(effNA + 3, 4), n_max_phys)</td><td>effNA=0 si Girth Welds=0; limitado por n_max_phys</td></tr>\n    <tr class=\"frow\"><td>n_overhang = min(max(ceil(L / 3D) − 1, 4), n_max_phys)</td><td>Asegura voladizo ≤ 1.5D dentro del límite físico</td></tr>\n    <tr class=\"fgroup\"><td colspan=\"2\">Límite Físico y Resultado</td></tr>\n    <tr class=\"frow\"><td>n_max_phys = max(2, floor(L / max(cl·1.5, 500)))</td><td>Evita solape de rodillos (ej.: L=1,000mm → 2 sets)</td></tr>\n    <tr class=\"frow result\"><td>n_rec = max(n_struct, n_active, n_overhang, 2)</td><td>Sets mínimos recomendados</td></tr>\n    <tr class=\"frow result\"><td>span = L / (n_rec + 1)&nbsp;&nbsp;&nbsp;[mm]</td><td>Espaciado uniforme</td></tr>\n  </table>\n  <div class=\"callout danger\"><strong>⚠ Regla de 4 Sets y Excepción de Tubo Único / Corto</strong>\n    <p>Al soldar una junta activa, 4 sets ubican 2 a cada lado para asegurar rotación estable y control térmico. <b>Si Girth Welds = 0 o el tubo es corto (ej. L=1,000mm)</b>, no rige la regla de 4 sets y predomina el límite físico (2 sets).</p></div>\n  <h3>7-4. Ejemplos</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>Caso</th><th>Girth Welds</th><th>Activas</th><th>Estructural</th><th>Recomendado</th></tr></thead>\n    <tbody>\n      <tr><td>D=8000 t=25, L=20m</td><td>9 (cada 2m)</td><td>1</td><td>3 sets (L/D=2.5→3)</td><td class=\"mono\"><b>4 sets</b></td></tr>\n      <tr><td>D=5000 t=20, L=18m</td><td>8 (cada 2m)</td><td>1</td><td>3 sets (L/D=3.6)</td><td class=\"mono\"><b>4 sets</b></td></tr>\n      <tr><td>D=3000 t=10, L=12m</td><td>5 (cada 2m)</td><td>2</td><td>3 sets (L/D=4.0)</td><td class=\"mono\"><b>5 sets</b></td></tr>\n      <tr><td>D=8000 t=20, L=1m</td><td><b>0</b></td><td><b>0</b></td><td>2 sets (tubo único/corto)</td><td class=\"mono\"><b>2 sets</b></td></tr>\n    </tbody>\n  </table></div>\n  <div class=\"callout ok\"><strong>✓ Las Juntas Completadas no Requieren Soportes Extra</strong>\n    <p>Con placas de 2m y 9 soldaduras frente a L_defl ≈ 50.3m (D=8000, t=25), la viga trabaja de forma continua.</p></div>\n  <h3>7-5. Leyenda de Vista Lateral</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>Elemento</th><th>Descripción</th></tr></thead>\n    <tbody>\n      <tr><td><b>Perfil del Tubo</b></td><td>Curva elástica de flecha por vano</td></tr>\n      <tr><td><b>Rodillos S1, S2…</b></td><td>Cunas en V numeradas</td></tr>\n      <tr><td><b>Juntas W1, W2…</b></td><td>Líneas amarillas discontinuas + símbolo ▽</td></tr>\n      <tr><td><b>Cota de Vano</b></td><td>Distancia ↔ en el primer vano</td></tr>\n      <tr><td><b>max δ</b></td><td>Flecha máxima (mm, %D) inferior derecha</td></tr>\n    </tbody>\n  </table></div>",
+      "s8": "<div class=\"tbl-wrap\"><table>\n    <thead><tr><th>Pestaña</th><th>Contenido</th><th>Disponibilidad</th></tr></thead>\n    <tbody>\n      <tr><td><b>Cumplimiento</b></td><td>API 2B · ISO · API 5L · DNV + medición en campo</td><td>Tras analizar</td></tr>\n      <tr><td><b>Comparar</b></td><td>Gráfico de barras de 5 estados + tabla comparativa completa</td><td>Tras analizar / comparar</td></tr>\n      <tr><td><b>Diagrama</b></td><td><b>3 Circunferencias</b> [Natural roja discontinua <code>#ef4444</code> · Soportado azul continua <code>#377feb</code> · Medida verde <code>#10b981</code>] + Vista Lateral</td><td>Tras analizar</td></tr>\n      <tr><td><b>Recomendaciones</b></td><td>Alertas CRITICAL / WARNING / CAUTION / INFO · propuesta preliminar de anillos, Spider Brace y vano + planos de sección/lateral si hay FALLA</td><td>Tras analizar</td></tr>\n      <tr><td><b>Lista Verif.</b></td><td>Lista de verificación en campo + tarjetas γ_eff, Brazier, Hertz y Beam δ</td><td>Tras analizar</td></tr>\n      <tr><td><b>Registros Guardados (Tarjeta Inferior)</b></td><td>Debajo de las 5 pestañas: <b>guarda/restaura medición de campo y desviaciones</b> · Importar · Exportar · <b>Selector de Destino (<code>#i-rpt-target</code>)</b> · <b>5 casillas de secciones del informe</b> · CSV/XLS/PDF (PRO) · Limpiar · <b>▲ Ocultar / ▼ Mostrar</b></td><td>Siempre</td></tr>\n    </tbody>\n  </table></div>",
+      "s9": "<div class=\"std-row\"><div class=\"std-code\">API 2B</div><div class=\"std-body\"><div class=\"title\">Fabricación de Tubería Estructural</div><div class=\"sub\">t ≤ 50.8mm → máx 6.4mm · D ≥ 1219mm → máx 12.7mm · t &gt; 50.8mm → Oval/t ≤ 1:8</div></div><div class=\"std-lim\">≤ 1.0%</div></div>\n  <div class=\"std-row\" style=\"margin-top:6px;\"><div class=\"std-code\">ISO 19902</div><div class=\"std-body\"><div class=\"title\">Estructuras Offshore · D/t ≤ 120</div><div class=\"sub\">Jackets y monopilotes estándar</div></div><div class=\"std-lim\">≤ 1.0%</div></div>\n  <div class=\"std-row\" style=\"margin-top:6px;\"><div class=\"std-code\">ISO 19902</div><div class=\"std-body\"><div class=\"title\">Estructuras Offshore · D/t &gt; 120</div><div class=\"sub\">Tolerancia estricta para pared delgada</div></div><div class=\"std-lim\" style=\"color:var(--or);\">≤ 0.5%</div></div>\n  <div class=\"std-row\" style=\"margin-top:6px;\"><div class=\"std-code\">API 5L</div><div class=\"std-body\"><div class=\"title\">Line Pipe · Cuerpo / Extremo</div><div class=\"sub\">Mayor exigencia en extremos · Para D &gt; 1,422mm sin límite acordado muestra <b>AGREEMENT REQUIRED</b> (no PASS automático)</div></div><div class=\"std-lim\">1.5% / 1.0%*</div></div>\n  <div class=\"std-row\" style=\"margin-top:6px;\"><div class=\"std-code\">DNV</div><div class=\"std-body\"><div class=\"title\">DNV-OS-C401 · Normal / Fatiga</div><div class=\"sub\">Miembros sensibles a fatiga requieren ≤ 0.5%</div></div><div class=\"std-lim\">1.0% / 0.5%</div></div>\n  <div class=\"callout\"><strong>※ Aviso Técnico</strong><p>Herramienta conceptual basada en teoría elástica lineal de anillo (I = t³/12). ΔD/D &gt; 5% es umbral de alerta del programa y Brazier D/t un indicador preliminar; valide con FEA o medición antes de la aprobación final.</p></div>",
+      "s10": "<h4>Variables Básicas</h4>\n  <table class=\"ftbl\">\n    <tr class=\"frow\"><td>D_mean = D − t</td><td>Diámetro medio (mm)</td></tr>\n    <tr class=\"frow\"><td>R = (D − t) / 2</td><td>Radio medio neutro (mm)</td></tr>\n    <tr class=\"frow\"><td>A = π(D² − ID²) / 4</td><td>Área transversal (mm²)</td></tr>\n    <tr class=\"frow\"><td>w = γ × A</td><td>Peso por unidad de longitud (N/mm) · γ = 7.85×10⁻⁵ N/mm³</td></tr>\n    <tr class=\"frow\"><td>I_ring = t³ / 12</td><td>Momento de inercia unitario del anillo (mm⁴/mm)</td></tr>\n    <tr class=\"frow\"><td>I_beam = π(D⁴ − ID⁴) / 64</td><td>Inercia total de viga (mm⁴) para flecha axial</td></tr>\n  </table>\n  <h4>Estado Natural — Anillo de Roark</h4>\n  <table class=\"ftbl\">\n    <tr class=\"frow\"><td>dDv = −0.1488 · w · R³ / (E·I_ring)</td><td>Cambio de diámetro vertical (mm)</td></tr>\n    <tr class=\"frow\"><td>dDh = +0.1369 · w · R³ / (E·I_ring)</td><td>Cambio de diámetro horizontal (mm)</td></tr>\n    <tr class=\"frow highlight\"><td>oval = 0.2857 · w · R³ / (E·I_ring)</td><td>Ovalidad total = D_max − D_min (reacción base R_base=2V_B verificada por integral de cortante)</td></tr>\n  </table>\n  <h4>Silla 120° — Presión Radial Uniforme (2α = 120°)</h4>\n  <table class=\"ftbl\">\n    <tr class=\"frow highlight\"><td>oval_saddle ≈ oval_natural × 0.4956</td><td>Integración directa de Green bajo arco radial uniforme de 120°</td></tr>\n  </table>\n  <h4>Rodillos Giratorios — Castigliano Azimut Completo (N=2,000, Malla 0.5° + Sección Áurea)</h4>\n  <table class=\"ftbl\">\n    <tr class=\"fgroup\"><td colspan=\"2\">Reacciones Radiales y Supuesto de Bogie Pivotante Simétrico (∑Fy = W)</td></tr>\n    <tr class=\"frow\"><td>TR2: N = W / (2·cosα)</td><td>Reacción normal del rodillo (N·cosα = W/2)</td></tr>\n    <tr class=\"frow\"><td>Double Roller: N₁ = N₂ = W / [4·cos(α_c)·cos(γ)]</td><td>Reparto equitativo bajo bogie simétrico de brazos iguales (L₁=L₂, ∑Fy = W)</td></tr>\n    <tr class=\"fgroup\"><td colspan=\"2\">Redundantes (M_A, N_A) y Ovalidad Completa</td></tr>\n    <tr class=\"frow\"><td>∫₀ᵖ M(φ)dφ = 0 · ∫₀ᵖ M(φ)·(1−cosφ)dφ = 0</td><td>Solución acoplada de M_A y N_A en la coronación</td></tr>\n    <tr class=\"frow\"><td>D(θ) = D + ΔD(θ)</td><td>θ ∈ [0°, 90°] cada 0.5° (181 pts) + optimización áurea (tol = 10⁻⁴ rad)</td></tr>\n    <tr class=\"frow\"><td>oval = max D(θ) − min D(θ)</td><td>Captura aplastamiento diagonal a 45° además de 0°/90°</td></tr>\n    <tr class=\"frow highlight\"><td>Óptimo Numérico: α_opt = 45.0° ★</td><td>argmin_α [D_max(α)−D_min(α)] = 45.0° (anula m=2; ≈ 5.68% del natural)</td></tr>\n  </table>\n  <h4>Tensión de Contacto Hertz (Carga Tributaria por Set)</h4>\n  <table class=\"ftbl\">\n    <tr class=\"frow\"><td>α = arcsin(C-C / (D + rd))</td><td>Ángulo de apoyo exacto con distancia entre centros (D+rd)/2</td></tr>\n    <tr class=\"frow\"><td>F = N_per_mm × (L / n_sets)</td><td>Carga por rodillo según longitud tributaria L_trib = L / n_sets</td></tr>\n    <tr class=\"frow\"><td>R_eff = Rp·Rr / (Rp + Rr)</td><td>Radio efectivo de contacto</td></tr>\n    <tr class=\"frow\"><td>1 / E_eff = (1−ν_p²)/E_p + (1−ν_r²)/E_r</td><td>Módulo equivalente general (Acero / Uretano / Caucho)</td></tr>\n    <tr class=\"frow\"><td>b = √(4·F·R_eff / π·cl·E_eff)</td><td>Semiancho de contacto (mm)</td></tr>\n    <tr class=\"frow highlight\"><td>P_max = 2·F / (π·cl·b)</td><td>Presión máxima — estable &lt; 600 MPa (uretano &gt;500 MPa o D≥6000)</td></tr>\n  </table>\n  <h4>Optimización de Sets</h4>\n  <table class=\"ftbl\">\n    <tr class=\"fgroup\"><td colspan=\"2\">Vanos Admisibles</td></tr>\n    <tr class=\"frow\"><td>δ_allow = 0.0005 · D</td><td>Flecha admisible (0.05%D)</td></tr>\n    <tr class=\"frow\"><td>L_defl = ⁴√(384·E·I_beam·δ_allow / 5·w)</td><td>Vano admisible por flecha</td></tr>\n    <tr class=\"frow\"><td>span_hz = [600²·π·cl·R_eff / (E_eff·w)] × 2·cos45°</td><td>Vano Hertz (2 rodillos/set, P = 600 MPa)</td></tr>\n    <tr class=\"fgroup\"><td colspan=\"2\">Cálculo Final</td></tr>\n    <tr class=\"frow\"><td>n_struct = max(n_defl, n_hertz, n_LD, n_span, 2)</td><td>Sets estructurales</td></tr>\n    <tr class=\"frow\"><td>n_active = min(max(effNA + 3, 4), n_max_phys)</td><td>Sets por soldadura activa effNA = min(active, nW) &gt; 0</td></tr>\n    <tr class=\"frow result\"><td>n_rec = max(n_struct, n_active, n_overhang, 2)</td><td>Sets mínimos recomendados</td></tr>\n    <tr class=\"frow result\"><td>span = L / (n_rec + 1)&nbsp;&nbsp;&nbsp;[mm]</td><td>Espaciado uniforme</td></tr>\n  </table>",
+      "s11": "<div class=\"tbl-wrap\"><table>\n    <thead><tr><th>α (°)</th><th>Arco (°)</th><th>δv (mm)</th><th>δh (mm)</th><th>Oval (mm)</th><th>Oval (%)</th><th>vs Nat</th><th>Nota</th></tr></thead>\n    <tbody>\n      <tr><td>30</td><td>60</td><td class=\"mono\">−55.38</td><td class=\"mono\">+60.25</td><td class=\"mono\">115.63</td><td class=\"mono\">3.8542</td><td class=\"mono\">56.46%</td><td>—</td></tr>\n      <tr><td>40</td><td>80</td><td class=\"mono\">−17.82</td><td class=\"mono\">+27.38</td><td class=\"mono\">45.20</td><td class=\"mono\">1.5066</td><td class=\"mono\">22.07%</td><td>—</td></tr>\n      <tr style=\"background:var(--acbg);\"><td><b>45.0</b></td><td><b>90.0</b></td><td class=\"mono\"><b>+5.47</b></td><td class=\"mono\"><b>+5.47</b></td><td class=\"mono\"><b>11.64</b></td><td class=\"mono\"><b>0.3879</b></td><td class=\"mono\"><b>5.68%</b></td><td><b>★ Óptimo (anula m=2)</b></td></tr>\n      <tr><td>49.1</td><td>98.2</td><td class=\"mono\">+27.40</td><td class=\"mono\">−16.02</td><td class=\"mono\">43.46</td><td class=\"mono\">1.4486</td><td class=\"mono\">21.22%</td><td>Referencia previa (ref)</td></tr>\n      <tr><td>55</td><td>110</td><td class=\"mono\">+64.88</td><td class=\"mono\">−54.22</td><td class=\"mono\">119.09</td><td class=\"mono\">3.9698</td><td class=\"mono\">58.15%</td><td>—</td></tr>\n      <tr><td>60</td><td>120</td><td class=\"mono\">+104.35</td><td class=\"mono\">−95.92</td><td class=\"mono\">200.27</td><td class=\"mono\">6.6757</td><td class=\"mono\">97.78%</td><td>—</td></tr>\n    </tbody>\n  </table></div>",
+      "s12": "<div class=\"tbl-wrap\"><table>\n    <thead><tr><th>N°</th><th>Ítem</th><th>Criterio</th><th>Acción Requerida</th></tr></thead>\n    <tbody>\n      <tr><td>1</td><td><b>Cálculo γ_eff</b></td><td>Equilibrio bogie (N1=N2): óptimo α_center = 45.0°</td><td>Nivelación láser dentro de ±2°</td></tr>\n      <tr><td>2</td><td><b>Riesgo Brazier</b></td><td>D/t &gt; 300 Alto Riesgo · &gt;200 Precaución</td><td>Instalar araña interna / anillos ≤ 4D</td></tr>\n      <tr><td>3</td><td><b>Presión Hertz</b></td><td>P_max &gt; 500 MPa Riesgo</td><td>Revestimiento de uretano (Shore 80A~90A)</td></tr>\n      <tr><td>4</td><td><b>Vano Apoyo</b></td><td>Recomendado ≤ D/2</td><td>Mínimo 3 pares de rodillos</td></tr>\n      <tr><td>5</td><td><b>Convergencia γ</b></td><td>γ &lt; 5° Precaución</td><td>Usar rodillos de ancho ajustable</td></tr>\n      <tr><td>6</td><td><b>Distorsión Térmica</b></td><td>Superposición no lineal</td><td>Perfilómetro láser antes/después del enfriado</td></tr>\n      <tr><td>7</td><td><b>Verificación Final</b></td><td>API 2B ≤ 1.0%<br>ISO D/t&gt;120 → ≤ 0.5%</td><td>Confirmar PASS y guardar en panel inferior</td></tr>\n    </tbody>\n  </table></div>",
+      "s13": "<h3>Selección de Soporte (% del Estado Natural)</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>Situación</th><th>Soporte Recomendado</th><th>Ovalidad vs Natural</th></tr></thead>\n    <tbody>\n      <tr><td>Almacenamiento/Transporte</td><td>② Silla 120°</td><td class=\"mono\">≈ 49.6% (arco radial)</td></tr>\n      <tr><td>Soldadura Rotativa (Óptimo)</td><td>③-B TR2 α=45° ★</td><td class=\"mono\">≈ 5.7% (anula m=2)</td></tr>\n      <tr><td>Referencia Modelo Previo</td><td>③-A TR2 α=49.1° (ref)</td><td class=\"mono\">≈ 21.2%</td></tr>\n      <tr><td>Gran Diámetro Pesado</td><td>④ Doble Rodillo α_c=45°</td><td class=\"mono\">≈ 4.3% (equilibrio N1=N2)</td></tr>\n    </tbody>\n  </table></div>\n  <h3>Directrices de Soldadura</h3>\n  <ul>\n    <li><b>Durante Soldadura:</b> Mínimo 4 sets (2 a cada lado, salvo tubo corto único).</li>\n    <li><b>Instalar Máximo de Rodillos:</b> Incluso en soldadura o simple apoyo, instale tantos rodillos como sea posible para mejorar la ovalidad.</li>\n    <li><b>Juntas Circunferenciales:</b> Usar soldadura salteada simétrica.</li>\n    <li><b>Silla → TR2:</b> Cambiar siempre a rodillos TR2 antes de rotar para soldar.</li>\n    <li><b>Control Previo:</b> Ingresar D_min/D_max o desviación ± desde D para verificar API 2B.</li>\n  </ul>\n  <div class=\"callout danger\"><strong>⚠ Corrección ante FAIL</strong>\n    <p>① Enderezado Mecánico en Frío (Cold Fitting)<br>② Enderezado Térmico (Heat Straightening)<br>③ Anillo Reforzador Interno (Stiffener Ring) y remedición</p></div>"
+    }
+  },
+  "ja": {
+    "heroTitle": "📖 TOA 技術リファレンスマニュアル",
+    "heroSub": "炭素鋼大径管 真円度解析 · ターニングローラー最適化 · 規格適合完全ガイド",
+    "scopeTitle": "⚠ 適用範囲および工学的限界に関するご案内 (Engineering Scope & Limitations)",
+    "scopeBody": "本アプリは現場事前検討・ローラーセッティング・品質協議のための一次エンジニアリング支援ツールとして即座に活用できますが、2D線形弾性リング理論に基づくため最終設計・製作承認（Code Sign-off）用の解析器として単独使用することはできません。最終承認前には必ず適用規格条項照合・3D FEA・現場計測検証を併用してください。",
+    "navStart": "はじめに",
+    "navSupport": "支持方式",
+    "navResults": "結果分析",
+    "navStd": "規格・公式",
+    "navAppendix": "付録",
+    "s1": "アプリ概要・画面構成",
+    "s2": "鋼管仕様入力・D/t パネル",
+    "s3": "ターニングローラー仕様",
+    "s4": "規格 / オプション",
+    "s5": "現場計測入力",
+    "s6": "予測真円度・座屈警告・総合判定",
+    "s7": "ローラーセット最適化・支持性能",
+    "s8": "出力タブ (5タブ) ・保存パネル",
+    "s9": "規格判定基準",
+    "s10": "主要計算式",
+    "s11": "TR2 角度別真円度 (D=3,000mm, t=10mm · 全周)",
+    "s12": "現場作業チェックリスト",
+    "s13": "実務ガイドライン",
+    "nav": {
+      "s1": "1. アプリ概要",
+      "s2": "2. 鋼管仕様",
+      "s3": "3. ローラー仕様",
+      "s4": "4. 規格 / オプション",
+      "s5": "5. 現場計測",
+      "s6": "6. 予測・総合判定",
+      "s7": "7. セット最適化",
+      "s8": "8. 出力タブ",
+      "s9": "9. 規格基準",
+      "s10": "10. 主要計算式",
+      "s11": "11. TR2 角度表",
+      "s12": "12. チェックリスト",
+      "s13": "13. 実務指針"
+    },
+    "body": {
+      "s1": "<div class=\"tbl-wrap\"><table>\n    <thead><tr><th>項目</th><th>内容</th></tr></thead>\n    <tbody>\n      <tr><td><b>適用理論</b></td><td>Roark's Formulas 第9版 (I_ring = t³/12) · Castigliano 法（M_A·N_A 連立解析 · 径方向反力）· 全周グリーン関数積分 (θ∈[0°,90°]) · Hertz 線接触</td></tr>\n      <tr><td><b>適用規格</b></td><td>API 2B · ISO 19902 · API 5L（D&gt;1,422mm As Agreed 注記）· DNV-OS-C401</td></tr>\n      <tr><td><b>外径範囲</b></td><td class=\"mono\">Φ 3,000 ~ 15,000 mm (炭素鋼)</td></tr>\n      <tr><td><b>材料定数</b></td><td class=\"mono\">E = 206,000 MPa · γ = 7.85×10⁻⁵ N/mm³ · ν = 0.3</td></tr>\n      <tr><td><b>断面二次モーメント</b></td><td class=\"mono\">I_ring = t³ / 12（単位幅弾性リング；梁たわみは全断面 I_beam を使用）</td></tr>\n    </tbody>\n  </table></div>\n  <h3>1-1. 上下画面レイアウト (Unified Sub-Cards)</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>領域</th><th>左 → 右 4列構成</th></tr></thead>\n    <tbody>\n      <tr><td><b>上部入力バー</b><br><small>入力条件</small></td><td>① <b>鋼管仕様</b> · ② <b>ターニングローラー仕様</b> · ③ <b>規格/オプション + 現場計測（上下積重ね）</b> · ④ <b>D / t</b> パネル（右側）</td></tr>\n      <tr><td><b>下部サマリー行</b><br><small>主要結果</small></td><td>① <b>最小推奨ローラーセット</b> · ② <b>支持性能解析</b> · ③ <b>予測真円度</b> · ④ <b>解析実行 / 全比較 / 💾 保存</b> 3段ボタン + 下部 <b>PASS/FAIL</b> バッジ</td></tr>\n      <tr><td><b>詳細タブ・保存パネル</b><br><small>5タブ + 独立</small></td><td><b>規格判定</b> · <b>状態比較</b> · <b>断面図</b> · <b>推奨事項</b> · <b>チェックリスト</b>（5タブ）＋最下部の独立した折りたたみ式<b>保存済み記録</b>パネル</td></tr>\n    </tbody>\n  </table></div>\n  <div class=\"callout ok\"><strong>✓ 解析モデル検証基準</strong><p>頂部 M_A·N_A 連立解法により Roark Case 1・Case 15 の厳密解と一致し、すべての支持状態で鉛直つり合い（∑Fy = W、残差 0.00%）を満たします。</p></div>",
+      "s2": "<h3>2-1. 入力フィールド</h3>\n  <div class=\"inp-grid\">\n    <div class=\"inp-box\"><div class=\"lbl\">外径</div><div class=\"name\">D (mm)</div><div class=\"range\">100~20,000 · 刻み 100</div><div class=\"id\">id: iD</div></div>\n    <div class=\"inp-box\"><div class=\"lbl\">肉厚</div><div class=\"name\">t (mm)</div><div class=\"range\">5~500 · 刻み 5</div><div class=\"id\">id: it</div></div>\n    <div class=\"inp-box\" style=\"border-color:var(--ac);\"><div class=\"lbl\" style=\"color:var(--ac);\">管長</div><div class=\"name\">L (mm)</div><div class=\"range\">500~100,000 · 刻み 500</div><div class=\"id\">id: i-plen</div></div>\n    <div class=\"inp-box\"><div class=\"lbl\">周溶接総数</div><div class=\"name\">総溶接数</div><div class=\"range\">0~50 · 刻み 1 · 初期 5</div><div class=\"id\">id: i-nweld</div></div>\n    <div class=\"inp-box\" style=\"border-color:var(--ac);background:var(--acbg);\"><div class=\"lbl\" style=\"color:var(--ac);font-weight:800;\">進行中溶接数 ★</div><div class=\"name\">Active Welds</div><div class=\"range\">0~10 · 刻み 1 · 初期 1</div><div class=\"id\">id: i-aweld</div></div>\n    <div class=\"inp-box\"><div class=\"lbl\">プレート幅（参照）</div><div class=\"name\">Plate Width (mm)</div><div class=\"range\">500~10,000 · 刻み 100</div><div class=\"id\">id: i-platespan</div></div>\n  </div>\n  <h3>2-2. D/t リアルタイムパネル（右上列 · Brazier 警告付）</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>項目</th><th>計算式 / 基準</th><th>色・警告</th></tr></thead>\n    <tbody>\n      <tr><td><b>D / t Ratio</b></td><td class=\"mono\">D ÷ t</td><td>&gt;300 赤 · &gt;200 橙 · &gt;120 青 · 他は緑</td></tr>\n      <tr><td><b>Thin / Thick</b></td><td class=\"mono\">D/t ≥ 20</td><td>青 Thin-Wall · 橙 Thick-Wall</td></tr>\n      <tr><td><b>R (mm)</b></td><td class=\"mono\">(D − t) / 2</td><td>平均半径</td></tr>\n      <tr><td><b>ISO limit</b></td><td class=\"mono\">D/t &gt; 120 → ≤ 0.5%</td><td>橙 / 緑</td></tr>\n      <tr><td><b>Brazier</b></td><td class=\"mono\">D/t &gt; 300 HIGH · &gt;200 MOD</td><td>HIGH ⚠ 赤 · MOD △ 橙 · LOW 緑（<code>dt-brazier-alert</code>）</td></tr>\n      <tr><td><b>L / D</b></td><td class=\"mono\">L ÷ D</td><td>&gt;10 橙 · &gt;6 青 · 他は緑</td></tr>\n    </tbody>\n  </table></div>",
+      "s3": "<h3>3-1. 支持方式 7種（径方向法線反力）</h3>\n  <div class=\"sup-grid\">\n    <div class=\"sup-card\"><div class=\"code\">NATURAL</div><div class=\"lbl\">① 自然状態</div><div class=\"desc\">Roark 自重リング変形（全周 D_max−D_min）。比較基準。</div></div>\n    <div class=\"sup-card\"><div class=\"code\">SADDLE120</div><div class=\"lbl\">② 120° サドル</div><div class=\"desc\">均一径方向接触圧（2α=120°）積分。自然の約 49.6%。保管・運搬用。</div></div>\n    <div class=\"sup-card\"><div class=\"code\">TR2_491 (ref)</div><div class=\"lbl\">③-A TR2 α=49.1° (ref)</div><div class=\"desc\">旧モデル（N_A 省略）参照角。全周比 約 21.2%（最適ではない）。</div></div>\n    <div class=\"sup-card best\"><div class=\"code\">TR2_45 ★</div><div class=\"lbl\">③-B TR2 α=45° ★</div><div class=\"desc\">理論・現場最適（m=2 相殺、δv=δh）。45° 曲げ残存により約 5.7%。</div></div>\n    <div class=\"sup-card\"><div class=\"code\">TR2_30</div><div class=\"lbl\">③-C TR2 α=30°</div><div class=\"desc\">スパン 60°（自然の約 56.5%）。</div></div>\n    <div class=\"sup-card\"><div class=\"code\">TR2_CUSTOM</div><div class=\"lbl\">③-D TR2 Custom</div><div class=\"desc\">α 任意入力 10°~80°。</div></div>\n    <div class=\"sup-card best\"><div class=\"code\">TR4_STD</div><div class=\"lbl\">④-A TR4 4ローラー (22.5°/67.5°)</div><div class=\"desc\">下部4点独立支持 (22.5°/67.5°)。全周真円度を自然状態の約 0.35% まで低減。</div></div>\n    <div class=\"sup-card\"><div class=\"code\">TR4_CUSTOM</div><div class=\"lbl\">④-B TR4 4ローラー Custom (α1/α2)</div><div class=\"desc\">内側(α1)・外側(α2)の4点支持角を任意設定（例: 30°/60°）。</div></div>\n    <div class=\"sup-card\"><div class=\"code\">DOUBLE_ROLLER</div><div class=\"lbl\">⑤ 固定ダブルローラー (4輪ボギー)</div><div class=\"desc\">4点支持・ボギー平衡 (N1=N2)、最適 α_c=45°（約 4.3%）。</div></div>\n  </div>\n  <h3>3-2. ローラーパラメータ</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>項目</th><th>ID</th><th>範囲</th><th>初期値</th><th>説明</th></tr></thead>\n    <tbody>\n      <tr><td><b>材質</b></td><td class=\"mono\">i-rmat</td><td>steel / urethane</td><td class=\"mono\">steel</td><td>D≥6000mm または P_max&gt;500MPa はウレタン（Shore 80A~90A）必須</td></tr>\n      <tr><td><b>ローラー径</b></td><td class=\"mono\">i-rdia</td><td class=\"mono\">100~2,000mm</td><td class=\"mono\">600mm</td><td>Hertz 応力および許容スパン算出</td></tr>\n      <tr><td><b>中心距離</b></td><td class=\"mono\">i-cc</td><td class=\"mono\">100~5,000mm</td><td>自動 (R×√2)</td><td>α=45° 基準で自動設定</td></tr>\n      <tr><td><b>接触長さ</b></td><td class=\"mono\">i-cl</td><td class=\"mono\">100~10,000mm</td><td class=\"mono\">300mm</td><td>軸方向有効接触長</td></tr>\n      <tr><td><b>α (Custom)</b></td><td class=\"mono\">i-a</td><td class=\"mono\">10°~80°</td><td class=\"mono\">45°</td><td>TR2_CUSTOM 選択時に表示</td></tr>\n      <tr><td><b>α_center (DR)</b></td><td class=\"mono\">i-ac</td><td class=\"mono\">20°~65°</td><td class=\"mono\">45°</td><td>ボギー中心角（平衡最適 45.0°）</td></tr>\n      <tr><td><b>γ_roller (DR)</b></td><td class=\"mono\">i-gr</td><td class=\"mono\">1°~20°</td><td class=\"mono\">10°</td><td>ボギー内半開き角</td></tr>\n    </tbody>\n  </table></div>",
+      "s4": "<p>上部入力バー第3列（<code>D / t</code> 左側）の<b>現場計測（任意）</b>上段に配置されます。</p>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>オプション</th><th>ID</th><th>値</th><th>許容限界</th></tr></thead>\n    <tbody>\n      <tr><td><b>API 5L 区間</b></td><td class=\"mono\">i-zone</td><td>body / end</td><td>body ≤ 1.5% · end ≤ 1.0%（D&gt;1,422mm As Agreed 注記）</td></tr>\n      <tr><td><b>DNV 疲労</b></td><td class=\"mono\">i-fat</td><td>false / true</td><td>通常 ≤ 1.0% · 疲労敏感 ≤ 0.5%</td></tr>\n    </tbody>\n  </table></div>",
+      "s5": "<p>規格/オプション直下に配置され、上段に絶対値 <b>D_min (OD, mm)</b>（左）・<b>D_max (OD, mm)</b>（右）、下段に <b>基準 D 比 −/+ 偏差 (mm)</b>（<code>id: i-devmin</code>, <code>i-devmax</code>）を入力できます。上下は双方向に自動連動し、例えば <code>D=8,000mm</code> で偏差に <code>-2</code>, <code>+2</code> を入力すると <code>D_min=7,998mm</code>, <code>D_max=8,002mm</code> が自動算出されます。<b>D_max &lt; D_min</b> の逆転時は即時警告を表示します。</p>\n  <table class=\"ftbl\">\n    <tr class=\"frow\"><td>D_min = D + ΔD_min · D_max = D + ΔD_max</td><td>偏差入力と実測外径 OD の双方向自動同期</td></tr>\n    <tr class=\"frow\"><td>真円度 (%) = (D_max − D_min) / D_nominal × 100</td><td>同一断面外径に基づく実測真円度（D_max ≥ D_min 必須）</td></tr>\n  </table>",
+      "s6": "<div class=\"tbl-wrap\"><table>\n    <thead><tr><th>カード</th><th>上枠線</th><th>内容</th><th>座屈警告および色基準</th></tr></thead>\n    <tbody>\n      <tr><td><b>自然状態</b></td><td>赤 (<code>#ef4444</code>)</td><td>全周 Roark 自重真円度 (mm, %)</td><td>&gt;1% 赤 / 0.3~1% 橙 / ≤0.3% 青 · Brazier 座屈警告バッジ</td></tr>\n      <tr><td><b>支持状態</b></td><td>青 (<code>--ac</code>)</td><td>選択方式の予測値 + vs自然(%)</td><td>&gt;1% 赤 / 0.3~1% 橙 / ≤0.3% 青 · Brazier 座屈警告バッジ</td></tr>\n      <tr><td><b>現場計測</b></td><td>緑 (<code>#10b981</code>)</td><td>実測真円度 + API / ISO / DNV 判定</td><td>PASS 緑 / FAIL 赤 · Brazier 座屈警告バッジ</td></tr>\n    </tbody>\n  </table></div>\n  <div class=\"callout warn\"><strong>⚠ 各項目での座屈リスク警告</strong>\n    <p><code>TOAEngine.evaluateStateBuckling</code> が各カードをリアルタイム評価し、D/t &gt; 300 または扁平過大時に赤 <b>⚠ 座屈リスク (Brazier High)</b>、D/t &gt; 200 時に橙 <b>⚠ 座屈注意 (Brazier Caution)</b> を表示します。</p>\n    <p style=\"margin-top:6px;\">さらに <code>TOAEngine.evaluateOvalBendingRisk</code> が真円度%・D/t・リング曲げ応力(<b>σ_b = 6M_max/t²</b>)・梁たわみ(δ)を総合評価し、高リスク時に上部 <b>楕円化・曲げ警告バナー (CRITICAL/WARNING)</b> と補強提案へのジャンプを表示します。</p></div>\n  <div class=\"callout ok\"><strong>▶ 解析実行カードおよび下部総合判定 (<code>#stat-pill</code>)</strong>\n    <p>第4列に <b>解析実行</b> · <b>全支持状態を比較</b> · <b>💾 保存</b> ボタンが並び、直下に総合判定バッジ（<code>待機中 / 合格 PASS / 不合格 FAIL</code>）が表示されます。</p></div>",
+      "s7": "<div class=\"callout ok\"><strong>✓ 構造スパン原則と配置</strong>\n    <p><b>ローラー支持性能解析</b>は<b>最小推奨ローラーセット数</b>の右隣に配置されます。完了した周溶接は一体断面となるためセット数に影響せず、構造スパンと進行中溶接数のみで決定されます。</p></div>\n  <h3>7-1. 溶接入力の区分</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>入力</th><th>ID</th><th>役割</th><th>セット数への影響</th></tr></thead>\n    <tbody>\n      <tr><td><b>周溶接総数</b><br><small>可視化</small></td><td class=\"mono\">i-nweld</td><td>側面図に ▽ 表示 · 0 の場合は継目なし単管</td><td><span class=\"pill-p\">effNA 上限制限</span></td></tr>\n      <tr><td><b>進行中溶接数</b> ★</td><td class=\"mono\">i-aweld</td><td>施工中ジョイント数 (effNA = min(active, nW))</td><td><span class=\"pill-f\">セット数を決定</span></td></tr>\n      <tr><td><b>プレート幅</b><br><small>参照</small></td><td class=\"mono\">i-platespan</td><td>側面図の注記参照のみ</td><td><span class=\"pill-p\">なし</span></td></tr>\n    </tbody>\n  </table></div>\n  <h3>7-2. 決定ロジック</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>#</th><th>基準</th><th>計算式</th><th>備考</th></tr></thead>\n    <tbody>\n      <tr><td>①</td><td><b>たわみ基準</b></td><td class=\"mono\">L_defl = ⁴√(384·E·I_beam·0.0005D / 5·w)</td><td>D=8000, t=25 → L_defl ≈ 50.3m</td></tr>\n      <tr><td>②</td><td><b>Hertz 基準</b></td><td class=\"mono\">span_hz = [600²·π·cl·R_eff / (E_eff·w)] × 2·cos45°</td><td>1セット2輪の径方向分担 (P ≤ 600 MPa)</td></tr>\n      <tr><td>③</td><td><b>L/D と間隔</b></td><td class=\"mono\">≤2→2 / 2~4→3 / 4~7→4 / 7~10→5 / &gt;10→6 · 間隔 ≤ 2.5D</td><td>実務最小基準</td></tr>\n      <tr><td>④</td><td><b>進行中溶接</b> ★</td><td class=\"mono\">n ≥ min(max(effNA + 3, 4), n_max_phys)</td><td>溶接部両側各2セット（単管・短管は例外）</td></tr>\n    </tbody>\n  </table></div>\n  <h3>7-3. 最終算出式</h3>\n  <table class=\"ftbl\">\n    <tr class=\"fgroup\"><td colspan=\"2\">構造基準 (たわみ · Hertz · L/D · 間隔 ≤ 2.5D)</td></tr>\n    <tr class=\"frow\"><td>n_struct = max(n_defl, n_hertz, n_LD, n_span, 2)</td><td>完了溶接数は含まない</td></tr>\n    <tr class=\"fgroup\"><td colspan=\"2\">進行中溶接基準 (effNA = min(active, nW) &gt; 0 の場合のみ)</td></tr>\n    <tr class=\"frow\"><td>n_active = min(max(effNA + 3, 4), n_max_phys)</td><td>周溶接=0 なら effNA=0；短管は物理上限で制限</td></tr>\n    <tr class=\"frow\"><td>n_overhang = min(max(ceil(L / 3D) − 1, 4), n_max_phys)</td><td>端部張出 ≤ 1.5D を確保</td></tr>\n    <tr class=\"fgroup\"><td colspan=\"2\">物理配置上限と結果</td></tr>\n    <tr class=\"frow\"><td>n_max_phys = max(2, floor(L / max(cl·1.5, 500)))</td><td>ローラー干渉防止（例：L=1,000mm → 2セット）</td></tr>\n    <tr class=\"frow result\"><td>n_rec = max(n_struct, n_active, n_overhang, 2)</td><td>最終推奨セット数</td></tr>\n    <tr class=\"frow result\"><td>span = L / (n_rec + 1)&nbsp;&nbsp;&nbsp;[mm]</td><td>等間隔スパン</td></tr>\n  </table>\n  <div class=\"callout danger\"><strong>⚠ 溶接中 4セット原則と単管・短管の例外</strong>\n    <p>中央付近の周溶接時は両側に各2セットを配置し回転安定性と熱変形抑制を図ります。<b>ただし周溶接数 = 0 の単管、または短い短管（例：L=1,000mm）</b>では 4セット規則は適用されず物理上限（2セット）が優先されます。</p></div>\n  <h3>7-4. ケース例</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>ケース</th><th>周溶接</th><th>進行中</th><th>構造基準</th><th>推奨セット</th></tr></thead>\n    <tbody>\n      <tr><td>D=8000 t=25, L=20m</td><td>9 (2m毎)</td><td>1</td><td>3セット (L/D=2.5→3)</td><td class=\"mono\"><b>4 sets</b></td></tr>\n      <tr><td>D=5000 t=20, L=18m</td><td>8 (2m毎)</td><td>1</td><td>3セット (L/D=3.6)</td><td class=\"mono\"><b>4 sets</b></td></tr>\n      <tr><td>D=3000 t=10, L=12m</td><td>5 (2m毎)</td><td>2</td><td>3セット (L/D=4.0)</td><td class=\"mono\"><b>5 sets</b></td></tr>\n      <tr><td>D=8000 t=20, L=1m</td><td><b>0</b></td><td><b>0</b></td><td>2セット (単管/短管)</td><td class=\"mono\"><b>2 sets</b></td></tr>\n    </tbody>\n  </table></div>\n  <div class=\"callout ok\"><strong>✓ 完了済みの周溶接はセット数に影響しません</strong>\n    <p>板幅 2m・溶接 9箇所でも L_defl ≈ 50.3m（D=8000, t=25）であり連続梁として挙動するため追加支持不要です。</p></div>\n  <h3>7-5. 側面図 (Side View)</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>表示要素</th><th>説明</th></tr></thead>\n    <tbody>\n      <tr><td><b>パイプ外形</b></td><td>単純梁たわみ曲線を表示</td></tr>\n      <tr><td><b>ローラー S1, S2…</b></td><td>V型フレームと番号表示</td></tr>\n      <tr><td><b>溶接部 W1, W2…</b></td><td>黄破線 + ▽ シンボル</td></tr>\n      <tr><td><b>スパン寸法線</b></td><td>第1スパンに ↔ 寸法表示</td></tr>\n      <tr><td><b>max δ</b></td><td>右下に最大たわみ (mm, %D)</td></tr>\n    </tbody>\n  </table></div>",
+      "s8": "<div class=\"tbl-wrap\"><table>\n    <thead><tr><th>タブ</th><th>内容</th><th>表示条件</th></tr></thead>\n    <tbody>\n      <tr><td><b>規格判定</b></td><td>API 2B · ISO · API 5L · DNV 判定 + 現場計測</td><td>解析後</td></tr>\n      <tr><td><b>状態比較</b></td><td>5方式の棒グラフ + 全周真円度・対自然比一覧表</td><td>解析 / 比較後</td></tr>\n      <tr><td><b>断面図</b></td><td><b>3色予測円周線</b> [自然赤破線 <code>#ef4444</code> · 支持青実線 <code>#377feb</code> · 実測緑一点鎖線 <code>#10b981</code>] + 側面図</td><td>解析後</td></tr>\n      <tr><td><b>推奨事項</b></td><td>CRITICAL / WARNING / CAUTION / INFO · 不合格時に補強リング・Spider Brace・支持スパンの予備寸法/位置および専用断面・側面図を自動表示</td><td>解析後</td></tr>\n      <tr><td><b>チェックリスト</b></td><td>現場作業チェックリストおよび γ_eff · Brazier · Hertz · Beam δ</td><td>解析後</td></tr>\n      <tr><td><b>保存済み記録 (下部独立パネル)</b></td><td>5タブ下部の独立カード: <b>現場計測(絶対値・偏差)の保存/復元</b> · インポート · エクスポート · <b>出力対象選択 (<code>#i-rpt-target</code>)</b> · <b>レポート5項目チェックボックス</b> · CSV/XLS/PDF (PRO) · 削除 · <b>▲ 折りたたむ / ▼ 展開</b></td><td>常時</td></tr>\n    </tbody>\n  </table></div>",
+      "s9": "<div class=\"std-row\"><div class=\"std-code\">API 2B</div><div class=\"std-body\"><div class=\"title\">構造用鋼管製作規格</div><div class=\"sub\">t ≤ 50.8mm → max 6.4mm · D ≥ 1219mm → max 12.7mm · t &gt; 50.8mm → Oval/t ≤ 1:8</div></div><div class=\"std-lim\">≤ 1.0%</div></div>\n  <div class=\"std-row\" style=\"margin-top:6px;\"><div class=\"std-code\">ISO 19902</div><div class=\"std-body\"><div class=\"title\">海洋構造物 · D/t ≤ 120</div><div class=\"sub\">ジャケット・モノパイル基本基準</div></div><div class=\"std-lim\">≤ 1.0%</div></div>\n  <div class=\"std-row\" style=\"margin-top:6px;\"><div class=\"std-code\">ISO 19902</div><div class=\"std-body\"><div class=\"title\">海洋構造物 · D/t &gt; 120</div><div class=\"sub\">薄肉大径管の厳格基準</div></div><div class=\"std-lim\" style=\"color:var(--or);\">≤ 0.5%</div></div>\n  <div class=\"std-row\" style=\"margin-top:6px;\"><div class=\"std-code\">API 5L</div><div class=\"std-body\"><div class=\"title\">ラインパイプ · 管体 / 管端</div><div class=\"sub\">管端部がより厳格 · D &gt; 1,422mm は合意条件未入力時に自動 PASS を保留し <b>AGREEMENT REQUIRED</b> を表示</div></div><div class=\"std-lim\">1.5% / 1.0%*</div></div>\n  <div class=\"std-row\" style=\"margin-top:6px;\"><div class=\"std-code\">DNV</div><div class=\"std-body\"><div class=\"title\">DNV-OS-C401 · 通常 / 疲労</div><div class=\"sub\">疲労敏感部材は ≤ 0.5% 必須</div></div><div class=\"std-lim\">1.0% / 0.5%</div></div>\n  <div class=\"callout\"><strong>※ 規格・仮定条件に関する注記</strong><p>本アプリは単位幅線形弾性リング理論 (I = t³/12) に基づく概念・比較検討用です（ΔD/D &gt; 5% はプログラム警告基準、Brazier D/t は予備スクリーニング指標）。最終承認時には適用規格照合および FEA / 実測検証が必要です。</p></div>",
+      "s10": "<h4>基本変数</h4>\n  <table class=\"ftbl\">\n    <tr class=\"frow\"><td>D_mean = D − t</td><td>平均外径 (mm)</td></tr>\n    <tr class=\"frow\"><td>R = (D − t) / 2</td><td>平均半径 (mm)</td></tr>\n    <tr class=\"frow\"><td>A = π(D² − ID²) / 4</td><td>断面積 (mm²)</td></tr>\n    <tr class=\"frow\"><td>w = γ × A</td><td>単位長さ自重 (N/mm) · γ = 7.85×10⁻⁵ N/mm³</td></tr>\n    <tr class=\"frow\"><td>I_ring = t³ / 12</td><td>単位幅リング断面二次モーメント (mm⁴/mm)</td></tr>\n    <tr class=\"frow\"><td>I_beam = π(D⁴ − ID⁴) / 64</td><td>全断面二次モーメント (mm⁴) — 軸方向たわみ用</td></tr>\n  </table>\n  <h4>自然状態 — Roark Ring</h4>\n  <table class=\"ftbl\">\n    <tr class=\"frow\"><td>dDv = −0.1488 · w · R³ / (E·I_ring)</td><td>鉛直径変化量 (mm)</td></tr>\n    <tr class=\"frow\"><td>dDh = +0.1369 · w · R³ / (E·I_ring)</td><td>水平径変化量 (mm)</td></tr>\n    <tr class=\"frow highlight\"><td>oval = 0.2857 · w · R³ / (E·I_ring)</td><td>全周真円度 = D_max − D_min（半リングせん断積分で底部反力 R_base = 2V_B を独立検証）</td></tr>\n  </table>\n  <h4>120° サドル — 均一半径方向接触圧 (2α = 120°)</h4>\n  <table class=\"ftbl\">\n    <tr class=\"frow highlight\"><td>oval_saddle ≈ oval_natural × 0.4956</td><td>2α=120° 均一径方向圧のグリーン関数直接積分</td></tr>\n  </table>\n  <h4>ターニングローラー — Castigliano 全周積分 (N=2,000, 0.5° 格子 + 黄金分割探索)</h4>\n  <table class=\"ftbl\">\n    <tr class=\"fgroup\"><td colspan=\"2\">法線反力および対称等腕ピボットボギー仮定 (∑Fy = W)</td></tr>\n    <tr class=\"frow\"><td>TR2: N = W / (2·cosα)</td><td>単体ローラーの法線反力 (N·cosα = W/2)</td></tr>\n    <tr class=\"frow\"><td>Double Roller: N₁ = N₂ = W / [4·cos(α_c)·cos(γ)]</td><td>対称等腕ボギー (L₁=L₂) 仮定時の内外ローラー均等分担 (∑Fy = W)</td></tr>\n    <tr class=\"fgroup\"><td colspan=\"2\">連立不静定 (M_A, N_A) と全周真円度</td></tr>\n    <tr class=\"frow\"><td>∫₀ᵖ M(φ)dφ = 0 · ∫₀ᵖ M(φ)·(1−cosφ)dφ = 0</td><td>頂部断面曲げ M_A・軸力 N_A 連立解法</td></tr>\n    <tr class=\"frow\"><td>D(θ) = D + ΔD(θ)</td><td>θ ∈ [0°, 90°] 0.5°格子(181点) + 黄金分割極値補間 (tol = 10⁻⁴ rad)</td></tr>\n    <tr class=\"frow\"><td>oval = max D(θ) − min D(θ)</td><td>0°/90° のほか 45° 対角方向の扁平も評価</td></tr>\n    <tr class=\"frow highlight\"><td>数値最適化検証: α_opt = 45.0° ★</td><td>argmin_α [D_max(α)−D_min(α)] = 45.0° (m=2 相殺、全周比 ≈ 5.68%)</td></tr>\n  </table>\n  <h4>Hertz 線接触応力（セット分担長さ反映）</h4>\n  <table class=\"ftbl\">\n    <tr class=\"frow\"><td>α = arcsin(C-C / (D + rd))</td><td>鋼管外径(D)とローラー外径(rd)の中心距離に基づく支持角</td></tr>\n    <tr class=\"frow\"><td>F = N_per_mm × (L / n_sets)</td><td>ローラー1輪あたり荷重（分担長さ L_trib = L / n_sets）</td></tr>\n    <tr class=\"frow\"><td>R_eff = Rp·Rr / (Rp + Rr)</td><td>有効接触半径</td></tr>\n    <tr class=\"frow\"><td>1 / E_eff = (1−ν_p²)/E_p + (1−ν_r²)/E_r</td><td>一般有効弾性係数（鋼・ウレタン・ゴム反映）</td></tr>\n    <tr class=\"frow\"><td>b = √(4·F·R_eff / π·cl·E_eff)</td><td>接触半幅 (mm)</td></tr>\n    <tr class=\"frow highlight\"><td>P_max = 2·F / (π·cl·b)</td><td>最大接触圧 — 安定閾値 &lt; 600 MPa（&gt;500 MPa や D≥6000 はウレタン推奨）</td></tr>\n  </table>\n  <h4>ローラーセット最適化</h4>\n  <table class=\"ftbl\">\n    <tr class=\"fgroup\"><td colspan=\"2\">構造許容スパン</td></tr>\n    <tr class=\"frow\"><td>δ_allow = 0.0005 · D</td><td>許容たわみ (0.05%D)</td></tr>\n    <tr class=\"frow\"><td>L_defl = ⁴√(384·E·I_beam·δ_allow / 5·w)</td><td>たわみ基準許容スパン</td></tr>\n    <tr class=\"frow\"><td>span_hz = [600²·π·cl·R_eff / (E_eff·w)] × 2·cos45°</td><td>Hertz 許容スパン (1セット2輪、P = 600 MPa)</td></tr>\n    <tr class=\"fgroup\"><td colspan=\"2\">セット数決定</td></tr>\n    <tr class=\"frow\"><td>n_struct = max(n_defl, n_hertz, n_LD, n_span, 2)</td><td>構造基準セット数</td></tr>\n    <tr class=\"frow\"><td>n_active = min(max(effNA + 3, 4), n_max_phys)</td><td>effNA = min(active, nW) &gt; 0 時（物理上限考慮）</td></tr>\n    <tr class=\"frow result\"><td>n_rec = max(n_struct, n_active, n_overhang, 2)</td><td>最終推奨セット数</td></tr>\n    <tr class=\"frow result\"><td>span = L / (n_rec + 1)&nbsp;&nbsp;&nbsp;[mm]</td><td>均等スパン</td></tr>\n  </table>",
+      "s11": "<div class=\"tbl-wrap\"><table>\n    <thead><tr><th>α (°)</th><th>スパン (°)</th><th>δv (mm)</th><th>δh (mm)</th><th>真円度 (mm)</th><th>真円度 (%)</th><th>vs 自然</th><th>備考</th></tr></thead>\n    <tbody>\n      <tr><td>30</td><td>60</td><td class=\"mono\">−55.38</td><td class=\"mono\">+60.25</td><td class=\"mono\">115.63</td><td class=\"mono\">3.8542</td><td class=\"mono\">56.46%</td><td>—</td></tr>\n      <tr><td>40</td><td>80</td><td class=\"mono\">−17.82</td><td class=\"mono\">+27.38</td><td class=\"mono\">45.20</td><td class=\"mono\">1.5066</td><td class=\"mono\">22.07%</td><td>—</td></tr>\n      <tr style=\"background:var(--acbg);\"><td><b>45.0</b></td><td><b>90.0</b></td><td class=\"mono\"><b>+5.47</b></td><td class=\"mono\"><b>+5.47</b></td><td class=\"mono\"><b>11.64</b></td><td class=\"mono\"><b>0.3879</b></td><td class=\"mono\"><b>5.68%</b></td><td><b>★ 最適 (m=2 相殺)</b></td></tr>\n      <tr><td>49.1</td><td>98.2</td><td class=\"mono\">+27.40</td><td class=\"mono\">−16.02</td><td class=\"mono\">43.46</td><td class=\"mono\">1.4486</td><td class=\"mono\">21.22%</td><td>旧モデル参照角 (ref)</td></tr>\n      <tr><td>55</td><td>110</td><td class=\"mono\">+64.88</td><td class=\"mono\">−54.22</td><td class=\"mono\">119.09</td><td class=\"mono\">3.9698</td><td class=\"mono\">58.15%</td><td>—</td></tr>\n      <tr><td>60</td><td>120</td><td class=\"mono\">+104.35</td><td class=\"mono\">−95.92</td><td class=\"mono\">200.27</td><td class=\"mono\">6.6757</td><td class=\"mono\">97.78%</td><td>—</td></tr>\n    </tbody>\n  </table></div>",
+      "s12": "<div class=\"tbl-wrap\"><table>\n    <thead><tr><th>No</th><th>項目</th><th>基準</th><th>現場対策</th></tr></thead>\n    <tbody>\n      <tr><td>1</td><td><b>γ_eff 確認</b></td><td>ボギー平衡 (N1=N2): 最適 α_center = 45.0°</td><td>レーザー水準器で ±2° 以内に調整</td></tr>\n      <tr><td>2</td><td><b>Brazier リスク</b></td><td>D/t &gt; 300 高リスク · &gt;200 注意</td><td>内部スパイダー・補強リング ≤ 4D 設置</td></tr>\n      <tr><td>3</td><td><b>Hertz 接触圧</b></td><td>P_max &gt; 500 MPa 危険</td><td>ウレタンライニング (Shore 80A~90A)</td></tr>\n      <tr><td>4</td><td><b>支持スパン</b></td><td>推奨 ≤ D/2</td><td>3対以上のローラー配置</td></tr>\n      <tr><td>5</td><td><b>γ 収束</b></td><td>γ &lt; 5° 注意</td><td>可変幅ターニングローラー推奨</td></tr>\n      <tr><td>6</td><td><b>複合熱変形</b></td><td>非線形溶接重畳</td><td>冷却前後のレーザー計測</td></tr>\n      <tr><td>7</td><td><b>最終判定</b></td><td>API 2B ≤ 1.0%<br>ISO D/t&gt;120 → ≤ 0.5%</td><td>PASS 確認後に下部保存パネルへ記録</td></tr>\n    </tbody>\n  </table></div>",
+      "s13": "<h3>支持方式選定ガイド（自然状態比）</h3>\n  <div class=\"tbl-wrap\"><table>\n    <thead><tr><th>用途</th><th>推奨方式</th><th>自然状態比</th></tr></thead>\n    <tbody>\n      <tr><td>保管・運搬</td><td>② 120° サドル</td><td class=\"mono\">≈ 49.6% (均一径方向圧)</td></tr>\n      <tr><td>回転溶接（最適）</td><td>③-B TR2 α=45° ★</td><td class=\"mono\">≈ 5.7% (m=2 相殺)</td></tr>\n      <tr><td>旧モデル比較参照</td><td>③-A TR2 α=49.1° (ref)</td><td class=\"mono\">≈ 21.2%</td></tr>\n      <tr><td>大重量大径管</td><td>④ ダブルローラー α_c=45°</td><td class=\"mono\">≈ 4.3% (ボギー N1=N2)</td></tr>\n    </tbody>\n  </table></div>\n  <h3>現場溶接ガイドライン</h3>\n  <ul>\n    <li><b>溶接施工中:</b> 最小 4セット（溶接部両側各 2セット；短尺単管は例外）。</li>\n    <li><b>可能な限り多数設置:</b> 溶接中または仮置き（保管）状態でも真円度改善のため極力多くのターニングローラー設置を推奨します。</li>\n    <li><b>周溶接:</b> 対称スキップ溶接で収縮ひずみを均一化。</li>\n    <li><b>サドル → TR2:</b> 回転溶接時は必ず TR2 ローラーへ載せ替え。</li>\n    <li><b>溶接前検査:</b> D_min/D_max または基準 D 比 ±偏差入力で API 2B 適合を事前確認。</li>\n  </ul>\n  <div class=\"callout danger\"><strong>⚠ FAIL 発生時の是正処置</strong>\n    <p>① 冷間矯正 (Mechanical Cold Fitting)<br>② 加熱矯正 (Heat Straightening)<br>③ 内部補強リング (Internal Stiffener Ring) 設置後の再計測</p></div>"
+    }
+  }
+};
+
+// ── LANGUAGE APPLY (MAIN PAGE UNIFIED DROPDOWN) ────────────
+var MAN_FLAGS={
+  ko:'shared-header-kit/icons/flag_ko.png',
+  en:'shared-header-kit/icons/flag_en.png',
+  zh:'shared-header-kit/icons/flag_zh.png',
+  ja:'shared-header-kit/icons/flag_ja.png',
+  es:'shared-header-kit/icons/flag_es.png'
+};
+function setManLang(lang){
+  if(!I18N[lang]) lang='ko';
+  var x=I18N[lang]||I18N['ko'];
+  if(document.documentElement) document.documentElement.lang=lang||'ko';
+  document.querySelectorAll('[data-i18n]').forEach(function(el){
+    var k=el.getAttribute('data-i18n');
+    if(x[k]) el.textContent=x[k];
+  });
+  var sids=['s1','s2','s3','s4','s5','s6','s7','s8','s9','s10','s11','s12','s13'];
+  sids.forEach(function(id){
+    var sec=document.getElementById(id);
+    if(sec&&x[id]){
+      var h2=sec.querySelector('.sec-hdr h2');
+      if(h2) h2.textContent=x[id];
+    }
+    var bodyEl=document.getElementById('b-'+id);
+    var html=(x.body&&x.body[id])||(I18N.ko&&I18N.ko.body&&I18N.ko.body[id]);
+    if(bodyEl&&html) bodyEl.innerHTML=html;
+  });
+  var navLinks=document.querySelectorAll('nav a[href^="#s"]');
+  navLinks.forEach(function(a){
+    var href=a.getAttribute('href').replace('#','');
+    if(x.nav&&x.nav[href]) a.textContent=x.nav[href];
+    else if(x[href]) a.textContent=x[href];
+  });
+  var flagEl=document.getElementById('currentFlagIcon');
+  if(flagEl){
+    var src=MAN_FLAGS[lang]||MAN_FLAGS.ko;
+    flagEl.innerHTML='<img src="'+src+'" alt="'+lang.toUpperCase()+'" />';
+  }
+  var menu=document.getElementById('langDropdownMenu');
+  if(menu){
+    menu.querySelectorAll('.lang-item').forEach(function(it){
+      it.classList.toggle('active', it.getAttribute('data-lang')===lang);
+    });
+  }
+  try{ localStorage.setItem('HI_LANG',lang); localStorage.setItem('man_lang',lang); }catch(e){}
+}
+
+// ── SCROLL NAV ─────────────────────────────────────────────
+var secs=document.querySelectorAll('section[id]');
+var links=document.querySelectorAll('nav a[href^="#"]');
+window.addEventListener('scroll',function(){
+  var y=window.scrollY+100;
+  secs.forEach(function(s){
+    if(y>=s.offsetTop&&y<s.offsetTop+s.offsetHeight){
+      links.forEach(function(l){l.classList.remove('on');});
+      var lnk=document.querySelector('nav a[href="#'+s.id+'"]');
+      if(lnk)lnk.classList.add('on');
+    }
+  });
+},{passive:true});
+if(links[0])links[0].classList.add('on');
+
+// ── INIT ───────────────────────────────────────────────────
+(function(){
+  var sids=['s1','s2','s3','s4','s5','s6','s7','s8','s9','s10','s11','s12','s13'];
+  I18N.ko.body={};
+  sids.forEach(function(id){
+    var el=document.getElementById('b-'+id);
+    if(el) I18N.ko.body[id]=el.innerHTML;
+  });
+  var btnLang=document.getElementById('btnLangDropdown');
+  var menuLang=document.getElementById('langDropdownMenu');
+  var wrapLang=document.getElementById('manLangWrap');
+  if(btnLang&&menuLang){
+    btnLang.onclick=function(e){
+      e.stopPropagation();
+      var isOpen=!menuLang.classList.contains('hidden');
+      menuLang.classList.toggle('hidden', isOpen);
+      if(wrapLang) wrapLang.classList.toggle('open', !isOpen);
+    };
+    document.addEventListener('click',function(e){
+      if(!menuLang.contains(e.target)&&!btnLang.contains(e.target)){
+        menuLang.classList.add('hidden');
+        if(wrapLang) wrapLang.classList.remove('open');
+      }
+    });
+    menuLang.querySelectorAll('.lang-item').forEach(function(item){
+      item.onclick=function(e){
+        e.stopPropagation();
+        var l=item.getAttribute('data-lang');
+        menuLang.classList.add('hidden');
+        if(wrapLang) wrapLang.classList.remove('open');
+        setManLang(l);
+      };
+    });
+  }
+  var saved=null;
+  try{ saved=localStorage.getItem('HI_LANG')||localStorage.getItem('man_lang'); }catch(e){}
+  var urlLang=new URLSearchParams(location.search).get('lang');
+  var lang=urlLang||saved||'ko';
+  if(!I18N[lang]) lang='ko';
+  setManLang(lang);
+})();
+</script>
+</body>
+</html>
