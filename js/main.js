@@ -235,14 +235,19 @@ const App = {
     const betaMsgEl = document.getElementById("betaNoticeMsg");
     if (betaMsgEl && x.betaNoticeMsg) {
       const parts = String(x.betaNoticeMsg).split("\n");
-      betaMsgEl.innerHTML = parts.length >= 2
-        ? `<span class="bp-line">${parts[0]}</span><span class="bp-warn">${parts.slice(1).join("<br>")}</span>`
-        : `<span class="bp-line">${parts[0]}</span>`;
+      if (parts.length >= 3) {
+        betaMsgEl.innerHTML = `<span class="bp-line">${parts[0]}</span><span class="bp-warn">${parts[1]}</span><span class="bp-tip">💻 ${parts.slice(2).join("<br>")}</span>`;
+      } else if (parts.length === 2) {
+        betaMsgEl.innerHTML = `<span class="bp-line">${parts[0]}</span><span class="bp-warn">${parts[1]}</span>`;
+      } else {
+        betaMsgEl.innerHTML = `<span class="bp-line">${parts[0]}</span>`;
+      }
     }
     s("betaNoticeBtn", x.betaNoticeBtn);
     s("t-td-sample", sampleTag);
     s("t-cs-sample", sampleTag);
     s("t-sv-sample", sampleTag);
+    s("td-sample-banner", x.betaDiagBanner);
     document.querySelectorAll(".beta-sample-card").forEach(el => {
       el.setAttribute("data-beta-sample", sampleTag);
     });
@@ -1285,7 +1290,7 @@ const App = {
         1,
         { ...(sampleRsInfo || {}), govLabel: `Hertz ${tag}` },
         this.state.theme,
-        { sampleTag: tag }
+        { sampleTag: tag, sampleInfoHtml: this.t("betaSvInfoSample") }
       );
     } catch (e) {}
   },

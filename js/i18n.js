@@ -869,7 +869,7 @@ const I18N = {
 const BETA_I18N = {
   ko: {
     betaNoticeTitle: "베타 버전 사용 안내",
-    betaNoticeMsg: "이 앱은 베타버전으로 현장 사전 검토·롤러 세팅·품질 협의용 1차 엔지니어링 도구로는 쓸모가 크지만\n최종 설계·제작 승인(Code Sign-off)용 해석기로는 단독 사용해서는 안된다",
+    betaNoticeMsg: "이 앱은 베타버전으로 현장 사전 검토 및 롤러 세팅/품질 협의를 위한 1차 엔지니어링 도구로는 쓸모가 크지만 최종 설계·제작 승인(Code Sign-off)용 해석기로는 단독 사용해서는 안됩니다.\n반드시 자격을 갖춘 전문 엔지니어의 조언에 따라 작업계획을 수립하여야 합니다.\n앱의 특성상 많은 데이터를 표시해야하므로 모바일 보다는 PC에서 실행하는 것이 가독성이 우수합니다.",
     betaNoticeBtn: "확인했습니다",
     betaDisabledBadge: "Beta 비활성",
     betaDisabledTag: "[비활성]",
@@ -891,6 +891,8 @@ const BETA_I18N = {
     betaReinfCsLbl: "보강 단면도 (Ring + Spider Brace) [샘플]",
     betaReinfSvLbl: "보강 측면도 (보강링 · 스파이더 · 롤러 위치) [샘플]",
     betaReinfNote: "※ [샘플] 본 보강 도면 및 수치는 베타 버전 미리보기용 샘플입니다. 실제 제작 및 설계 적용에 사용해서는 안 됩니다.",
+    betaDiagBanner: "[샘플] 본 단면도 및 측면도는 TOA Beta v0.5 미리보기용으로 임의의 예시 제원(D=8000mm · t=20mm · L=12000mm · 4 sets)으로 작성된 샘플 그림입니다.",
+    betaSvInfoSample: "<b>[샘플] 예시 배치: 4 sets</b> │ 스팬: 2,400mm │ L/D = 1.5 │ 결정 기준: Hertz [샘플]<br><span style=\"color:var(--txl)\">※ 입력값과 무관한 임의 샘플 그림이며 실제 설계·배치에 사용할 수 없습니다.</span>",
     betaReinfTargetWord: "목표",
     betaPdf: {
       docTitle: "[샘플] TOA Beta v0.5 엔지니어링 리포트",
@@ -925,7 +927,7 @@ const BETA_I18N = {
   },
   en: {
     betaNoticeTitle: "Beta Version Notice",
-    betaNoticeMsg: "This app is a Beta version. While highly useful as a preliminary engineering tool for field pre-checks, roller setup, and quality discussions,\nit must NOT be used alone as a solver for final design or fabrication approval (Code Sign-off).",
+    betaNoticeMsg: "This app is a Beta version. While highly useful as a preliminary engineering tool for field pre-checks and roller setup/quality discussions, it must NOT be used alone as a solver for final design or fabrication approval (Code Sign-off).\nAll work plans must be established under the guidance of a qualified professional engineer.\nDue to the large amount of engineering data displayed, running this app on a PC provides better readability than on mobile devices.",
     betaNoticeBtn: "Understood",
     betaDisabledBadge: "Beta Disabled",
     betaDisabledTag: "[Disabled]",
@@ -947,6 +949,8 @@ const BETA_I18N = {
     betaReinfCsLbl: "Reinforcement Cross-Section (Ring + Spider Brace) [SAMPLE]",
     betaReinfSvLbl: "Reinforcement Side View (Ring · Spider · Roller) [SAMPLE]",
     betaReinfNote: "※ [SAMPLE] These reinforcement drawings and values are preview samples only. Do not use for actual fabrication or final design.",
+    betaDiagBanner: "[SAMPLE] These Cross-Section and Side View diagrams are arbitrary sample drawings (D=8000mm · t=20mm · L=12000mm · 4 sets) for TOA Beta v0.5 preview.",
+    betaSvInfoSample: "<b>[SAMPLE] Example Layout: 4 sets</b> │ Span: 2,400mm │ L/D = 1.5 │ Governing: Hertz [SAMPLE]<br><span style=\"color:var(--txl)\">※ Arbitrary sample diagram independent of your inputs. Do not use for actual design or setup.</span>",
     betaReinfTargetWord: "Target",
     betaPdf: {
       docTitle: "[SAMPLE] TOA Beta v0.5 Engineering Report",
@@ -981,7 +985,7 @@ const BETA_I18N = {
   },
   zh: {
     betaNoticeTitle: "测试版使用须知",
-    betaNoticeMsg: "本应用为测试版本，作为现场预审、滚轮架布置及质量沟通的一级工程辅助工具具有较高实用价值，\n但不得单独用作最终设计或制造批准（Code Sign-off）的正式解析工具。",
+    betaNoticeMsg: "本应用为测试版本，作为现场预审及滚轮架布置/质量沟通的一级工程辅助工具具有较高实用价值，但不得单独用作最终设计或制造批准（Code Sign-off）的正式解析工具。\n请务必在具备资质的专业工程师指导下制定作业计划。\n鉴于本应用需显示大量工程数据，建议在 PC 端运行以获得比移动端更佳的可读性。",
     betaNoticeBtn: "我已了解",
     betaDisabledBadge: "Beta 已禁用",
     betaDisabledTag: "[已禁用]",
@@ -1003,6 +1007,8 @@ const BETA_I18N = {
     betaReinfCsLbl: "加固横截面图 (Ring + Spider Brace) [示例]",
     betaReinfSvLbl: "加固侧视图 (加强环 · 蜘蛛撑 · 滚轮位置) [示例]",
     betaReinfNote: "※ [示例] 以上加固图纸及数值仅为测试版预览示例，不可用于实际制造与最终设计。",
+    betaDiagBanner: "[示例] 本横截面图与侧视图为 TOA Beta v0.5 预览用任意示例图纸（D=8000mm · t=20mm · L=12000mm · 4 sets）。",
+    betaSvInfoSample: "<b>[示例] 示例布置: 4 sets</b> │ 跨距: 2,400mm │ L/D = 1.5 │ 控制基准: Hertz [示例]<br><span style=\"color:var(--txl)\">※ 此为与当前输入无关的任意示例图纸，不得用于实际设计与布置。</span>",
     betaReinfTargetWord: "目标",
     betaPdf: {
       docTitle: "[示例] TOA Beta v0.5 工程报告",
@@ -1037,7 +1043,7 @@ const BETA_I18N = {
   },
   es: {
     betaNoticeTitle: "Aviso de Versión Beta",
-    betaNoticeMsg: "Esta aplicación es una versión Beta. Aunque resulta muy útil como herramienta preliminar de ingeniería para revisión en campo, ajuste de rodillos y consultas de calidad,\nNO debe utilizarse por sí sola para la aprobación final de diseño o fabricación (Code Sign-off).",
+    betaNoticeMsg: "Esta aplicación es una versión Beta. Aunque resulta muy útil como herramienta preliminar de ingeniería para la revisión en campo y el ajuste de rodillos/consultas de calidad, NO debe utilizarse por sí sola para la aprobación final de diseño o fabricación (Code Sign-off).\nEl plan de trabajo debe elaborarse siempre bajo el asesoramiento de un ingeniero profesional cualificado.\nDebido a la gran cantidad de datos que muestra la aplicación, se recomienda ejecutarla en PC en lugar de móvil para una mejor legibilidad.",
     betaNoticeBtn: "Entendido",
     betaDisabledBadge: "Beta Desactivado",
     betaDisabledTag: "[Desactivado]",
@@ -1059,6 +1065,8 @@ const BETA_I18N = {
     betaReinfCsLbl: "Sección Transversal de Refuerzo (Anillo + Araña) [MUESTRA]",
     betaReinfSvLbl: "Vista Lateral de Refuerzo (Anillo · Araña · Rodillo) [MUESTRA]",
     betaReinfNote: "※ [MUESTRA] Estos planos y valores son solo de muestra para vista previa Beta. No utilizar para diseño ni fabricación real.",
+    betaDiagBanner: "[MUESTRA] Estos diagramas de sección transversal y vista lateral son dibujos de muestra arbitrarios (D=8000mm · t=20mm · L=12000mm · 4 sets) para vista previa de TOA Beta v0.5.",
+    betaSvInfoSample: "<b>[MUESTRA] Disposición de ejemplo: 4 sets</b> │ Vano: 2,400mm │ L/D = 1.5 │ Criterio: Hertz [MUESTRA]<br><span style=\"color:var(--txl)\">※ Dibujo de muestra arbitrario independiente de sus datos. No usar para diseño real.</span>",
     betaReinfTargetWord: "Objetivo",
     betaPdf: {
       docTitle: "[MUESTRA] Informe de Ingeniería TOA Beta v0.5",
@@ -1093,7 +1101,7 @@ const BETA_I18N = {
   },
   ja: {
     betaNoticeTitle: "ベータ版ご利用案内",
-    betaNoticeMsg: "本アプリはベータ版であり、現場事前検討・ローラーセッティング・品質協議用の一次エンジニアリングツールとして有用ですが、\n最終設計・製作承認（Code Sign-off）用の解析機として単独で使用してはなりません。",
+    betaNoticeMsg: "本アプリはベータ版であり、現場事前検討およびローラーセッティング・品質協議用の一次エンジニアリングツールとして有用ですが、最終設計・製作承認（Code Sign-off）用の解析機として単独で使用してはなりません。\n必ず資格を有する専門エンジニアの助言に従って作業計画を策定してください。\nアプリの特性上、多くのデータを表示する必要があるため、モバイル端末よりもPCで実行する方が視認性に優れています。",
     betaNoticeBtn: "確認しました",
     betaDisabledBadge: "Beta 無効",
     betaDisabledTag: "[無効]",
@@ -1115,6 +1123,8 @@ const BETA_I18N = {
     betaReinfCsLbl: "補強断面図 (Ring + Spider Brace) [サンプル]",
     betaReinfSvLbl: "補強側面図 (補強リング · スパイダー · ローラー位置) [サンプル]",
     betaReinfNote: "※ [サンプル] 本補強図面および数値はベータ版のプレビュー用サンプルです。実際の製作・最終設計には使用しないでください。",
+    betaDiagBanner: "[サンプル] 本断面図および側面図は TOA Beta v0.5 プレビュー用の任意例示仕様（D=8000mm · t=20mm · L=12000mm · 4 sets）によるサンプル図面です。",
+    betaSvInfoSample: "<b>[サンプル] 例示配置: 4 sets</b> │ スパン: 2,400mm │ L/D = 1.5 │ 決定基準: Hertz [サンプル]<br><span style=\"color:var(--txl)\">※ 入力値とは無関係な任意のサンプル図面であり、実際の設計・配置には使用できません。</span>",
     betaReinfTargetWord: "目標",
     betaPdf: {
       docTitle: "[サンプル] TOA Beta v0.5 エンジニアリングレポート",

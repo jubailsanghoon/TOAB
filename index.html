@@ -128,8 +128,9 @@
       <span class="beta-popup-badge">TOA BETA v0.5</span>
       <h2 class="beta-popup-title" id="betaNoticeTitle">베타 버전 사용 안내</h2>
       <p class="beta-popup-msg" id="betaNoticeMsg">
-        <span class="bp-line">이 앱은 베타버전으로 현장 사전 검토·롤러 세팅·품질 협의용 1차 엔지니어링 도구로는 쓸모가 크지만</span>
-        <span class="bp-warn">최종 설계·제작 승인(Code Sign-off)용 해석기로는 단독 사용해서는 안된다</span>
+        <span class="bp-line">이 앱은 베타버전으로 현장 사전 검토 및 롤러 세팅/품질 협의를 위한 1차 엔지니어링 도구로는 쓸모가 크지만 최종 설계·제작 승인(Code Sign-off)용 해석기로는 단독 사용해서는 안됩니다.</span>
+        <span class="bp-warn">반드시 자격을 갖춘 전문 엔지니어의 조언에 따라 작업계획을 수립하여야 합니다.</span>
+        <span class="bp-tip">💻 앱의 특성상 많은 데이터를 표시해야하므로 모바일 보다는 PC에서 실행하는 것이 가독성이 우수합니다.</span>
       </p>
       <button type="button" class="beta-popup-btn" id="betaNoticeBtn" onclick="App.closeBetaNotice()">확인했습니다</button>
     </div>
@@ -432,6 +433,7 @@
         </div>
         <div class="tp" id="tm"><div id="tm-body"><div class="ph"><p id="t-ph-tm">전체 비교를 클릭하세요.</p></div></div></div>
         <div class="tp" id="td">
+          <div id="td-sample-banner" class="reinf-guide s-sel" style="margin-bottom:12px;">[샘플] 본 단면도 및 측면도는 TOA Beta v0.5 미리보기용으로 임의의 예시 제원(D=8000mm · t=20mm · L=12000mm · 4 sets)으로 작성된 샘플 그림입니다.</div>
           <div class="diag-row" style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;">
             <div style="flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:6px;">
               <div style="font-size:10px;font-weight:700;color:var(--txl);text-transform:uppercase;letter-spacing:.8px;"><span id="t-cslbl">단면도 (Cross-Section)</span> <span class="beta-sample-badge" id="t-cs-sample">[샘플]</span></div>

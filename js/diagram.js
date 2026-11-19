@@ -723,29 +723,33 @@ const TOADiagram = (() => {
 
     const infoEl = document.getElementById('sv-info');
     if (infoEl) {
-      const govLd = pipeLenMm / D;
-      const govLabel = info.govLabel || '구조 기준';
-      const Ldfl = info.L_defl ? Math.round(info.L_defl) + 'mm' : '—';
-      const shz = info.span_hertz ? Math.round(info.span_hertz) + 'mm' : '—';
-      const plateEl = document.getElementById('i-platespan');
-      const plateW = plateEl ? +plateEl.value || 0 : 0;
-      let plateNote = '';
-      if (plateW > 0 && info.L_defl && plateW < info.L_defl) {
-        plateNote = `<span style="color:var(--gn)"> ✓ 플레이트 간격(${plateW}mm) &lt; 구조 허용 스팬(${Ldfl}) → 롤러 세트 수에 영향 없음</span>`;
+      if (labels && labels.sampleInfoHtml) {
+        infoEl.innerHTML = labels.sampleInfoHtml;
+      } else {
+        const govLd = pipeLenMm / D;
+        const govLabel = info.govLabel || '구조 기준';
+        const Ldfl = info.L_defl ? Math.round(info.L_defl) + 'mm' : '—';
+        const shz = info.span_hertz ? Math.round(info.span_hertz) + 'mm' : '—';
+        const plateEl = document.getElementById('i-platespan');
+        const plateW = plateEl ? +plateEl.value || 0 : 0;
+        let plateNote = '';
+        if (plateW > 0 && info.L_defl && plateW < info.L_defl) {
+          plateNote = `<span style="color:var(--gn)"> ✓ 플레이트 간격(${plateW}mm) &lt; 구조 허용 스팬(${Ldfl}) → 롤러 세트 수에 영향 없음</span>`;
+        }
+        const activeNote = nActive > 0
+          ? `  <span style="color:var(--ac)">│ 진행 중 용접 ${nActive}개 → 최소 ${Math.max(nActive + 3, 4)}세트 (용접부 좌우 2세트 배치)</span>`
+          : '';
+        const cbNote = cb
+          ? `<br><span style="color:${(cb.liftOff || overloadCount > 0) ? 'var(--rd)' : 'var(--tx2)'}">연속보 반력(Δh=${settleMm}mm): max <b>${cb.maxKN}kN</b> (편하중 ${cb.loadFactor}×)${cb.liftOff ? ' · <b>⚠ 들뜸(LIFT-OFF) 발생</b>' : ''}${capTon > 0 ? (overloadCount > 0 ? ` · <b>⚠ 정격용량(${capTon}t=${capKN.toFixed(0)}kN) 초과!</b>` : ` · 용량(${capTon}t) OK ✓`) : ''}</span>`
+          : '';
+        infoEl.innerHTML =
+          (labels && labels.sampleTag ? `<span class="beta-sample-badge" style="margin:0 6px 0 0;">${labels.sampleTag}</span>` : '')
+          + `<b>권장 세트 수: ${nSets}sets</b>  │  구조 스팬: ${Math.round(span)}mm  │  L/D = ${govLd.toFixed(1)}${activeNote}`
+          + `<br><span style="color:var(--txl)">결정 기준: ${govLabel}  │  처짐 허용 스팬: ${Ldfl}  │  Hertz 허용 스팬: ${shz}  │  max δ: ${deflMmShow.toFixed(2)}mm (${(deflMmShow / D * 100).toFixed(3)}%D)</span>`
+          + cbNote
+          + (nWelds > 0 ? `<br><span style="color:var(--txl)">Girth Weld ${nWelds}개 균등 표시${plateW > 0 ? ` (플레이트 폭 참조: ${plateW}mm)` : ''}</span>` : '')
+          + plateNote;
       }
-      const activeNote = nActive > 0
-        ? `  <span style="color:var(--ac)">│ 진행 중 용접 ${nActive}개 → 최소 ${Math.max(nActive + 3, 4)}세트 (용접부 좌우 2세트 배치)</span>`
-        : '';
-      const cbNote = cb
-        ? `<br><span style="color:${(cb.liftOff || overloadCount > 0) ? 'var(--rd)' : 'var(--tx2)'}">연속보 반력(Δh=${settleMm}mm): max <b>${cb.maxKN}kN</b> (편하중 ${cb.loadFactor}×)${cb.liftOff ? ' · <b>⚠ 들뜸(LIFT-OFF) 발생</b>' : ''}${capTon > 0 ? (overloadCount > 0 ? ` · <b>⚠ 정격용량(${capTon}t=${capKN.toFixed(0)}kN) 초과!</b>` : ` · 용량(${capTon}t) OK ✓`) : ''}</span>`
-        : '';
-      infoEl.innerHTML =
-        (labels && labels.sampleTag ? `<span class="beta-sample-badge" style="margin:0 6px 0 0;">${labels.sampleTag}</span>` : '')
-        + `<b>권장 세트 수: ${nSets}sets</b>  │  구조 스팬: ${Math.round(span)}mm  │  L/D = ${govLd.toFixed(1)}${activeNote}`
-        + `<br><span style="color:var(--txl)">결정 기준: ${govLabel}  │  처짐 허용 스팬: ${Ldfl}  │  Hertz 허용 스팬: ${shz}  │  max δ: ${deflMmShow.toFixed(2)}mm (${(deflMmShow / D * 100).toFixed(3)}%D)</span>`
-        + cbNote
-        + (nWelds > 0 ? `<br><span style="color:var(--txl)">Girth Weld ${nWelds}개 균등 표시${plateW > 0 ? ` (플레이트 폭 참조: ${plateW}mm)` : ''}</span>` : '')
-        + plateNote;
     }
     if (labels && labels.sampleTag) drawSampleWatermark(ctx, W, H, labels.sampleTag);
   }
@@ -757,7 +761,7 @@ const TOADiagram = (() => {
     ctx.font = 'bold 11px Inter, sans-serif';
     const bw = Math.max(72, Math.ceil(ctx.measureText(tagText).width) + 20);
     const bh = 22, bx = W - bw - 10, by = 10;
-    ctx.fillStyle = 'rgba(245, 158, 11, 0.92)';
+    ctx.fillStyle = 'rgba(245, 158, 11, 0.94)';
     ctx.fillRect(bx, by, bw, bh);
     ctx.strokeStyle = '#b45309';
     ctx.lineWidth = 1;
@@ -767,11 +771,11 @@ const TOADiagram = (() => {
     ctx.textBaseline = 'middle';
     ctx.fillText(tagText, bx + bw / 2, by + bh / 2);
 
-    // 중앙 대각선 워터마크
+    // 중앙 대각선 워터마크 (시인성 강화)
     ctx.translate(W / 2, H / 2);
     ctx.rotate(-Math.PI / 7);
-    ctx.fillStyle = 'rgba(220, 38, 38, 0.16)';
-    ctx.font = '900 40px Inter, sans-serif';
+    ctx.fillStyle = 'rgba(220, 38, 38, 0.24)';
+    ctx.font = '900 42px Inter, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.fillText(tagText, 0, 0);
