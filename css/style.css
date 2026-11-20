@@ -847,3 +847,25 @@ button.beta-disabled-btn {
 .beta-popup-btn:hover {
   filter: brightness(1.06);
 }
+.beta-popup-sub-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+.beta-popup-sub-btn {
+  flex: 1;
+  padding: 8px 10px;
+  border: 1px solid var(--bdr);
+  border-radius: 8px;
+  background: var(--inp);
+  color: var(--tx2);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.beta-popup-sub-btn:hover {
+  border-color: var(--ac);
+  color: var(--tx);
+}

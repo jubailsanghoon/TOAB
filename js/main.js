@@ -36,7 +36,7 @@ const App = {
         defaultLang: this.state.lang,
         onThemeChange: (theme) => this.applyTheme(theme, false),
         onLanguageChange: (lang) => this.setLang(lang),
-        onLicenseClick: () => this.openBetaNotice(),
+        onLicenseClick: () => this.openBetaNotice(false),
         onHelpClick: () => this.openManualModal()
       });
     }
@@ -54,14 +54,46 @@ const App = {
     this.renderSaved();
     this.updatePlanBadge();
     this.bindNetworkEvents();
-    this.openBetaNotice();
+    if (this.shouldShowBetaNotice()) {
+      this.openBetaNotice(true);
+    }
   },
 
-  openBetaNotice() {
+  _betaAutoCloseTimer: null,
+
+  getLocalDateStamp() {
+    const now = new Date();
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+  },
+
+  shouldShowBetaNotice() {
+    try {
+      if (localStorage.getItem("TOAB_BETA_NOTICE_HIDE_FOREVER") === "1") return false;
+      if (localStorage.getItem("TOAB_BETA_NOTICE_HIDE_DATE") === this.getLocalDateStamp()) return false;
+    } catch (e) {}
+    return true;
+  },
+
+  openBetaNotice(autoClose = false) {
+    clearTimeout(this._betaAutoCloseTimer);
     document.getElementById("betaNoticeModal")?.classList.remove("hidden");
+    if (autoClose) {
+      this._betaAutoCloseTimer = setTimeout(() => {
+        this.closeBetaNotice();
+      }, 2000);
+    }
   },
 
-  closeBetaNotice() {
+  closeBetaNotice(mode = "") {
+    clearTimeout(this._betaAutoCloseTimer);
+    this._betaAutoCloseTimer = null;
+    try {
+      if (mode === "today") {
+        localStorage.setItem("TOAB_BETA_NOTICE_HIDE_DATE", this.getLocalDateStamp());
+      } else if (mode === "forever") {
+        localStorage.setItem("TOAB_BETA_NOTICE_HIDE_FOREVER", "1");
+      }
+    } catch (e) {}
     document.getElementById("betaNoticeModal")?.classList.add("hidden");
   },
 
@@ -244,6 +276,8 @@ const App = {
       }
     }
     s("betaNoticeBtn", x.betaNoticeBtn);
+    s("betaNoticeHideTodayBtn", x.betaNoticeHideToday);
+    s("betaNoticeHideForeverBtn", x.betaNoticeHideForever);
     s("t-td-sample", sampleTag);
     s("t-cs-sample", sampleTag);
     s("t-sv-sample", sampleTag);

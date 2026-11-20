@@ -123,7 +123,7 @@
   </div>
 
   <!-- 베타버전 0.5 메인 페이지 주의 팝업 -->
-  <div id="betaNoticeModal" class="beta-popup-overlay" role="dialog" aria-modal="true" aria-labelledby="betaNoticeTitle">
+  <div id="betaNoticeModal" class="beta-popup-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="betaNoticeTitle">
     <div class="beta-popup-card">
       <span class="beta-popup-badge">TOA BETA v0.5</span>
       <h2 class="beta-popup-title" id="betaNoticeTitle">베타 버전 사용 안내</h2>
@@ -133,6 +133,10 @@
         <span class="bp-tip">💻 앱의 특성상 많은 데이터를 표시해야하므로 모바일 보다는 PC에서 실행하는 것이 가독성이 우수합니다.</span>
       </p>
       <button type="button" class="beta-popup-btn" id="betaNoticeBtn" onclick="App.closeBetaNotice()">확인했습니다</button>
+      <div class="beta-popup-sub-actions">
+        <button type="button" class="beta-popup-sub-btn" id="betaNoticeHideTodayBtn" onclick="App.closeBetaNotice('today')">오늘 그만보기</button>
+        <button type="button" class="beta-popup-sub-btn" id="betaNoticeHideForeverBtn" onclick="App.closeBetaNotice('forever')">계속 그만보기</button>
+      </div>
     </div>
   </div>
 
