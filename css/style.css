@@ -184,7 +184,7 @@ button:focus, input:focus, select:focus { outline: 2px solid var(--ac); outline-
 }
 .bottom-summary-row {
   display: grid;
-  grid-template-columns: 1.05fr 1.25fr 1.85fr 0.85fr;
+  grid-template-columns: 1.05fr 1.25fr 0.85fr 1.85fr;
   gap: 12px;
   align-items: stretch;
 }
